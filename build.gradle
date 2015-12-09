@@ -71,8 +71,10 @@ dependencies {
     
     compile 'junit:junit:4.4'
     
-    
-    
+    compile 'org.metacsp:meta-csp-framework:1.1.4'    
+	
+	compile 'org.apache.commons:commons-lang3:3.0'
+
     
 }
 
@@ -97,4 +99,8 @@ eclipse {
 	// setup your Java classpath variable GRADLE_USER_HOME to C:/users/<login>/.gradle
 	// we use GRADLE_USER_HOME instead of GRADLE_HOME, because this is also the environment variable honored by gradle: http://mrhaki.blogspot.de/2010/09/gradle-goodness-changing-gradle-user.html
 	// pathVariables GRADLE_USER_HOME: gradle.gradleUserHomeDir
+	
+	project {
+		name = 'de.uni_stuttgart.iaas.bpel.equivalence'
+	}
 }
