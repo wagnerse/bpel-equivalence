@@ -1,5 +1,6 @@
 package de.uni_stuttgart.iaas.bpel.equivalence.model.factories;
 
+import org.eclipse.bpel.model.Activity;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 
@@ -23,7 +24,7 @@ public class BasicActivityFactory implements IActivityNetworkFactory{
 
 	@Override
 	public AbstractActivityNetwork createElementNetwork(EObject eobject, NetworkSolver network) {
-		return new BasicActivityNetwork(support, eobject, network);
+		return new BasicActivityNetwork(support,(Activity) eobject, network);
 	}
 
 }
