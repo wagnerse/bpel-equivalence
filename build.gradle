@@ -74,6 +74,8 @@ dependencies {
     compile 'org.metacsp:meta-csp-framework:1.1.4'    
 	
 	compile 'org.apache.commons:commons-lang3:3.0'
+	
+	compile 'org.eclipse.emf:common:2.2.3'
 
     
 }
