@@ -10,22 +10,22 @@ public class ActivityState extends SimpleAllenInterval{
 	 */
 	private static final long serialVersionUID = -2838842176872064496L;
 	
-	private BepelState stateType;
+	private BPELStateEnum stateType;
 	
 	public ActivityState(ConstraintSolver cs, int id) {
 		super(cs, id);
 	}
 	
-	public ActivityState(BepelState stateType, ConstraintSolver cs, int id) {
+	public ActivityState(BPELStateEnum stateType, ConstraintSolver cs, int id) {
 		super(cs, id);
 		this.stateType = stateType;
 	}
 	
-	public void setStateType(BepelState state) {
+	public void setStateType(BPELStateEnum state) {
 		this.stateType = state;
 	}
 	
-	public BepelState getStateType() {
+	public BPELStateEnum getStateType() {
 		return stateType;
 	}
 

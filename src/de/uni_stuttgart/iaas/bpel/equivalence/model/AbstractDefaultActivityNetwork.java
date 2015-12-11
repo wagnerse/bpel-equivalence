@@ -9,8 +9,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.metacsp.time.qualitative.QualitativeAllenIntervalConstraint.Type;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.ActivityState;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.ActivityStateLink;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.BepelState;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.StateConstraint;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.BPELStateEnum;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.NetworkSolver;
 
 public abstract class AbstractDefaultActivityNetwork extends AbstractActivityNetwork{
@@ -20,8 +20,8 @@ public abstract class AbstractDefaultActivityNetwork extends AbstractActivityNet
 	}
 
 	@Override
-	public Map<Pair<BepelState, BepelState>, Type[]> getConnectionTable() {
-		return new HashMap<Pair<BepelState, BepelState>, Type[]>();
+	public Map<Pair<BPELStateEnum, BPELStateEnum>, Type[]> getConnectionTable() {
+		return new HashMap<Pair<BPELStateEnum, BPELStateEnum>, Type[]>();
 	}
 
 	@Override
@@ -30,8 +30,8 @@ public abstract class AbstractDefaultActivityNetwork extends AbstractActivityNet
 	}
 
 	@Override
-	protected ActivityStateLink[] getLocalLinks() {
-		ActivityStateLink[] stateLinks = {};
+	protected StateConstraint[] getLocalLinks() {
+		StateConstraint[] stateLinks = {};
 		return stateLinks;
 	}
 	

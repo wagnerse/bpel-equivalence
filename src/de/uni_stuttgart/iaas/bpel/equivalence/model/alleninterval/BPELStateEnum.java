@@ -1,6 +1,6 @@
 package de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval;
 
-public enum BepelState {
+public enum BPELStateEnum {
 	INITAL, 
 	DEAD, 
 	

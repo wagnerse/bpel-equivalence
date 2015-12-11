@@ -14,15 +14,15 @@ import org.metacsp.time.qualitative.QualitativeAllenIntervalConstraint.Type;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.AbstractActivityNetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.IActivityConnector;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.ActivityState;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.ActivityStateLink;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.BepelState;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.StateConstraint;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.BPELStateEnum;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.NetworkSolver;
 
 public class ScopeNetwork extends AbstractActivityNetwork{
 	
 	private Scope scope;
 	private ActivityState[] activityStates;
-	private ActivityStateLink[] activityStateLinks;
+	private StateConstraint[] activityStateLinks;
 
 	public ScopeNetwork(Scope subject, NetworkSolver network) {
 		super(network);
@@ -37,14 +37,14 @@ public class ScopeNetwork extends AbstractActivityNetwork{
 	
 	private void initNetwork() {
 		// states
-		ActivityState init = getNetwork().createActivityState(BepelState.INITAL);
-		ActivityState dead = getNetwork().createActivityState(BepelState.DEAD);
-		ActivityState executing = getNetwork().createActivityState(BepelState.EXECUTING);
-		ActivityState completed = getNetwork().createActivityState(BepelState.COMPLETED);
-		ActivityState terminated = getNetwork().createActivityState(BepelState.TERMINATED);
-		ActivityState faultHandling = getNetwork().createActivityState(BepelState.FAULT_HANDLING);
-		ActivityState faultCought = getNetwork().createActivityState(BepelState.FAULT_COUGHT);
-		ActivityState faultUncought = getNetwork().createActivityState(BepelState.FAULT_UNCOUGHT);
+		ActivityState init = getNetwork().createActivityState(BPELStateEnum.INITAL);
+		ActivityState dead = getNetwork().createActivityState(BPELStateEnum.DEAD);
+		ActivityState executing = getNetwork().createActivityState(BPELStateEnum.EXECUTING);
+		ActivityState completed = getNetwork().createActivityState(BPELStateEnum.COMPLETED);
+		ActivityState terminated = getNetwork().createActivityState(BPELStateEnum.TERMINATED);
+		ActivityState faultHandling = getNetwork().createActivityState(BPELStateEnum.FAULT_HANDLING);
+		ActivityState faultCought = getNetwork().createActivityState(BPELStateEnum.FAULT_COUGHT);
+		ActivityState faultUncought = getNetwork().createActivityState(BPELStateEnum.FAULT_UNCOUGHT);
 		
 		ActivityState[] stateList = {
 				init, 
@@ -58,7 +58,7 @@ public class ScopeNetwork extends AbstractActivityNetwork{
 		activityStates = stateList;
 		
 		// links
-		List<ActivityStateLink> activityStateLinksList = new ArrayList<ActivityStateLink>();
+		List<StateConstraint> activityStateLinksList = new ArrayList<StateConstraint>();
 		activityStateLinksList.add(createMeetsActivityStateLink(init, dead));
 		activityStateLinksList.add(createMeetsActivityStateLink(init, terminated));
 		activityStateLinksList.add(createMeetsActivityStateLink(init, executing));
@@ -67,13 +67,13 @@ public class ScopeNetwork extends AbstractActivityNetwork{
 		activityStateLinksList.add(createMeetsActivityStateLink(executing, faultHandling));
 		activityStateLinksList.add(createMeetsActivityStateLink(faultHandling, faultCought));
 		activityStateLinksList.add(createMeetsActivityStateLink(faultHandling, faultUncought));
-		activityStateLinks = (ActivityStateLink[]) activityStateLinksList.toArray();
+		activityStateLinks = (StateConstraint[]) activityStateLinksList.toArray();
 		
 	}
 	
 
 	@Override
-	public Map<Pair<BepelState, BepelState>, Type[]> getConnectionTable() {
+	public Map<Pair<BPELStateEnum, BPELStateEnum>, Type[]> getConnectionTable() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -84,7 +84,7 @@ public class ScopeNetwork extends AbstractActivityNetwork{
 	}
 
 	@Override
-	protected ActivityStateLink[] getLocalLinks() {
+	protected StateConstraint[] getLocalLinks() {
 		return activityStateLinks;
 	}
 
