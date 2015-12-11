@@ -67,12 +67,12 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 
 	private void initNetwork() {
 		// states
-		ActivityState init = getNetwork().createActivityState(BPELStateEnum.INITAL);
-		ActivityState dead = getNetwork().createActivityState(BPELStateEnum.DEAD);
-		ActivityState executing = getNetwork().createActivityState(BPELStateEnum.EXECUTING);
-		ActivityState completed = getNetwork().createActivityState(BPELStateEnum.COMPLETED);
-		ActivityState terminated = getNetwork().createActivityState(BPELStateEnum.TERMINATED);
-		ActivityState fault = getNetwork().createActivityState(BPELStateEnum.FAULT);
+		ActivityState init = getNetwork().createActivityState(getEObject(), BPELStateEnum.INITAL);
+		ActivityState dead = getNetwork().createActivityState(getEObject(), BPELStateEnum.DEAD);
+		ActivityState executing = getNetwork().createActivityState(getEObject(), BPELStateEnum.EXECUTING);
+		ActivityState completed = getNetwork().createActivityState(getEObject(), BPELStateEnum.COMPLETED);
+		ActivityState terminated = getNetwork().createActivityState(getEObject(), BPELStateEnum.TERMINATED);
+		ActivityState fault = getNetwork().createActivityState(getEObject(), BPELStateEnum.FAULT);
 
 		ActivityState[] stateList = { init, dead, executing, completed, terminated, fault };
 		activityStates = stateList;
