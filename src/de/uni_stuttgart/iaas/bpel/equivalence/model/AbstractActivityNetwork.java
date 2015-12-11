@@ -66,6 +66,8 @@ public abstract class AbstractActivityNetwork {
 	}
 
 	public abstract EClass getSupportedEClass();
+	
+	public abstract EObject getEObject();
 
 	public abstract Map<Pair<BPELStateEnum, BPELStateEnum>, QualitativeAllenIntervalConstraint.Type[]> getConnectionTable();
 

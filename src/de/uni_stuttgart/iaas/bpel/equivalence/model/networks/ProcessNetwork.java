@@ -40,4 +40,9 @@ public class ProcessNetwork extends AbstractDefaultActivityNetwork{
 		return (AbstractActivityNetwork[]) childList.toArray();
 	}
 
+	@Override
+	public EObject getEObject() {
+		return (EObject) this.process;
+	}
+
 }

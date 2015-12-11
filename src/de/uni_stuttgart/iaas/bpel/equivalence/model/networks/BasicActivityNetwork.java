@@ -102,4 +102,9 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 			return states;
 		}
 	}
+
+	@Override
+	public EObject getEObject() {
+		return (EObject) this.activity;
+	}
 }

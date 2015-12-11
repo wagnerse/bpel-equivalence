@@ -37,14 +37,14 @@ public class ScopeNetwork extends AbstractActivityNetwork{
 	
 	private void initNetwork() {
 		// states
-		ActivityState init = getNetwork().createActivityState(BPELStateEnum.INITAL);
-		ActivityState dead = getNetwork().createActivityState(BPELStateEnum.DEAD);
-		ActivityState executing = getNetwork().createActivityState(BPELStateEnum.EXECUTING);
-		ActivityState completed = getNetwork().createActivityState(BPELStateEnum.COMPLETED);
-		ActivityState terminated = getNetwork().createActivityState(BPELStateEnum.TERMINATED);
-		ActivityState faultHandling = getNetwork().createActivityState(BPELStateEnum.FAULT_HANDLING);
-		ActivityState faultCought = getNetwork().createActivityState(BPELStateEnum.FAULT_COUGHT);
-		ActivityState faultUncought = getNetwork().createActivityState(BPELStateEnum.FAULT_UNCOUGHT);
+		ActivityState init = getNetwork().createActivityState(getEObject(), BPELStateEnum.INITAL);
+		ActivityState dead = getNetwork().createActivityState(getEObject(), BPELStateEnum.DEAD);
+		ActivityState executing = getNetwork().createActivityState(getEObject(), BPELStateEnum.EXECUTING);
+		ActivityState completed = getNetwork().createActivityState(getEObject(), BPELStateEnum.COMPLETED);
+		ActivityState terminated = getNetwork().createActivityState(getEObject(), BPELStateEnum.TERMINATED);
+		ActivityState faultHandling = getNetwork().createActivityState(getEObject(), BPELStateEnum.FAULT_HANDLING);
+		ActivityState faultCought = getNetwork().createActivityState(getEObject(), BPELStateEnum.FAULT_COUGHT);
+		ActivityState faultUncought = getNetwork().createActivityState(getEObject(), BPELStateEnum.FAULT_UNCOUGHT);
 		
 		ActivityState[] stateList = {
 				init, 
@@ -113,6 +113,12 @@ public class ScopeNetwork extends AbstractActivityNetwork{
 		public ActivityState[] getConnectionStates() {
 			return states;
 		}
+	}
+
+
+	@Override
+	public EObject getEObject() {
+		return (EObject) this.scope;
 	}
 
 }
