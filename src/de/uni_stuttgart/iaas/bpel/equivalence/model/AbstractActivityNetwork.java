@@ -1,5 +1,6 @@
 package de.uni_stuttgart.iaas.bpel.equivalence.model;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.MutablePair;
@@ -9,6 +10,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.metacsp.framework.Variable;
 import org.metacsp.fuzzyAllenInterval.FuzzyAllenIntervalConstraint;
 import org.metacsp.time.qualitative.QualitativeAllenIntervalConstraint;
+import org.metacsp.time.qualitative.QualitativeAllenIntervalConstraint.Type;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.NetworkSolver;
 import de.uni_stuttgart.iaas.bpel.equivalence.NetworkFactoryRepo;
@@ -19,6 +21,8 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.BPELStateEnum;
 public abstract class AbstractActivityNetwork {
 
 	private NetworkSolver network;
+	private Map<Pair<BPELStateEnum, BPELStateEnum>, Type[]> constraints = new HashMap<Pair<BPELStateEnum, BPELStateEnum>, Type[]>();
+
 
 	@SuppressWarnings("unused")
 	private AbstractActivityNetwork() {
@@ -26,6 +30,7 @@ public abstract class AbstractActivityNetwork {
 	}
 
 	public AbstractActivityNetwork(NetworkSolver network) {
+		initConstraintMap();
 		this.network = network;
 	}
 
@@ -43,7 +48,7 @@ public abstract class AbstractActivityNetwork {
 				for (ActivityState localState : this.getActivityConnector().getConnectionStates()) {
 					Pair<BPELStateEnum, BPELStateEnum> key = new MutablePair<BPELStateEnum, BPELStateEnum>(
 							senderState.getStateType(), localState.getStateType());
-					QualitativeAllenIntervalConstraint.Type[] constraints = parent.getConnectionTable().get(key);
+					QualitativeAllenIntervalConstraint.Type[] constraints = parent.getConnectionConstraints().get(key);
 
 					StateConstraint constraint = new StateConstraint(constraints);
 					constraint.setFrom(senderState);
@@ -69,13 +74,21 @@ public abstract class AbstractActivityNetwork {
 	
 	public abstract EObject getEObject();
 
-	public abstract Map<Pair<BPELStateEnum, BPELStateEnum>, QualitativeAllenIntervalConstraint.Type[]> getConnectionTable();
-
 	public abstract IActivityConnector getActivityConnector();
 
 	protected abstract StateConstraint[] getLocalLinks();
 
 	protected abstract AbstractActivityNetwork[] getChildNetworks();
+	
+	protected abstract void initConstraintMap();
+	
+	protected void putConstraint(BPELStateEnum l, BPELStateEnum r, Type...types) {
+		constraints.put(new MutablePair<BPELStateEnum, BPELStateEnum>(l, r), types);
+	}
+
+	public Map<Pair<BPELStateEnum, BPELStateEnum>, Type[]> getConnectionConstraints() {		
+		return constraints;
+	}
 
 	protected void doPostProcessing() {
 		// not implemented
@@ -90,7 +103,13 @@ public abstract class AbstractActivityNetwork {
 	}
 
 	protected AbstractActivityNetwork createChildNetwork(EObject child) {
-		return NetworkFactoryRepo.getInstance().createElementNetwork(child, getNetwork());
+		
+		if (child != null) {		
+			return NetworkFactoryRepo.getInstance().createElementNetwork(child, getNetwork());
+		}
+		else {
+			return null;
+		}
 	}
 
 	protected StateConstraint createMeetsActivityStateLink(Variable from, Variable to) {

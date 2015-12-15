@@ -1,15 +1,11 @@
 package de.uni_stuttgart.iaas.bpel.equivalence.model.networks;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.bpel.model.Activity;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.metacsp.time.qualitative.QualitativeAllenIntervalConstraint.Type;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.model.AbstractActivityNetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.IActivityConnector;
@@ -42,11 +38,6 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 	@Override
 	public EClass getSupportedEClass() {
 		return support;
-	}
-
-	@Override
-	public Map<Pair<BPELStateEnum, BPELStateEnum>, Type[]> getConnectionTable() {
-		return new HashMap<Pair<BPELStateEnum, BPELStateEnum>, Type[]>();
 	}
 
 	@Override
@@ -85,7 +76,9 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 		activityStateLinksList.add(createMeetsActivityStateLink(executing, terminated));
 		activityStateLinksList.add(createMeetsActivityStateLink(executing, completed));
 		activityStateLinksList.add(createMeetsActivityStateLink(executing, fault));
-		activityStateLinks = (StateConstraint[]) activityStateLinksList.toArray();
+		
+		activityStateLinks = new StateConstraint[activityStateLinksList.size()];
+		activityStateLinks = activityStateLinksList.toArray(activityStateLinks);
 
 	}
 
@@ -106,5 +99,11 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 	@Override
 	public EObject getEObject() {
 		return (EObject) this.activity;
+	}
+
+	@Override
+	protected void initConstraintMap() {
+		// TODO Auto-generated method stub
+		
 	}
 }

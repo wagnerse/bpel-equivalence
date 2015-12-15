@@ -1,9 +1,11 @@
 package de.uni_stuttgart.iaas.bpel.equivalence.model.networks;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.bpel.model.BPELPackage;
 import org.eclipse.bpel.model.Scope;
@@ -23,7 +25,7 @@ public class ScopeNetwork extends AbstractActivityNetwork{
 	private Scope scope;
 	private ActivityState[] activityStates;
 	private StateConstraint[] activityStateLinks;
-
+	
 	public ScopeNetwork(Scope subject, NetworkSolver network) {
 		super(network);
 		this.scope = subject;
@@ -67,15 +69,69 @@ public class ScopeNetwork extends AbstractActivityNetwork{
 		activityStateLinksList.add(createMeetsActivityStateLink(executing, faultHandling));
 		activityStateLinksList.add(createMeetsActivityStateLink(faultHandling, faultCought));
 		activityStateLinksList.add(createMeetsActivityStateLink(faultHandling, faultUncought));
-		activityStateLinks = (StateConstraint[]) activityStateLinksList.toArray();
+		
+		activityStateLinks = new StateConstraint[activityStateLinksList.size()];
+		activityStateLinks = activityStateLinksList.toArray(activityStateLinks);
 		
 	}
 	
-
 	@Override
-	public Map<Pair<BPELStateEnum, BPELStateEnum>, Type[]> getConnectionTable() {
-		// TODO Auto-generated method stub
-		return null;
+	protected void initConstraintMap() {
+		putConstraint(BPELStateEnum.INITAL, BPELStateEnum.INITAL, Type.Equals);
+		putConstraint(BPELStateEnum.INITAL, BPELStateEnum.EXECUTING, Type.Meets);
+		putConstraint(BPELStateEnum.INITAL, BPELStateEnum.DEAD, Type.Meets);
+		putConstraint(BPELStateEnum.INITAL, BPELStateEnum.FAULT, Type.Before);
+		putConstraint(BPELStateEnum.INITAL, BPELStateEnum.TERMINATED, Type.Meets, Type.Before);
+		putConstraint(BPELStateEnum.INITAL, BPELStateEnum.COMPLETED, Type.Before);
+		
+		putConstraint(BPELStateEnum.EXECUTING, BPELStateEnum.INITAL, Type.MetBy);
+		putConstraint(BPELStateEnum.EXECUTING, BPELStateEnum.EXECUTING, Type.Equals);
+		putConstraint(BPELStateEnum.EXECUTING, BPELStateEnum.DEAD);
+		putConstraint(BPELStateEnum.EXECUTING, BPELStateEnum.FAULT, Type.Meets);
+		putConstraint(BPELStateEnum.EXECUTING, BPELStateEnum.TERMINATED, Type.Meets);
+		putConstraint(BPELStateEnum.EXECUTING, BPELStateEnum.COMPLETED, Type.Meets);
+		
+		putConstraint(BPELStateEnum.DEAD, BPELStateEnum.INITAL, Type.MetBy);
+		putConstraint(BPELStateEnum.DEAD, BPELStateEnum.EXECUTING);
+		putConstraint(BPELStateEnum.DEAD, BPELStateEnum.DEAD, Type.Equals);
+		putConstraint(BPELStateEnum.DEAD, BPELStateEnum.FAULT);
+		putConstraint(BPELStateEnum.DEAD, BPELStateEnum.TERMINATED);
+		putConstraint(BPELStateEnum.DEAD, BPELStateEnum.COMPLETED);
+		
+		putConstraint(BPELStateEnum.FAULT_HANDLING, BPELStateEnum.INITAL, Type.After);
+		putConstraint(BPELStateEnum.FAULT_HANDLING, BPELStateEnum.EXECUTING, Type.MetBy);
+		putConstraint(BPELStateEnum.FAULT_HANDLING, BPELStateEnum.DEAD);
+		putConstraint(BPELStateEnum.FAULT_HANDLING, BPELStateEnum.FAULT, Type.Starts);
+		putConstraint(BPELStateEnum.FAULT_HANDLING, BPELStateEnum.TERMINATED);
+		putConstraint(BPELStateEnum.FAULT_HANDLING, BPELStateEnum.COMPLETED);
+		
+		putConstraint(BPELStateEnum.FAULT_UNCOUGHT, BPELStateEnum.INITAL, Type.After);
+		putConstraint(BPELStateEnum.FAULT_UNCOUGHT, BPELStateEnum.EXECUTING, Type.After);
+		putConstraint(BPELStateEnum.FAULT_UNCOUGHT, BPELStateEnum.DEAD);
+		putConstraint(BPELStateEnum.FAULT_UNCOUGHT, BPELStateEnum.FAULT, Type.Finishes);
+		putConstraint(BPELStateEnum.FAULT_UNCOUGHT, BPELStateEnum.TERMINATED);
+		putConstraint(BPELStateEnum.FAULT_UNCOUGHT, BPELStateEnum.COMPLETED);
+		
+		putConstraint(BPELStateEnum.FAULT_COUGHT, BPELStateEnum.INITAL, Type.After);
+		putConstraint(BPELStateEnum.FAULT_COUGHT, BPELStateEnum.EXECUTING, Type.After);
+		putConstraint(BPELStateEnum.FAULT_COUGHT, BPELStateEnum.DEAD);
+		putConstraint(BPELStateEnum.FAULT_COUGHT, BPELStateEnum.FAULT, Type.Finishes);
+		putConstraint(BPELStateEnum.FAULT_COUGHT, BPELStateEnum.TERMINATED);
+		putConstraint(BPELStateEnum.FAULT_COUGHT, BPELStateEnum.COMPLETED);
+
+		putConstraint(BPELStateEnum.TERMINATED, BPELStateEnum.INITAL, Type.After, Type.MetBy);
+		putConstraint(BPELStateEnum.TERMINATED, BPELStateEnum.EXECUTING, Type.MetBy);
+		putConstraint(BPELStateEnum.TERMINATED, BPELStateEnum.DEAD);
+		putConstraint(BPELStateEnum.TERMINATED, BPELStateEnum.FAULT);
+		putConstraint(BPELStateEnum.TERMINATED, BPELStateEnum.TERMINATED, Type.Equals);
+		putConstraint(BPELStateEnum.TERMINATED, BPELStateEnum.COMPLETED);
+
+		putConstraint(BPELStateEnum.COMPLETED, BPELStateEnum.INITAL, Type.After);
+		putConstraint(BPELStateEnum.COMPLETED, BPELStateEnum.EXECUTING, Type.MetBy);
+		putConstraint(BPELStateEnum.COMPLETED, BPELStateEnum.DEAD);
+		putConstraint(BPELStateEnum.COMPLETED, BPELStateEnum.FAULT);
+		putConstraint(BPELStateEnum.COMPLETED, BPELStateEnum.TERMINATED);
+		putConstraint(BPELStateEnum.COMPLETED, BPELStateEnum.COMPLETED, Type.Equals);
 	}
 
 	@Override
@@ -93,11 +149,10 @@ public class ScopeNetwork extends AbstractActivityNetwork{
 	 */
 	@Override
 	protected AbstractActivityNetwork[] getChildNetworks() {
-		List<AbstractActivityNetwork> childList = new ArrayList<AbstractActivityNetwork>();
-		childList.add(createChildNetwork((EObject) scope.getFaultHandlers()));
-		childList.add(createChildNetwork((EObject) scope.getActivity()));
+		AbstractActivityNetwork activity = createChildNetwork((EObject) scope.getActivity());
+		AbstractActivityNetwork[] childArray = {activity};
 		
-		return (AbstractActivityNetwork[]) childList.toArray();
+		return childArray;
 	}
 	
 	

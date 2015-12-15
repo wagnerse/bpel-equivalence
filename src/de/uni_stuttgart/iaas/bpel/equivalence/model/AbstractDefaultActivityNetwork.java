@@ -20,7 +20,7 @@ public abstract class AbstractDefaultActivityNetwork extends AbstractActivityNet
 	}
 
 	@Override
-	public Map<Pair<BPELStateEnum, BPELStateEnum>, Type[]> getConnectionTable() {
+	public Map<Pair<BPELStateEnum, BPELStateEnum>, Type[]> getConnectionConstraints() {
 		return new HashMap<Pair<BPELStateEnum, BPELStateEnum>, Type[]>();
 	}
 

@@ -3,9 +3,6 @@ package de.uni_stuttgart.iaas.bpel.equivalence.model.networks;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.bpel.model.Process;
 import org.eclipse.bpel.model.BPELPackage;
 
@@ -34,15 +31,22 @@ public class ProcessNetwork extends AbstractDefaultActivityNetwork{
 
 	@Override
 	protected AbstractActivityNetwork[] getChildNetworks() {
-		List<AbstractActivityNetwork> childList = new ArrayList<AbstractActivityNetwork>();
-		childList.add(createChildNetwork((EObject) process.getActivity()));
+		AbstractActivityNetwork activity = createChildNetwork((EObject) process.getActivity());
 		
-		return (AbstractActivityNetwork[]) childList.toArray();
+		AbstractActivityNetwork[] childArray = {activity};
+
+		return childArray;
 	}
 
 	@Override
 	public EObject getEObject() {
 		return (EObject) this.process;
+	}
+
+	@Override
+	protected void initConstraintMap() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

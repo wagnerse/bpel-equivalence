@@ -4,6 +4,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.metacsp.framework.ConstraintSolver;
 import org.metacsp.time.qualitative.SimpleAllenInterval;
 
+import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
+
 public class ActivityState extends SimpleAllenInterval{
 
 	/**
@@ -38,6 +40,13 @@ public class ActivityState extends SimpleAllenInterval{
 	
 	public void setBPELElement(EObject bpelElement){
 		this.bpelElement = bpelElement;
+	}
+	
+	public String getName() {
+		Object nameAttr = EMFUtils.getAttributeByName(bpelElement, "name");
+		String bpelName = (nameAttr instanceof String)? (String) nameAttr : "";
+		
+		return bpelName + stateType.toString();
 	}
 
 }

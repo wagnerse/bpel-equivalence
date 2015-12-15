@@ -75,7 +75,12 @@ dependencies {
 	
 	compile 'org.apache.commons:commons-lang3:3.0'
 	
-	compile 'org.eclipse.emf:common:2.2.3'
+	compile 'org.eclipse.emf:org.eclipse.emf.ecore:2.11.1-v20150805-0538'
+	
+	compile 'org.eclipse.emf:org.eclipse.emf.common:2.11.0-v20150805-0538'
+	
+	compile 'org.eclipse.emf:org.eclipse.emf.ecore.xmi:2.11.1-v20150805-0538'
+
 
     
 }
