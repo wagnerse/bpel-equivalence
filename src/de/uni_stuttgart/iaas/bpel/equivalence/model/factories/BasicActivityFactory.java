@@ -23,8 +23,8 @@ public class BasicActivityFactory implements IActivityNetworkFactory{
 	}
 
 	@Override
-	public AbstractActivityNetwork createElementNetwork(EObject eobject, NetworkSolver network) {
-		return new BasicActivityNetwork(support,(Activity) eobject, network);
+	public AbstractActivityNetwork createElementNetwork(AbstractActivityNetwork parentNetwork, EObject eobject, NetworkSolver network) {
+		return new BasicActivityNetwork(parentNetwork, support,(Activity) eobject, network);
 	}
 
 }

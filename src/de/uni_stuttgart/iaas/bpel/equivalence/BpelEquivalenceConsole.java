@@ -16,7 +16,6 @@ public class BpelEquivalenceConsole {
 		EObject process2 = (EObject) BPELResourceUtils.readProcessFromFile(args[1]);
 		
 		BpelEquivalence equivalence = new BpelEquivalence();
-		equivalence.init();
 		NetworkSolver network1 =equivalence.createNetwork(process1);
 		NetworkSolver network2 =equivalence.createNetwork(process2);
 		

@@ -31,13 +31,13 @@ public class NetworkFactoryRepo {
 		return instance;
 	}
 	
-	public AbstractActivityNetwork createElementNetwork(EObject eobject, NetworkSolver network) {
+	public AbstractActivityNetwork createElementNetwork(AbstractActivityNetwork parentNetwork, EObject eobject, NetworkSolver network) {
 		EClass eClass = eobject.eClass();		
 		if (!factories.containsKey(eClass)) {
 			return null; //TODO stub?
 		}
 		else {
-			return factories.get(eClass).createElementNetwork(eobject, network);
+			return factories.get(eClass).createElementNetwork(parentNetwork, eobject, network);
 		}
 	}
 	

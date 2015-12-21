@@ -9,6 +9,6 @@ public interface IActivityNetworkFactory {
 	
 	public EClass getSupportedEClass();
 
-	public AbstractActivityNetwork createElementNetwork(EObject eobject, NetworkSolver network);
+	public AbstractActivityNetwork createElementNetwork(AbstractActivityNetwork parentNetwork, EObject eobject, NetworkSolver network);
 
 }

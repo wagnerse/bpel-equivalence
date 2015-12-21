@@ -19,7 +19,6 @@ public class BpelAllenNetworkConsole {
 		EObject process1 = (EObject) BPELResourceUtils.readProcessFromFile(args[0]);
 		
 		BpelEquivalence equivalence = new BpelEquivalence();
-		equivalence.init();
 		
 		NetworkSolver network1 =equivalence.createNetwork(process1);
 		

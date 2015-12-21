@@ -5,12 +5,17 @@ import org.eclipse.emf.ecore.EObject;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.NetworkSolver;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.BasicActivityFactory;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.FHCatchNetworkFactory;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.ProcessNetworkFactory;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.ScopeNetworkFactory;
 
 public class BpelEquivalence {
 	
-	public void init() {
+	public BpelEquivalence() {
+		initRepo();
+	}
+	
+	private void initRepo() {
 
 		NetworkFactoryRepo.getInstance().registerFactory(new ProcessNetworkFactory());
 		NetworkFactoryRepo.getInstance().registerFactory(new ScopeNetworkFactory());
@@ -25,10 +30,12 @@ public class BpelEquivalence {
 		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(BPELPackage.eINSTANCE.getEmpty()));
 		//TODO check compensate, compensateScope, rethrow, validate
 		
+		NetworkFactoryRepo.getInstance().registerFactory(new FHCatchNetworkFactory());
+			
 	}
 	
 	public NetworkSolver createNetwork(EObject eObject) {
-		return NetworkFactoryRepo.getInstance().createElementNetwork(eObject, new NetworkSolver()).linkActivityNetworkLayer(null);
+		return NetworkFactoryRepo.getInstance().createElementNetwork(null, eObject, new NetworkSolver()).linkActivityNetworkLayer();
 	}
 	
 	public boolean checkBpelEquivalence(NetworkSolver network1, NetworkSolver network2) {

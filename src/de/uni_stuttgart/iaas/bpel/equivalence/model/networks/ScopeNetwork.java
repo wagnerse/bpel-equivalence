@@ -1,13 +1,10 @@
 package de.uni_stuttgart.iaas.bpel.equivalence.model.networks;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.lang3.tuple.MutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.bpel.model.BPELPackage;
+import org.eclipse.bpel.model.Catch;
 import org.eclipse.bpel.model.Scope;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -16,9 +13,11 @@ import org.metacsp.time.qualitative.QualitativeAllenIntervalConstraint.Type;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.AbstractActivityNetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.IActivityConnector;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.ActivityState;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.StateConstraint;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.BPELStateEnum;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.NetworkSolver;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.StateConstraint;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.networks.ScopeNetwork.ScopeConnector;
+import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
 
 public class ScopeNetwork extends AbstractActivityNetwork{
 	
@@ -26,8 +25,8 @@ public class ScopeNetwork extends AbstractActivityNetwork{
 	private ActivityState[] activityStates;
 	private StateConstraint[] activityStateLinks;
 	
-	public ScopeNetwork(Scope subject, NetworkSolver network) {
-		super(network);
+	public ScopeNetwork(AbstractActivityNetwork parentNetwork, Scope subject, NetworkSolver network) {
+		super(parentNetwork, network);
 		this.scope = subject;
 		initNetwork();
 	}
@@ -35,6 +34,12 @@ public class ScopeNetwork extends AbstractActivityNetwork{
 	@Override
 	public EClass getSupportedEClass() {
 		return BPELPackage.eINSTANCE.getScope();
+	}
+	
+	@Override
+	public String getNetworkName() {
+		Object attribute = EMFUtils.getAttributeByName(scope, "name");
+		return (attribute instanceof String)? (String) attribute : "[Scope]";
 	}
 	
 	private void initNetwork() {
@@ -140,7 +145,7 @@ public class ScopeNetwork extends AbstractActivityNetwork{
 	}
 
 	@Override
-	protected StateConstraint[] getLocalLinks() {
+	public StateConstraint[] getLocalLinks() {
 		return activityStateLinks;
 	}
 
@@ -148,10 +153,24 @@ public class ScopeNetwork extends AbstractActivityNetwork{
 	 * This class supports Scopes with fault handlers and activities.
 	 */
 	@Override
-	protected AbstractActivityNetwork[] getChildNetworks() {
-		AbstractActivityNetwork activity = createChildNetwork((EObject) scope.getActivity());
-		AbstractActivityNetwork[] childArray = {activity};
+	protected AbstractActivityNetwork[] createChildNetworks() {
+		List<AbstractActivityNetwork> childList = new ArrayList<AbstractActivityNetwork>();	
 		
+		// add activity
+		AbstractActivityNetwork activity = createChildNetwork(scope.getActivity());
+		if (activity != null) childList.add(activity);
+		
+		if (scope.getFaultHandlers() != null) {
+			// add fault handlers
+			for (Catch bpelCatch : scope.getFaultHandlers().getCatch()) {
+				AbstractActivityNetwork catchNetwork = createChildNetwork(bpelCatch);
+				if (catchNetwork != null)
+					childList.add(catchNetwork);
+			} 
+		}
+		// create return array
+		AbstractActivityNetwork[] childArray = new AbstractActivityNetwork[childList.size()];
+		childArray = childList.toArray(childArray);
 		return childArray;
 	}
 	

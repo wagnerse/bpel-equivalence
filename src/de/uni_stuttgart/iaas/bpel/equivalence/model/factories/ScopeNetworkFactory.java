@@ -13,8 +13,8 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.networks.ScopeNetwork;
 public class ScopeNetworkFactory implements IActivityNetworkFactory{
 
 	@Override
-	public AbstractActivityNetwork createElementNetwork(EObject eobject, NetworkSolver network) {
-		return new ScopeNetwork((Scope) eobject, network);
+	public AbstractActivityNetwork createElementNetwork(AbstractActivityNetwork parentNetwork, EObject eobject, NetworkSolver network) {
+		return new ScopeNetwork(parentNetwork, (Scope) eobject, network);
 	}
 
 	@Override

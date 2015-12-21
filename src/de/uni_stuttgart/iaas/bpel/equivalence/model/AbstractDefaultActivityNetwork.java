@@ -15,8 +15,8 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.NetworkSolver;
 
 public abstract class AbstractDefaultActivityNetwork extends AbstractActivityNetwork{
 
-	public AbstractDefaultActivityNetwork(NetworkSolver network) {
-		super(network);
+	public AbstractDefaultActivityNetwork(AbstractActivityNetwork parentNetwork, NetworkSolver network) {
+		super(parentNetwork, network);
 	}
 
 	@Override
@@ -30,7 +30,7 @@ public abstract class AbstractDefaultActivityNetwork extends AbstractActivityNet
 	}
 
 	@Override
-	protected StateConstraint[] getLocalLinks() {
+	public StateConstraint[] getLocalLinks() {
 		StateConstraint[] stateLinks = {};
 		return stateLinks;
 	}

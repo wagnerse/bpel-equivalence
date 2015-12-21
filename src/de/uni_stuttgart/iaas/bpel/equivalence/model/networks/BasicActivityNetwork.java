@@ -11,6 +11,7 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.AbstractActivityNetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.IActivityConnector;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.ActivityState;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.StateConstraint;
+import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.BPELStateEnum;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.NetworkSolver;
 
@@ -21,8 +22,8 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 	private ActivityState[] activityStates;
 	private StateConstraint[] activityStateLinks;
 
-	public BasicActivityNetwork(EClass support, Activity subject, NetworkSolver network) {
-		super(network);
+	public BasicActivityNetwork(AbstractActivityNetwork parentNetwork, EClass support, Activity subject, NetworkSolver network) {
+		super(parentNetwork, network);
 		this.support = support;
 		this.activity = subject;
 		initNetwork();
@@ -34,6 +35,12 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 		this.activity = (Activity) subject;
 		initNetwork();
 	}*/
+	
+	@Override
+	public String getNetworkName() {
+		Object attribute = EMFUtils.getAttributeByName(activity, "name");
+		return (attribute instanceof String)? (String) attribute : "[Activity]";
+	}
 
 	@Override
 	public EClass getSupportedEClass() {
@@ -46,12 +53,12 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 	}
 
 	@Override
-	protected StateConstraint[] getLocalLinks() {
+	public StateConstraint[] getLocalLinks() {
 		return activityStateLinks;
 	}
 
 	@Override
-	protected AbstractActivityNetwork[] getChildNetworks() {
+	protected AbstractActivityNetwork[] createChildNetworks() {
 		AbstractActivityNetwork[] childs = {};
 		return childs;
 	}
