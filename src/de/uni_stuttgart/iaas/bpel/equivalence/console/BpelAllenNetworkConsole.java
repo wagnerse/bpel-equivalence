@@ -1,9 +1,10 @@
-package de.uni_stuttgart.iaas.bpel.equivalence;
+package de.uni_stuttgart.iaas.bpel.equivalence.console;
 
 import org.eclipse.emf.ecore.EObject;
 
 import java.io.File;
 
+import de.uni_stuttgart.iaas.bpel.equivalence.BpelEquivalence;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.NetworkSolver;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.AllenNetworkUtils;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.BPELResourceUtils;
