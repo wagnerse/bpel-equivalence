@@ -2,8 +2,10 @@ package de.uni_stuttgart.iaas.bpel.equivalence.model.allenintervall.complexity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.metacsp.time.qualitative.QualitativeAllenIntervalConstraint.Type;
 
@@ -15,8 +17,9 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.allenintervall.pointalgebra.
 public class AllenComplexity {
 	
 	private List<HashSet<RelationEnum>> gammaX = new ArrayList<HashSet<RelationEnum>>();
+	private Map<HashSet<Type>, Complexity> complexityCache = new HashMap<HashSet<Type>, Complexity>();
 	
-	private ConditionSet condSet = new ConditionSet();
+	private ConditionSet condSet = null;
 
 	public enum Complexity {P, NP};
 	
@@ -28,19 +31,39 @@ public class AllenComplexity {
 		return condSet;
 	}
 	
+	/**
+	 * Calculate complexity without caching
+	 * @param c {@link StateConstraint}
+	 * @return {@link Complexity}
+	 */
 	public Complexity isNP(StateConstraint c) {
-		
+		return isNP(c, false);
+	}
+	
+	/**
+	 * Calculate complexity with caching.
+	 * @param c {@link StateConstraint}
+	 * @return {@link Complexity}
+	 */
+	public Complexity isNP(StateConstraint c, boolean caching) {
+		condSet = new ConditionSet();
+		HashSet<Type> cachingKey = new HashSet<Type>();
 		for(Type t : c.getTypes()) {
 			ConditionSet condSet2 = new ConditionSet(t);
-			condSet.compose(condSet2);
+			condSet.orAdd(condSet2);
+			cachingKey.add(t);
 		}
 		
-		return checkComplexity(condSet);
+		if (caching && complexityCache.containsKey(cachingKey)) {
+			return complexityCache.get(cachingKey);
+		}
+		else {
+			return checkComplexity(condSet);
+		}
 	}
 	
 	private Complexity checkComplexity(ConditionSet condSet) {	
 		Complexity result = Complexity.P;
-		
 		for (Condition c: condSet.getConditions()) {
 			if (!gammaX.contains(c.getRelations())) {
 				result = Complexity.NP;

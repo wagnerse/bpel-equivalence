@@ -2,6 +2,7 @@ package de.uni_stuttgart.iaas.bpel.equivalence.model.allenintervall.pointalgebra
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.metacsp.time.qualitative.QualitativeAllenIntervalConstraint.Type;
@@ -26,14 +27,14 @@ public class ConditionSet {
 	public Collection<Condition> getConditions() {
 		return conditions.values();
 	}
-
-	public void compose(ConditionSet set2) {
+	
+	public void orAdd(ConditionSet set2) {
 		for (Condition c2: set2.getConditions()) {
 			Condition c1 = getCondition(c2.getP1(), c2.getP2());
 			// if the condition for p1 and p2 of c2 is set perform compose c1 with c2
 			// else use c2
 			if (c1 != null) {
-				c1.compose(c2);
+				c1.or(c2);
 			}
 			else {
 				setCondition(c2.getP1(), c2.getP2(), c2.getRelationsCopy());
@@ -49,51 +50,80 @@ public class ConditionSet {
 	private void initRelationConditions(Type t) {
 		
 		if (t == Type.Before) {
+			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
+			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.GREATER);
 			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.LESS);
+			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.LESS);
 		}
 		else if (t == Type.After) {
+			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.GREATER);
+			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
 			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.GREATER);
+			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.GREATER);
 		}
-		else if (t == Type.Meets || t == Type.MetBy) {
-			setCondition(PointEnum.END_I, PointEnum.START_J, RelationEnum.EQUALS);
+		else if (t == Type.Meets) {
+			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
+			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.EQUALS);
+			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.LESS);
+			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.LESS);
+		}
+		else if (t == Type.MetBy) {
+			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.EQUALS);
+			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
+			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.GREATER);
+			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.GREATER);
 		}
 		else if (t == Type.Overlaps) {
-			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.LESS);
+			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
 			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
+			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.LESS);
 			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.LESS);
 		}
 		else if (t == Type.OverlappedBy) {
-			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.GREATER);
 			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
+			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
+			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.GREATER);
 			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.GREATER);
 		}
 		else if (t == Type.During) {
+			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
+			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
 			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.GREATER);
 			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.LESS);
 		}
 		else if (t == Type.Contains) {
+			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
+			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
 			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.LESS);
 			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.GREATER);
 		}
 		else if (t == Type.Starts) {
+			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
+			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
 			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.EQUALS);
 			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.LESS);
 		}
 		else if (t == Type.StartedBy) {
+			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
+			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
 			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.EQUALS);
 			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.GREATER);
 		}
 		else if (t == Type.Finishes) {
-			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.GREATER);
 			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
+			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
+			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.GREATER);
 			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.EQUALS);
 		}
 		else if (t == Type.FinishedBy) {
-			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.LESS);
+			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
 			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
+			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.LESS);
 			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.EQUALS);
 		}
 		else if (t == Type.Equals) {
+			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
+			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
 			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.EQUALS);
 			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.EQUALS);
 		}
