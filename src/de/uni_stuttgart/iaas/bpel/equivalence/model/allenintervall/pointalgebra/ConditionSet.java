@@ -2,11 +2,11 @@ package de.uni_stuttgart.iaas.bpel.equivalence.model.allenintervall.pointalgebra
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 import org.metacsp.time.qualitative.QualitativeAllenIntervalConstraint.Type;
 
+import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.BranchingType;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.allenintervall.pointalgebra.Condition.PointEnum;
 
 public class ConditionSet {
@@ -17,6 +17,10 @@ public class ConditionSet {
 	}
 
 	public ConditionSet(Type t) {
+		initRelationConditions(BranchingType.fromType(t));
+	}
+	
+	public ConditionSet(BranchingType t) {
 		initRelationConditions(t);
 	}
 	
@@ -47,85 +51,156 @@ public class ConditionSet {
 		conditions.put(c.getPointKey(), c);
 	}
 	
-	private void initRelationConditions(Type t) {
+	private void initRelationConditions(BranchingType t) {
 		
-		if (t == Type.Before) {
+		if (t == BranchingType.Before) {
 			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
 			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.GREATER);
 			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.LESS);
 			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.LESS);
 		}
-		else if (t == Type.After) {
+		else if (t == BranchingType.After) {
 			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.GREATER);
 			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
 			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.GREATER);
 			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.GREATER);
 		}
-		else if (t == Type.Meets) {
+		else if (t == BranchingType.Meets) {
 			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
 			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.EQUALS);
 			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.LESS);
 			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.LESS);
 		}
-		else if (t == Type.MetBy) {
+		else if (t == BranchingType.MetBy) {
 			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.EQUALS);
 			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
 			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.GREATER);
 			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.GREATER);
 		}
-		else if (t == Type.Overlaps) {
+		else if (t == BranchingType.Overlaps) {
 			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
 			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
 			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.LESS);
 			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.LESS);
 		}
-		else if (t == Type.OverlappedBy) {
+		else if (t == BranchingType.OverlappedBy) {
 			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
 			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
 			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.GREATER);
 			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.GREATER);
 		}
-		else if (t == Type.During) {
+		else if (t == BranchingType.During) {
 			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
 			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
 			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.GREATER);
 			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.LESS);
 		}
-		else if (t == Type.Contains) {
+		else if (t == BranchingType.Contains) {
 			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
 			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
 			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.LESS);
 			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.GREATER);
 		}
-		else if (t == Type.Starts) {
+		else if (t == BranchingType.Starts) {
 			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
 			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
 			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.EQUALS);
 			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.LESS);
 		}
-		else if (t == Type.StartedBy) {
+		else if (t == BranchingType.StartedBy) {
 			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
 			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
 			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.EQUALS);
 			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.GREATER);
 		}
-		else if (t == Type.Finishes) {
+		else if (t == BranchingType.Finishes) {
 			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
 			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
 			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.GREATER);
 			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.EQUALS);
 		}
-		else if (t == Type.FinishedBy) {
+		else if (t == BranchingType.FinishedBy) {
 			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
 			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
 			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.LESS);
 			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.EQUALS);
 		}
-		else if (t == Type.Equals) {
+		else if (t == BranchingType.Equals) {
 			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
 			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
 			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.EQUALS);
 			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.EQUALS);
+		}
+		
+		//Branching Types
+		else if (t == BranchingType.PartiallyBefore) {
+			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
+			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.UNRELATED);
+			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.LESS);
+			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.UNRELATED);
+		}
+		else if (t == BranchingType.PartiallyAfter) {
+			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.UNRELATED);
+			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
+			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.GREATER);
+			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.UNRELATED);
+		}
+		else if (t == BranchingType.PartiallyMeets) {
+			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
+			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
+			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.LESS);
+			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.UNRELATED);
+		}
+		else if (t == BranchingType.PartiallyMetBy) {
+			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
+			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
+			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.GREATER);
+			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.UNRELATED);
+		}
+		else if (t == BranchingType.PartiallyOverlaps) {
+			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
+			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
+			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.LESS);
+			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.UNRELATED);
+		}
+		else if (t == BranchingType.PartiallyOverlappedBy) {
+			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
+			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
+			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.GREATER);
+			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.UNRELATED);
+		}
+		else if (t == BranchingType.PartiallyStarts) {
+			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
+			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
+			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.EQUALS);
+			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.UNRELATED);
+		}
+		else if (t == BranchingType.Adjacent) {
+			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
+			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.UNRELATED);
+			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.LESS);
+			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.UNRELATED);
+		}
+		else if (t == BranchingType.AdjacentBy) {
+			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.UNRELATED);
+			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
+			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.GREATER);
+			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.UNRELATED);
+		}
+		else if (t == BranchingType.Touches) {
+			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
+			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
+			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.EQUALS);
+			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.UNRELATED);
+		}
+		else if (t == BranchingType.Unrelated) {
+			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.UNRELATED);
+			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.UNRELATED);
+			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.UNRELATED);
+			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.UNRELATED);
+		}
+		else {
+			throw new IllegalStateException("Type " + t + " unkown.");
 		}
 	}
 	

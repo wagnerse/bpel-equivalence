@@ -3,86 +3,109 @@ package de.uni_stuttgart.iaas.bpel.equivalence.console;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.metacsp.framework.Variable;
-
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.NetworkSolver;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.StateConstraint;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.BranchingType;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.allenintervall.complexity.AllenComplexity;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.allenintervall.complexity.AllenComplexity.Complexity;
 
-import org.metacsp.time.qualitative.QualitativeAllenIntervalConstraint.Type;
-
 public class ComplexityConsole {
 
-	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 		if (args.length == 0) return;
 		
 		AllenComplexity allenComp = new AllenComplexity();
 		
-		// create network
-		NetworkSolver network = new NetworkSolver();
-		Variable i = network.createVariable();
-		Variable j = network.createVariable();
-		
-		Type[] constraints = createConstraints(args);
-		StateConstraint constraint = new StateConstraint(constraints);
-		
-		// check complexity
-		Complexity complexity = allenComp.isNP(constraint);
-	
-		// outputs
-		System.out.println("Complexity: " + complexity.name());
-		System.out.println("Conditions: " + allenComp.getConditionSet().toString());
+		try {
+			// check complexity
+			Complexity complexity = allenComp.isNP(createConstraints(args));
+
+			// outputs
+			System.out.println("Complexity: " + complexity.name());
+			System.out.println("Conditions: " + allenComp.getConditionSet().toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 	
-	private static Type[] createConstraints(String[] args) {
-		List<Type> typeList = new ArrayList<Type>();
+	private static List<BranchingType> createConstraints(String[] args) {
+		List<BranchingType> typeList = new ArrayList<BranchingType>();
 		
 		for (String a: args) {
 			if (a.equals("b")) {
-				typeList.add(Type.Before);
+				typeList.add(BranchingType.Before);
 			}
 			else if (a.equals("bi")) {
-				typeList.add(Type.After);
+				typeList.add(BranchingType.After);
 			}
 			else if (a.equals("m")) {
-				typeList.add(Type.Meets);
+				typeList.add(BranchingType.Meets);
 			}
 			else if (a.equals("mi")) {
-				typeList.add(Type.MetBy);
+				typeList.add(BranchingType.MetBy);
 			}
 			else if (a.equals("o")) {
-				typeList.add(Type.Overlaps);
+				typeList.add(BranchingType.Overlaps);
 			}
 			else if (a.equals("oi")) {
-				typeList.add(Type.OverlappedBy);
+				typeList.add(BranchingType.OverlappedBy);
 			}
 			else if (a.equals("d")) {
-				typeList.add(Type.During);
+				typeList.add(BranchingType.During);
 			}
 			else if (a.equals("di")) {
-				typeList.add(Type.Contains);
+				typeList.add(BranchingType.Contains);
 			}
 			else if (a.equals("s")) {
-				typeList.add(Type.Starts);
+				typeList.add(BranchingType.Starts);
 			}
 			else if (a.equals("si")) {
-				typeList.add(Type.StartedBy);
+				typeList.add(BranchingType.StartedBy);
 			}
 			else if (a.equals("f")) {
-				typeList.add(Type.Finishes);
+				typeList.add(BranchingType.Finishes);
 			}
 			else if (a.equals("fi")) {
-				typeList.add(Type.FinishedBy);
+				typeList.add(BranchingType.FinishedBy);
 			}
 			else if (a.equals("e")) {
-				typeList.add(Type.Equals);
+				typeList.add(BranchingType.Equals);
+			}
+			else if (a.equals("pb")) {
+				typeList.add(BranchingType.PartiallyBefore);
+			}
+			else if (a.equals("pbi")) {
+				typeList.add(BranchingType.PartiallyAfter);
+			}
+			else if (a.equals("pm")) {
+				typeList.add(BranchingType.PartiallyMeets);
+			}
+			else if (a.equals("pmi")) {
+				typeList.add(BranchingType.PartiallyMetBy);
+			}
+			else if (a.equals("po")) {
+				typeList.add(BranchingType.PartiallyOverlaps);
+			}
+			else if (a.equals("poi")) {
+				typeList.add(BranchingType.PartiallyOverlappedBy);
+			}
+			else if (a.equals("ps")) {
+				typeList.add(BranchingType.PartiallyStarts);
+			}
+			else if (a.equals("a")) {
+				typeList.add(BranchingType.Adjacent);
+			}
+			else if (a.equals("ai")) {
+				typeList.add(BranchingType.AdjacentBy);
+			}
+			else if (a.equals("t")) {
+				typeList.add(BranchingType.Touches);
+			}
+			else if (a.equals("u")) {
+				typeList.add(BranchingType.Unrelated);
 			}
 		}
 		
-		return typeList.toArray(new Type[typeList.size()]);
+		return typeList;
 	}
 
 }

@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.metacsp.time.qualitative.QualitativeAllenIntervalConstraint.Type;
 
+import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.BranchingType;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.StateConstraint;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.allenintervall.pointalgebra.Condition;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.allenintervall.pointalgebra.ConditionSet;
@@ -17,7 +18,7 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.allenintervall.pointalgebra.
 public class AllenComplexity {
 	
 	private List<HashSet<RelationEnum>> gammaX = new ArrayList<HashSet<RelationEnum>>();
-	private Map<HashSet<Type>, Complexity> complexityCache = new HashMap<HashSet<Type>, Complexity>();
+	private Map<HashSet<BranchingType>, Complexity> complexityCache = new HashMap<HashSet<BranchingType>, Complexity>();
 	
 	private ConditionSet condSet = null;
 
@@ -46,9 +47,22 @@ public class AllenComplexity {
 	 * @return {@link Complexity}
 	 */
 	public Complexity isNP(StateConstraint c, boolean caching) {
-		condSet = new ConditionSet();
-		HashSet<Type> cachingKey = new HashSet<Type>();
+		List<BranchingType> types = new ArrayList<BranchingType>();
 		for(Type t : c.getTypes()) {
+			types.add(BranchingType.fromType(t));
+		}
+		
+		return isNP(types, caching);
+	}
+	
+	public Complexity isNP(List<BranchingType> types) {
+		return isNP(types, false);
+	}
+	
+	public Complexity isNP(List<BranchingType> types, boolean caching) {
+		condSet = new ConditionSet();
+		HashSet<BranchingType> cachingKey = new HashSet<BranchingType>();
+		for(BranchingType t : types) {
 			ConditionSet condSet2 = new ConditionSet(t);
 			condSet.orAdd(condSet2);
 			cachingKey.add(t);
@@ -60,6 +74,7 @@ public class AllenComplexity {
 		else {
 			return checkComplexity(condSet);
 		}
+		
 	}
 	
 	private Complexity checkComplexity(ConditionSet condSet) {	
