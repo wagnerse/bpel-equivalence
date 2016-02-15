@@ -93,8 +93,23 @@ public enum BranchingType {
 	
 	Touches,
 	
-	Unrelated;
+	Unrelated,
 	
+	InitiallyBefore,
+	
+	InitiallyAfter,
+	
+	InitiallyMeets,
+	
+	InitiallyMetBy,
+	
+	InitiallyEquals;
+	
+	/**
+	 * Transform from a {@link org.metacsp.time.qualitative.QualitativeAllenIntervalConstraint.Type}
+	 * @param type {@link Type}
+	 * @return {@link BranchingType}
+	 */
 	public static BranchingType fromType(Type type) {
 
 		if (type == Type.Before) {
@@ -141,6 +156,10 @@ public enum BranchingType {
 		}
 	}
 	
+	/**
+	 * Transform this enum to a {@link org.metacsp.time.qualitative.QualitativeAllenIntervalConstraint.Type}
+	 * @return {@link Type}
+	 */
 	public Type toCSPType() {
 		
 		if (this == BranchingType.Before) {

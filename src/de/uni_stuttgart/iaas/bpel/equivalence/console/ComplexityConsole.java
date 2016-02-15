@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.BranchingType;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.allenintervall.complexity.AllenComplexity;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.allenintervall.complexity.AllenComplexity.Complexity;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.complexity.AllenComplexity;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.complexity.TractableClassResult;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.pointalgebra.Condition;
 
 public class ComplexityConsole {
 
@@ -16,11 +17,23 @@ public class ComplexityConsole {
 		
 		try {
 			// check complexity
-			Complexity complexity = allenComp.isNP(createConstraints(args));
+			TractableClassResult result = allenComp.checkTractabilityClass(createConstraints(args));
 
 			// outputs
-			System.out.println("Complexity: " + complexity.name());
-			System.out.println("Conditions: " + allenComp.getConditionSet().toString());
+			System.out.println("Constraints contained in gamma" + result.getTractableClassName() + ": " + result.getResult().name());
+			System.out.println("Conditions: " + result.getConditionSet().toString());
+			
+			if (result.getUncontainedConditions().size() > 0) {
+				System.out.print("\nConditions not contained: {");
+				for (Condition c: result.getUncontainedConditions()) {
+					if (result.getUncontainedConditions().indexOf(c) > 0) {
+						System.out.print(", ");
+					}
+					System.out.print(c.toString());
+				}
+				System.out.println("}");
+			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -102,6 +115,21 @@ public class ComplexityConsole {
 			}
 			else if (a.equals("u")) {
 				typeList.add(BranchingType.Unrelated);
+			}
+			else if (a.equals("ib")) {
+				typeList.add(BranchingType.InitiallyBefore);
+			}
+			else if (a.equals("ibi")) {
+				typeList.add(BranchingType.InitiallyAfter);
+			}
+			else if (a.equals("im")) {
+				typeList.add(BranchingType.InitiallyMeets);
+			}
+			else if (a.equals("imi")) {
+				typeList.add(BranchingType.InitiallyMetBy);
+			}
+			else if (a.equals("ie")) {
+				typeList.add(BranchingType.InitiallyEquals);
 			}
 		}
 		

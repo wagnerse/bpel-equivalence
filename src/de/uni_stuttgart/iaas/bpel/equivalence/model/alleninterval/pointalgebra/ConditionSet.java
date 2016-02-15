@@ -1,4 +1,4 @@
-package de.uni_stuttgart.iaas.bpel.equivalence.model.allenintervall.pointalgebra;
+package de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.pointalgebra;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -7,31 +7,71 @@ import java.util.Map;
 import org.metacsp.time.qualitative.QualitativeAllenIntervalConstraint.Type;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.BranchingType;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.allenintervall.pointalgebra.Condition.PointEnum;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.pointalgebra.Condition.PointEnum;
 
+/**
+ * 
+ * @author Jonas Scheurich
+ * A ConditionSet contains {@link Condition}s thats describes the relation
+ * between the time following time points.
+ * 
+ * start_i - end_j
+ * start_j - end_i
+ * start_i - start_j
+ * end_i - end_j
+ *
+ */
 public class ConditionSet {
 	
 	Map<String, Condition> conditions = new HashMap<String, Condition>();
 	
+	/**
+	 * Create a empty ConditionSet
+	 */
 	public ConditionSet() {
 	}
 
+	/**
+	 * Create a ConditionSet from a 
+	 * {@link org.metacsp.time.qualitative.QualitativeAllenIntervalConstraint.Type}
+	 * @param t Type
+	 */
 	public ConditionSet(Type t) {
 		initRelationConditions(BranchingType.fromType(t));
 	}
 	
+	/**
+	 * Create a ConditionSet from a {@link alleninterval.BranchingType}
+	 * @param t Type
+	 */
 	public ConditionSet(BranchingType t) {
 		initRelationConditions(t);
 	}
 	
+	/**
+	 * Get the Relation between two time points
+	 * @param p1 The first Point
+	 * @param p2 The second Point
+	 * @return {@link Condition}
+	 */
 	public Condition getCondition(PointEnum p1, PointEnum p2) {
 		return conditions.get(p1.name() + p2.name());
 	}
 	
+	/**
+	 * Get all conditions
+	 * @return list of {@link Condition}
+	 */
 	public Collection<Condition> getConditions() {
 		return conditions.values();
 	}
 	
+	/**
+	 * Perform a disjunction with this condition set and a second condition set.
+	 * The result is stored in this condition set.
+	 * 
+	 * @param set2 {@link ConditionSet}
+	 */
 	public void orAdd(ConditionSet set2) {
 		for (Condition c2: set2.getConditions()) {
 			Condition c1 = getCondition(c2.getP1(), c2.getP2());
@@ -46,11 +86,21 @@ public class ConditionSet {
 		}
 	}
 	
+	/**
+	 * Create a condition from the time point p1 to the time point p2
+	 * @param p1 
+	 * @param p2
+	 * @param relations list of relations
+	 */
 	public void setCondition(PointEnum p1, PointEnum p2, RelationEnum... relations) {
 		Condition c = new Condition(p1, p2, relations);
 		conditions.put(c.getPointKey(), c);
 	}
 	
+	/**
+	 * Create conditions for a constraint type
+	 * @param t {@link BranchingType} the constraint type
+	 */
 	private void initRelationConditions(BranchingType t) {
 		
 		if (t == BranchingType.Before) {
@@ -199,11 +249,44 @@ public class ConditionSet {
 			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.UNRELATED);
 			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.UNRELATED);
 		}
+		else if (t == BranchingType.InitiallyBefore) {
+			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
+			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.UNRELATED);
+			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.LESS);
+			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.UNRELATED);
+		}
+		else if (t == BranchingType.InitiallyAfter) {
+			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.UNRELATED);
+			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
+			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.GREATER);
+			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.UNRELATED);
+		}
+		else if (t == BranchingType.InitiallyMeets) {
+			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
+			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
+			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.LESS);
+			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.UNRELATED);
+		}
+		else if (t == BranchingType.InitiallyMetBy) {
+			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
+			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
+			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.GREATER);
+			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.UNRELATED);
+		}
+		else if (t == BranchingType.InitiallyEquals) {
+			setCondition(PointEnum.START_I, PointEnum.END_J, RelationEnum.LESS);
+			setCondition(PointEnum.START_J, PointEnum.END_I, RelationEnum.LESS);
+			setCondition(PointEnum.START_I, PointEnum.START_J, RelationEnum.EQUALS);
+			setCondition(PointEnum.END_I, PointEnum.END_J, RelationEnum.UNRELATED);
+		}
 		else {
-			throw new IllegalStateException("Type " + t + " unkown.");
+			throw new IllegalStateException("Type " + t.name() + " unkown.");
 		}
 	}
 	
+	/**
+	 * Crate a string with the format /('{' p1 rel ['|' rel]+ p2 '}')
+	 */
 	@Override
 	public String toString() {
 		StringBuilder str = new StringBuilder();
