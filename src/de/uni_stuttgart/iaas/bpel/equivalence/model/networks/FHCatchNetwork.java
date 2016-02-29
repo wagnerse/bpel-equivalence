@@ -75,7 +75,7 @@ public class FHCatchNetwork extends AbstractStubActivityNetwork {
 		putConstraint(BPELStateEnum.EXECUTING, BPELStateEnum.DEAD, Type.Meets);
 		putConstraint(BPELStateEnum.EXECUTING, BPELStateEnum.FAULT, Type.Before); // equals to fault handling
 		putConstraint(BPELStateEnum.EXECUTING, BPELStateEnum.FAULT_HANDLING, Type.Before); // equals to fault handling
-		putConstraint(BPELStateEnum.EXECUTING, BPELStateEnum.TERMINATED, Type.Before, Type.Meets); // TODO check this
+		putConstraint(BPELStateEnum.EXECUTING, BPELStateEnum.TERMINATED, Type.Before, Type.Meets);
 		putConstraint(BPELStateEnum.EXECUTING, BPELStateEnum.COMPLETED, Type.Before);
 
 		putConstraint(BPELStateEnum.DEAD, BPELStateEnum.INITAL, Type.MetBy);
