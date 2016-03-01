@@ -5,6 +5,6 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Variable;
 
 public interface IActivityConnector {
 	
-	public Variable[] getConnectionStates();
+	public Variable[] getVariables();
 
 }

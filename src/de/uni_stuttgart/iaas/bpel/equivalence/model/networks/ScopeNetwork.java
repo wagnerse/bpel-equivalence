@@ -19,8 +19,8 @@ import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
 public class ScopeNetwork extends AbstractActivityNetwork{
 	
 	private Scope scope;
-	private Variable[] activityStates;
-	private Constraint[] activityStateLinks;
+	private Variable[] variables;
+	private Constraint[] constraints;
 	
 	public ScopeNetwork(AbstractActivityNetwork parentNetwork, Scope subject, Problem network) {
 		super(parentNetwork, network);
@@ -50,12 +50,12 @@ public class ScopeNetwork extends AbstractActivityNetwork{
 
 	@Override
 	public IActivityConnector getActivityConnector() {		
-		return new ScopeConnector(activityStates);
+		return new ScopeConnector(variables);
 	}
 
 	@Override
 	public Constraint[] getLocalLinks() {
-		return activityStateLinks;
+		return constraints;
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class ScopeNetwork extends AbstractActivityNetwork{
 		}
 
 		@Override
-		public Variable[] getConnectionStates() {
+		public Variable[] getVariables() {
 			return states;
 		}
 	}

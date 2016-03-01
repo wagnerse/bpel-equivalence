@@ -9,7 +9,7 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.RelationEnum;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Variable;
 
-public class AllenNetworkUtils {
+public class NetworkUtils {
 
 	public static void saveAsCSV(Problem network, File file) throws IOException {
 
@@ -44,10 +44,9 @@ public class AllenNetworkUtils {
 					writer.append(", ");
 				}
 			}
-
+			
 			// end of line
 			writer.append("\n");
-
 		}
 
 		// finsih

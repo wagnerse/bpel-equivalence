@@ -101,7 +101,6 @@ public abstract class AbstractActivityNetwork {
 	 * @param types (if types are empty the constraint is unrelated
 	 */
 	protected void putConstraint(BPELStateEnum l, BPELStateEnum r, RelationEnum...types) {
-		//TODO check unrelated as empty constraint.
 		constraints.put(new MutablePair<BPELStateEnum, BPELStateEnum>(l, r), types);
 	}
 

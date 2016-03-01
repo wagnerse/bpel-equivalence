@@ -6,7 +6,7 @@ import org.eclipse.emf.ecore.EObject;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.BpelEquivalence;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
-import de.uni_stuttgart.iaas.bpel.equivalence.utils.AllenNetworkUtils;
+import de.uni_stuttgart.iaas.bpel.equivalence.utils.NetworkUtils;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.BPELResourceUtils;
 
 public class BpelAllenNetworkConsole {
@@ -33,7 +33,7 @@ public class BpelAllenNetworkConsole {
 		if (args.length >= 2) {
 			System.out.println("Write csv file ...");
 			try {
-				AllenNetworkUtils.saveAsCSV(network1, new File(args[1]));
+				NetworkUtils.saveAsCSV(network1, new File(args[1]));
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -40,7 +40,7 @@ public abstract class AbstractDefaultActivityNetwork extends AbstractActivityNet
 		}
 
 		@Override
-		public Variable[] getConnectionStates() {
+		public Variable[] getVariables() {
 			return states;
 		}
 

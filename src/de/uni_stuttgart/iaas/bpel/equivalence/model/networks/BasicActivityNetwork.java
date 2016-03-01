@@ -15,8 +15,8 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 
 	private EClass support;
 	private Activity activity;
-	private Variable[] activityStates;
-	private Constraint[] activityStateLinks;
+	private Variable[] variables;
+	private Constraint[] constraints;
 
 	public BasicActivityNetwork(AbstractActivityNetwork parentNetwork, EClass support, Activity subject, Problem network) {
 		super(parentNetwork, network);
@@ -24,13 +24,6 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 		this.activity = subject;
 		initNetwork();
 	}
-	
-	/*public BasicActivityNetwork(EClass support, EObject subject, NetworkSolver network) {
-		super(network);
-		this.support = support;
-		this.activity = (Activity) subject;
-		initNetwork();
-	}*/
 	
 	@Override
 	public String getNetworkName() {
@@ -45,12 +38,12 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 
 	@Override
 	public IActivityConnector getActivityConnector() {
-		return new BasicActivityConnector(activityStates);
+		return new BasicActivityConnector(variables);
 	}
 
 	@Override
 	public Constraint[] getLocalLinks() {
-		return activityStateLinks;
+		return constraints;
 	}
 
 	@Override
@@ -72,7 +65,7 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 		}
 
 		@Override
-		public Variable[] getConnectionStates() {
+		public Variable[] getVariables() {
 			return states;
 		}
 	}
