@@ -1,16 +1,16 @@
 package de.uni_stuttgart.iaas.bpel.equivalence.model;
 
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.NetworkSolver;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.StateConstraint;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Constraint;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
 
 public abstract class AbstractStubActivityNetwork extends AbstractActivityNetwork{
 
-	public AbstractStubActivityNetwork(AbstractActivityNetwork parentNetwork, NetworkSolver network) {
+	public AbstractStubActivityNetwork(AbstractActivityNetwork parentNetwork, Problem network) {
 		super(parentNetwork, network);
 	}
 	
 	@Override
-	public NetworkSolver linkActivityNetworkLayer() {
+	public Problem linkActivityNetworkLayer() {
 		super.childNetworks = createChildNetworks();
 		
 		// perfrom pre processing
@@ -34,8 +34,8 @@ public abstract class AbstractStubActivityNetwork extends AbstractActivityNetwor
 	}
 
 	@Override
-	public StateConstraint[] getLocalLinks() {
-		StateConstraint[] noConstraint = {};
+	public Constraint[] getLocalLinks() {
+		Constraint[] noConstraint = {};
 		return noConstraint;
 	}
 

@@ -4,17 +4,14 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import org.metacsp.framework.Constraint;
-import org.metacsp.framework.Variable;
-import org.metacsp.fuzzyAllenInterval.FuzzyAllenIntervalConstraint;
-
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.ActivityState;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.NetworkSolver;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.StateConstraint;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Constraint;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.RelationEnum;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Variable;
 
 public class AllenNetworkUtils {
 
-	public static void saveAsCSV(NetworkSolver network, File file) throws IOException {
+	public static void saveAsCSV(Problem network, File file) throws IOException {
 
 		FileWriter writer = new FileWriter(file);
 
@@ -24,37 +21,33 @@ public class AllenNetworkUtils {
 		// write head line;
 		writer.append(",");
 		for (Variable v : network.getVariables()) {
-			if (v instanceof ActivityState) {
-				writer.append(((ActivityState) v).getName() + ", ");
-			}
+
+			writer.append(v.getName() + ", ");
+
 		}
 		writer.append("\n");
 
 		// TODO write data
 		for (Variable vl : network.getVariables()) {
-			if (vl instanceof ActivityState) {
-				// write state name
-				writer.append(((ActivityState) vl).getName() + ", ");
+			// write state name
+			writer.append(vl.getName() + ", ");
 
-				// write data
-				for (Variable vr : network.getVariables()) {
-					if (vr instanceof ActivityState) {
-
-						// constraints list
-						for (Constraint constr : network.getConstraints(vl, vr)) {
-							if (constr instanceof StateConstraint) {
-								for (FuzzyAllenIntervalConstraint.Type type : ((StateConstraint) constr).getTypes()) {
-									writer.append(type.name() + " ");
-								}
-							}
+			// write data
+			for (Variable vr : network.getVariables()) {
+				if (vr instanceof Variable) {
+					// constraints list
+					for (Constraint constr : network.getConstraints(vl, vr)) {
+						for (RelationEnum type : constr.getRelations()) {
+							writer.append(type.name() + " ");
 						}
-						writer.append(", ");
 					}
+					writer.append(", ");
 				}
-
-				// end of line
-				writer.append("\n");
 			}
+
+			// end of line
+			writer.append("\n");
+
 		}
 
 		// finsih

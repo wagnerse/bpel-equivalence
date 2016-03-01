@@ -1,8 +1,6 @@
 package de.uni_stuttgart.iaas.bpel.equivalence.model;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.MutablePair;
@@ -11,22 +9,19 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.metacsp.framework.Variable;
 import org.metacsp.fuzzyAllenInterval.FuzzyAllenIntervalConstraint;
-import org.metacsp.time.qualitative.QualitativeAllenIntervalConstraint;
-import org.metacsp.time.qualitative.QualitativeAllenIntervalConstraint.Type;
 
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.NetworkSolver;
 import de.uni_stuttgart.iaas.bpel.equivalence.NetworkFactoryRepo;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.ActivityState;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.StateConstraint;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.BPELStateEnum;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Constraint;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.RelationEnum;
 
 public abstract class AbstractActivityNetwork {
 	
 	private AbstractActivityNetwork parentNetwork;
 	protected AbstractActivityNetwork[] childNetworks;
 	
-	private NetworkSolver network;
-	private Map<Pair<BPELStateEnum, BPELStateEnum>, Type[]> constraints = new HashMap<Pair<BPELStateEnum, BPELStateEnum>, Type[]>();
+	private Problem network;
+	private Map<Pair<BPELStateEnum, BPELStateEnum>, RelationEnum[]> constraints = new HashMap<Pair<BPELStateEnum, BPELStateEnum>, RelationEnum[]>();
 
 
 	@SuppressWarnings("unused")
@@ -34,13 +29,13 @@ public abstract class AbstractActivityNetwork {
 
 	}
 
-	public AbstractActivityNetwork(AbstractActivityNetwork parentNetwork, NetworkSolver network) {
+	public AbstractActivityNetwork(AbstractActivityNetwork parentNetwork, Problem network) {
 		initConstraintMap();
 		this.parentNetwork = parentNetwork;
 		this.network = network;
 	}
 
-	public NetworkSolver linkActivityNetworkLayer() {
+	public Problem linkActivityNetworkLayer() {
 		this.childNetworks = createChildNetworks();
 
 		// perfrom pre processing
@@ -49,7 +44,8 @@ public abstract class AbstractActivityNetwork {
 		// add local links
 		network.addConstraints(getLocalLinks());
 
-		if (parentNetwork != null) {
+		//TODO create links between local and sender
+		/*if (parentNetwork != null) {
 			// link network
 			for (ActivityState senderState : parentNetwork.getActivityConnector().getConnectionStates()) {
 				System.out.println("Create Constraints for " + getNetworkName() + ": " + senderState.getName());
@@ -67,7 +63,7 @@ public abstract class AbstractActivityNetwork {
 					network.addConstraint(constraint);
 				}
 			}
-		}
+		}*/
 
 		// perform post processing
 		doPostProcessing();
@@ -86,7 +82,7 @@ public abstract class AbstractActivityNetwork {
 
 	public abstract IActivityConnector getActivityConnector();
 
-	public abstract StateConstraint[] getLocalLinks();
+	public abstract Constraint[] getLocalLinks();
 
 	protected abstract AbstractActivityNetwork[] createChildNetworks();
 	
@@ -104,12 +100,12 @@ public abstract class AbstractActivityNetwork {
 	 * @param r
 	 * @param types (if types are empty the constraint is unrelated
 	 */
-	protected void putConstraint(BPELStateEnum l, BPELStateEnum r, Type...types) {
+	protected void putConstraint(BPELStateEnum l, BPELStateEnum r, RelationEnum...types) {
 		//TODO check unrelated as empty constraint.
 		constraints.put(new MutablePair<BPELStateEnum, BPELStateEnum>(l, r), types);
 	}
 
-	public Map<Pair<BPELStateEnum, BPELStateEnum>, Type[]> getConnectionConstraints() {		
+	public Map<Pair<BPELStateEnum, BPELStateEnum>, RelationEnum[]> getConnectionConstraints() {		
 		return constraints;
 	}
 
@@ -121,7 +117,7 @@ public abstract class AbstractActivityNetwork {
 		// not implemented
 	}
 
-	protected NetworkSolver getNetwork() {
+	protected Problem getNetwork() {
 		return network;
 	}
 
@@ -139,19 +135,21 @@ public abstract class AbstractActivityNetwork {
 		return this.parentNetwork;
 	}
 
-	protected StateConstraint createMeetsActivityStateLink(Variable from, Variable to) {
+	//FIXME delete?
+	/*protected StateConstraint createMeetsActivityStateLink(Variable from, Variable to) {
 		StateConstraint link = new StateConstraint(FuzzyAllenIntervalConstraint.Type.Meets);
 		link.setFrom(from);
 		link.setTo(to);
 		return link;
 	}
 
+	//FIXME delete?
 	protected StateConstraint createActivityStateLink(Variable from, Variable to,
 			FuzzyAllenIntervalConstraint.Type type) {
 		StateConstraint link = new StateConstraint(type);
 		link.setFrom(from);
 		link.setTo(to);
 		return link;
-	}
+	}*/
 
 }

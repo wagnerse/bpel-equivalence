@@ -1,4 +1,4 @@
-package de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval;
+package de.uni_stuttgart.iaas.bpel.equivalence.model;
 
 public enum BPELStateEnum {
 	INITAL, 

@@ -5,8 +5,8 @@ import java.util.List;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.BranchingType;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.complexity.AllenComplexity;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.complexity.Condition;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.complexity.TractableClassResult;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.pointalgebra.Condition;
 
 public class ComplexityConsole {
 

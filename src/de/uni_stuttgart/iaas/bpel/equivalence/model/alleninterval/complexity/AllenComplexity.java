@@ -7,14 +7,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.metacsp.time.qualitative.QualitativeAllenIntervalConstraint.Type;
-
 import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.BranchingType;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.StateConstraint;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.complexity.TractableClassResult.ComplexityResult;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.pointalgebra.Condition;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.pointalgebra.ConditionSet;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.pointalgebra.RelationEnum;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.RelationEnum;
 
 /**
  * 
@@ -30,31 +25,6 @@ public class AllenComplexity {
 	
 	public AllenComplexity() {
 		initGammaList();
-	}
-	
-	/**
-	 * Calculate if a State Constraint is in the tractable class.
-	 * Caching is disabled
-	 * @param c {@link StateConstraint}
-	 * @return {@link ComplexityResult}
-	 */
-	public TractableClassResult checkTractabilityClass(StateConstraint c) {
-		return checkTractabilityClass(c, false);
-	}
-	
-	/**
-	 * Calculate if a State Constraint is in the tractable class.
-	 * @param c {@link StateConstraint}
-	 * @param caching enables result caching
-	 * @return {@link ComplexityResult}
-	 */
-	public TractableClassResult checkTractabilityClass(StateConstraint c, boolean caching) {
-		List<BranchingType> types = new ArrayList<BranchingType>();
-		for(Type t : c.getTypes()) {
-			types.add(BranchingType.fromType(t));
-		}
-		
-		return checkTractabilityClass(types, caching);
 	}
 	
 	/**

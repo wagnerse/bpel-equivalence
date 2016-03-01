@@ -3,11 +3,11 @@ package de.uni_stuttgart.iaas.bpel.equivalence;
 import org.eclipse.bpel.model.BPELPackage;
 import org.eclipse.emf.ecore.EObject;
 
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.NetworkSolver;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.BasicActivityFactory;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.FHCatchNetworkFactory;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.ProcessNetworkFactory;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.ScopeNetworkFactory;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
 
 public class BpelEquivalence {
 	
@@ -34,11 +34,11 @@ public class BpelEquivalence {
 			
 	}
 	
-	public NetworkSolver createNetwork(EObject eObject) {
-		return NetworkFactoryRepo.getInstance().createElementNetwork(null, eObject, new NetworkSolver()).linkActivityNetworkLayer();
+	public Problem createNetwork(EObject eObject) {
+		return NetworkFactoryRepo.getInstance().createElementNetwork(null, eObject, new Problem()).linkActivityNetworkLayer();
 	}
 	
-	public boolean checkBpelEquivalence(NetworkSolver network1, NetworkSolver network2) {
+	public boolean checkBpelEquivalence(Problem network1, Problem network2) {
 		//TODO implement
 		return false;
 	}

@@ -1,28 +1,24 @@
 package de.uni_stuttgart.iaas.bpel.equivalence.model.networks;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.bpel.model.Activity;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.model.AbstractActivityNetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.IActivityConnector;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.ActivityState;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.StateConstraint;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Constraint;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Variable;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.BPELStateEnum;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.NetworkSolver;
 
 public class BasicActivityNetwork extends AbstractActivityNetwork {
 
 	private EClass support;
 	private Activity activity;
-	private ActivityState[] activityStates;
-	private StateConstraint[] activityStateLinks;
+	private Variable[] activityStates;
+	private Constraint[] activityStateLinks;
 
-	public BasicActivityNetwork(AbstractActivityNetwork parentNetwork, EClass support, Activity subject, NetworkSolver network) {
+	public BasicActivityNetwork(AbstractActivityNetwork parentNetwork, EClass support, Activity subject, Problem network) {
 		super(parentNetwork, network);
 		this.support = support;
 		this.activity = subject;
@@ -53,7 +49,7 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 	}
 
 	@Override
-	public StateConstraint[] getLocalLinks() {
+	public Constraint[] getLocalLinks() {
 		return activityStateLinks;
 	}
 
@@ -64,41 +60,19 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 	}
 
 	private void initNetwork() {
-		// states
-		ActivityState init = getNetwork().createActivityState(getEObject(), BPELStateEnum.INITAL);
-		ActivityState dead = getNetwork().createActivityState(getEObject(), BPELStateEnum.DEAD);
-		ActivityState executing = getNetwork().createActivityState(getEObject(), BPELStateEnum.EXECUTING);
-		ActivityState completed = getNetwork().createActivityState(getEObject(), BPELStateEnum.COMPLETED);
-		ActivityState terminated = getNetwork().createActivityState(getEObject(), BPELStateEnum.TERMINATED);
-		ActivityState fault = getNetwork().createActivityState(getEObject(), BPELStateEnum.FAULT);
-
-		ActivityState[] stateList = { init, dead, executing, completed, terminated, fault };
-		activityStates = stateList;
-
-		// links
-		List<StateConstraint> activityStateLinksList = new ArrayList<StateConstraint>();
-		activityStateLinksList.add(createMeetsActivityStateLink(init, dead));
-		activityStateLinksList.add(createMeetsActivityStateLink(init, terminated));
-		activityStateLinksList.add(createMeetsActivityStateLink(init, executing));
-		activityStateLinksList.add(createMeetsActivityStateLink(executing, terminated));
-		activityStateLinksList.add(createMeetsActivityStateLink(executing, completed));
-		activityStateLinksList.add(createMeetsActivityStateLink(executing, fault));
-		
-		activityStateLinks = new StateConstraint[activityStateLinksList.size()];
-		activityStateLinks = activityStateLinksList.toArray(activityStateLinks);
-
+		//TODO init local network
 	}
 
 	public class BasicActivityConnector implements IActivityConnector {
 
-		private ActivityState[] states;
+		private Variable[] states;
 
-		public BasicActivityConnector(ActivityState[] states) {
+		public BasicActivityConnector(Variable[] states) {
 			this.states = states;
 		}
 
 		@Override
-		public ActivityState[] getConnectionStates() {
+		public Variable[] getConnectionStates() {
 			return states;
 		}
 	}
@@ -110,7 +84,7 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 
 	@Override
 	protected void initConstraintMap() {
-		// TODO Auto-generated method stub
+		// not implemented
 		
 	}
 }

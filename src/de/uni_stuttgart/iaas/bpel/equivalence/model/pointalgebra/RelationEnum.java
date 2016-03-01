@@ -1,4 +1,4 @@
-package de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.pointalgebra;
+package de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra;
 
 /**
  * 
