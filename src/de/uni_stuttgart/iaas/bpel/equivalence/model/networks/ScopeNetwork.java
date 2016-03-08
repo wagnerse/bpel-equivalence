@@ -1,7 +1,7 @@
 package de.uni_stuttgart.iaas.bpel.equivalence.model.networks;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.bpel.model.BPELPackage;
 import org.eclipse.bpel.model.Catch;
@@ -11,6 +11,7 @@ import org.eclipse.emf.ecore.EObject;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.model.AbstractActivityNetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.IActivityConnector;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.networks.ScopeNetwork.ScopeConnector;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Constraint;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Variable;
@@ -25,7 +26,7 @@ public class ScopeNetwork extends AbstractActivityNetwork{
 	public ScopeNetwork(AbstractActivityNetwork parentNetwork, Scope subject, Problem network) {
 		super(parentNetwork, network);
 		this.scope = subject;
-		initNetwork();
+		initLocalNetwork();
 	}
 
 	@Override
@@ -39,7 +40,7 @@ public class ScopeNetwork extends AbstractActivityNetwork{
 		return (attribute instanceof String)? (String) attribute : "[Scope]";
 	}
 	
-	private void initNetwork() {
+	protected void initLocalNetwork() {
 		//TODO create local network		
 	}
 	
@@ -62,25 +63,22 @@ public class ScopeNetwork extends AbstractActivityNetwork{
 	 * This class supports Scopes with fault handlers and activities.
 	 */
 	@Override
-	protected AbstractActivityNetwork[] createChildNetworks() {
-		List<AbstractActivityNetwork> childList = new ArrayList<AbstractActivityNetwork>();	
+	protected Map<EObject, AbstractActivityNetwork> createChildNetworks() {
+		Map<EObject, AbstractActivityNetwork> childMap = new HashMap<EObject, AbstractActivityNetwork>();	
 		
 		// add activity
 		AbstractActivityNetwork activity = createChildNetwork(scope.getActivity());
-		if (activity != null) childList.add(activity);
+		if (activity != null) childMap.put(this.getEObject(), activity);
 		
 		if (scope.getFaultHandlers() != null) {
 			// add fault handlers
 			for (Catch bpelCatch : scope.getFaultHandlers().getCatch()) {
 				AbstractActivityNetwork catchNetwork = createChildNetwork(bpelCatch);
 				if (catchNetwork != null)
-					childList.add(catchNetwork);
+					childMap.put(this.getEObject(), catchNetwork);
 			} 
 		}
-		// create return array
-		AbstractActivityNetwork[] childArray = new AbstractActivityNetwork[childList.size()];
-		childArray = childList.toArray(childArray);
-		return childArray;
+		return childMap;
 	}
 	
 	

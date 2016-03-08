@@ -10,7 +10,7 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.IActivityNetworkFactory;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.networks.ScopeNetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
 
-public class ScopeNetworkFactory implements IActivityNetworkFactory{
+public class ScopeNetworkFactory implements IActivityNetworkFactory {
 
 	@Override
 	public AbstractActivityNetwork createElementNetwork(AbstractActivityNetwork parentNetwork, EObject eobject, Problem network) {

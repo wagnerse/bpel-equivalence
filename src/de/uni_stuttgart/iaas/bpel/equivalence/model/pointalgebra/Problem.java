@@ -3,15 +3,20 @@ package de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra;
 import org.eclipse.emf.ecore.EObject;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.model.BPELStateEnum;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Variable.StateTime;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.TimePointDesc;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.TimePointDesc.TimeTypeEnum;
 
 public class Problem {
 	
 	public Problem() {
 	}
 	
-	public Variable createVariable(EObject bpelElement, BPELStateEnum stateType, StateTime stateTime) {
-		Variable variable = new Variable(bpelElement, stateType, stateTime);
+	public Variable createVariable(EObject bpelElement, BPELStateEnum timeState, TimeTypeEnum timeType) {
+		return this.createVariable(bpelElement, new TimePointDesc(timeState, timeType));
+	}
+	
+	public Variable createVariable(EObject bpelElement, TimePointDesc timePoint) {
+		Variable variable = new Variable(bpelElement, timePoint);
 		//TODO store in internal representation
 		return variable;
 	}

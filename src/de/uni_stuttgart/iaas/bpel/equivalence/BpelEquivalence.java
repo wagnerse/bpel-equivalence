@@ -5,6 +5,7 @@ import org.eclipse.emf.ecore.EObject;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.BasicActivityFactory;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.FHCatchNetworkFactory;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.FlowNetworkFactory;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.ProcessNetworkFactory;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.ScopeNetworkFactory;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
@@ -19,6 +20,7 @@ public class BpelEquivalence {
 
 		NetworkFactoryRepo.getInstance().registerFactory(new ProcessNetworkFactory());
 		NetworkFactoryRepo.getInstance().registerFactory(new ScopeNetworkFactory());
+		NetworkFactoryRepo.getInstance().registerFactory(new FlowNetworkFactory());
 		
 		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(BPELPackage.eINSTANCE.getReceive()));
 		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(BPELPackage.eINSTANCE.getReply()));

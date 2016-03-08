@@ -1,11 +1,18 @@
 package de.uni_stuttgart.iaas.bpel.equivalence.model.networks;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.bpel.model.Activity;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.model.AbstractActivityNetwork;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.BPELStateEnum;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.IActivityConnector;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.TimePointDesc;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.TimePointDesc.TimeTypeEnum;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.networks.BasicActivityNetwork.BasicActivityConnector;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Constraint;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Variable;
@@ -22,7 +29,8 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 		super(parentNetwork, network);
 		this.support = support;
 		this.activity = subject;
-		initNetwork();
+		
+		initLocalNetwork();
 	}
 	
 	@Override
@@ -40,6 +48,42 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 	public IActivityConnector getActivityConnector() {
 		return new BasicActivityConnector(variables);
 	}
+	
+	protected void initLocalNetwork() {
+		Variable startInitial = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START));
+		Variable endInitial = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.END));
+		
+		Variable startDead = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START));
+		Variable endDead = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.END));
+		
+		Variable startTerminated = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.START));
+		Variable endTerminated = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.END));
+		
+		Variable startExe = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.START));
+		Variable endExe = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.END));
+		
+		Variable startFault = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START));
+		Variable endFault = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.END));
+		
+		Variable startComp = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START));
+		Variable endComp = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.END));
+		
+		Variable[] variableArray = { 
+				startInitial,
+				endInitial,
+				startDead,
+				endDead,
+				startTerminated,
+				endTerminated,
+				startExe,
+				endExe,
+				startFault,
+				endFault,
+				startComp,
+				endComp
+		};
+		this.variables = variableArray;
+	}
 
 	@Override
 	public Constraint[] getLocalLinks() {
@@ -47,13 +91,9 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 	}
 
 	@Override
-	protected AbstractActivityNetwork[] createChildNetworks() {
-		AbstractActivityNetwork[] childs = {};
-		return childs;
-	}
-
-	private void initNetwork() {
-		//TODO init local network
+	protected Map<EObject, AbstractActivityNetwork> createChildNetworks() {
+		Map<EObject, AbstractActivityNetwork> childMap = new HashMap<EObject, AbstractActivityNetwork>();
+		return childMap;
 	}
 
 	public class BasicActivityConnector implements IActivityConnector {

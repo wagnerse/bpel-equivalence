@@ -1,5 +1,8 @@
 package de.uni_stuttgart.iaas.bpel.equivalence.model.networks;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.bpel.model.Activity;
 import org.eclipse.bpel.model.BPELPackage;
 import org.eclipse.bpel.model.Catch;
@@ -26,6 +29,8 @@ public class FHCatchNetwork extends AbstractStubActivityNetwork {
 		super(parentNetwork, network);
 		this.faultHandlerCatch = subject;
 		this.activity = faultHandlerCatch.getActivity();
+		
+		initLocalNetwork();
 	}
 
 	@Override
@@ -45,9 +50,14 @@ public class FHCatchNetwork extends AbstractStubActivityNetwork {
 	}
 
 	@Override
-	protected AbstractActivityNetwork[] createChildNetworks() {
-		AbstractActivityNetwork[] childs = { createChildNetwork(activity) };
-		return childs;
+	protected Map<EObject, AbstractActivityNetwork> createChildNetworks() {
+		Map<EObject, AbstractActivityNetwork> childMap = new HashMap<EObject, AbstractActivityNetwork>();
+		childMap.put(this.getEObject(), createChildNetwork(activity));
+		return childMap;
+	}
+	
+	protected void initLocalNetwork() {
+		//TODO create local network		
 	}
 
 	@Override

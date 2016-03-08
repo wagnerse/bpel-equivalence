@@ -2,40 +2,32 @@ package de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra;
 
 import org.eclipse.emf.ecore.EObject;
 
-import de.uni_stuttgart.iaas.bpel.equivalence.model.BPELStateEnum;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.TimePointDesc;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
 
 public class Variable {
 	
-	public enum StateTime {START, END};
-	
-	private BPELStateEnum stateType;
+	private TimePointDesc timePoint;
 	private EObject bpelElement;
-	private StateTime stateTime;
 	
-	public Variable(EObject bpelElement, BPELStateEnum stateType, StateTime stateTime) {
+	public Variable(EObject bpelElement, TimePointDesc timePoint) {
 		this.bpelElement = bpelElement;
-		this.stateType = stateType;
-		this.stateTime = stateTime;
+		this.timePoint = timePoint;
 	}
 	
 	public EObject getBpelElement() {
 		return bpelElement;
 	}
 	
-	public StateTime getStateTime() {
-		return stateTime;
-	}
-	
-	public BPELStateEnum getStateType() {
-		return stateType;
+	public TimePointDesc getTimePoint() {
+		return timePoint;
 	}
 	
 	public String getName() {
 		Object nameAttr = EMFUtils.getAttributeByName(bpelElement, "name");
 		String bpelName = (nameAttr instanceof String)? (String) nameAttr : "";
 		
-		return bpelName + stateType.toString();
+		return bpelName + timePoint.getState().name() + timePoint.getTimeType().name();
 	}
 
 }

@@ -1,28 +1,25 @@
 package de.uni_stuttgart.iaas.bpel.equivalence.model;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang3.tuple.MutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.metacsp.framework.Variable;
-import org.metacsp.fuzzyAllenInterval.FuzzyAllenIntervalConstraint;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.NetworkFactoryRepo;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Constraint;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.RelationEnum;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Variable;
 
 public abstract class AbstractActivityNetwork {
-	
-	private AbstractActivityNetwork parentNetwork;
-	protected AbstractActivityNetwork[] childNetworks;
-	
-	private Problem network;
-	private Map<Pair<BPELStateEnum, BPELStateEnum>, RelationEnum[]> constraints = new HashMap<Pair<BPELStateEnum, BPELStateEnum>, RelationEnum[]>();
 
+	private AbstractActivityNetwork parentNetwork;
+	protected Map<EObject, AbstractActivityNetwork> childNetworks = new HashMap<EObject, AbstractActivityNetwork>();
+
+	private Problem network;
+	private Map<ConstraintMappingKey, RelationEnum[]> constraints = new HashMap<ConstraintMappingKey, RelationEnum[]>();
 
 	@SuppressWarnings("unused")
 	private AbstractActivityNetwork() {
@@ -30,46 +27,51 @@ public abstract class AbstractActivityNetwork {
 	}
 
 	public AbstractActivityNetwork(AbstractActivityNetwork parentNetwork, Problem network) {
-		initConstraintMap();
 		this.parentNetwork = parentNetwork;
 		this.network = network;
+
+		// add local links
+		network.addConstraints(getLocalLinks());
 	}
 
 	public Problem linkActivityNetworkLayer() {
+		
+		// init local constraint map
+		initConstraintMap();
+
+		// create child network objects
 		this.childNetworks = createChildNetworks();
 
 		// perfrom pre processing
 		doPreProcessing();
 
-		// add local links
-		network.addConstraints(getLocalLinks());
-
-		//TODO create links between local and sender
-		/*if (parentNetwork != null) {
-			// link network
-			for (ActivityState senderState : parentNetwork.getActivityConnector().getConnectionStates()) {
-				System.out.println("Create Constraints for " + getNetworkName() + ": " + senderState.getName());
-				for (ActivityState localState : this.getActivityConnector().getConnectionStates()) {
+		// create links between local and sender
+		for (AbstractActivityNetwork childNetwork : this.getChildNetworks()) {
+			System.out.println(this.getNetworkName() + ": Create Constraints for child " + childNetwork.getNetworkName());
+			for (Variable localVariable : this.getActivityConnector().getVariables()) {
+				System.out.println("Create Constraints for " + getNetworkName() + ": " + localVariable.getName());
+				for (Variable childVariable : childNetwork.getActivityConnector().getVariables()) {
 					// create Key
-					Pair<BPELStateEnum, BPELStateEnum> key = new MutablePair<BPELStateEnum, BPELStateEnum>(
-							senderState.getStateType(), localState.getStateType());
-					// get constraints
-					QualitativeAllenIntervalConstraint.Type[] constraints = parentNetwork.getConnectionConstraints().get(key);
+					ConstraintMappingKey key = new ConstraintMappingKey(
+							this, localVariable.getTimePoint(), 
+							childNetwork, childVariable.getTimePoint());
 
-					// create constraint link
-					StateConstraint constraint = new StateConstraint(constraints);
-					constraint.setFrom(senderState);
-					constraint.setTo(localState);
+					// create constraint link between this activity and the
+					// child activity
+					RelationEnum[] relations = this.getConnectionConstraints().get(key);
+					Constraint constraint = new Constraint(relations);
+					constraint.setFrom(localVariable);
+					constraint.setTo(childVariable);
 					network.addConstraint(constraint);
 				}
 			}
-		}*/
+		}
 
 		// perform post processing
 		doPostProcessing();
 
 		// perform child processing
-		for (AbstractActivityNetwork cn : getChildNetworks()) {
+		for (AbstractActivityNetwork cn : this.getChildNetworks()) {
 			cn.linkActivityNetworkLayer();
 		}
 
@@ -77,34 +79,38 @@ public abstract class AbstractActivityNetwork {
 	}
 
 	public abstract EClass getSupportedEClass();
-	
+
 	public abstract EObject getEObject();
 
 	public abstract IActivityConnector getActivityConnector();
 
 	public abstract Constraint[] getLocalLinks();
 
-	protected abstract AbstractActivityNetwork[] createChildNetworks();
-	
+	protected abstract Map<EObject, AbstractActivityNetwork> createChildNetworks();
+
 	protected abstract void initConstraintMap();
-	
+
 	public abstract String getNetworkName();
-	
-	public AbstractActivityNetwork[] getChildNetworks() {
-		return this.childNetworks;
-	}
-	
-	/**
-	 * Add a constraint to the network.
-	 * @param l
-	 * @param r
-	 * @param types (if types are empty the constraint is unrelated
-	 */
-	protected void putConstraint(BPELStateEnum l, BPELStateEnum r, RelationEnum...types) {
-		constraints.put(new MutablePair<BPELStateEnum, BPELStateEnum>(l, r), types);
+
+	public Collection<AbstractActivityNetwork> getChildNetworks() {
+		return this.childNetworks.values();
 	}
 
-	public Map<Pair<BPELStateEnum, BPELStateEnum>, RelationEnum[]> getConnectionConstraints() {		
+	/**
+	 * Add a constraint to the network.
+	 * 
+	 * @param l
+	 * @param r
+	 * @param types
+	 *            (if types are empty the constraint is unrelated
+	 */
+	protected void putConstraint(AbstractActivityNetwork n1, TimePointDesc p1, 
+			AbstractActivityNetwork n2, TimePointDesc p2, 
+			RelationEnum... types) {
+		constraints.put(new ConstraintMappingKey(n1, p1, n2, p2), types);
+	}
+
+	public Map<ConstraintMappingKey, RelationEnum[]> getConnectionConstraints() {
 		return constraints;
 	}
 
@@ -120,35 +126,24 @@ public abstract class AbstractActivityNetwork {
 		return network;
 	}
 
-	protected AbstractActivityNetwork createChildNetwork(EObject child) {
-		
-		if (child != null) {		
+	public AbstractActivityNetwork createChildNetwork(EObject child) {
+		if (child != null) {
 			return NetworkFactoryRepo.getInstance().createElementNetwork(this, child, getNetwork());
+		} else {
+			return null;
+		}
+	}
+
+	protected AbstractActivityNetwork getParentActivityNetwork() {
+		return this.parentNetwork;
+	}
+	
+	protected AbstractActivityNetwork getChildNetwork(EObject subject) {
+		if (this.childNetworks.containsKey(subject)) {
+			return childNetworks.get(subject);
 		}
 		else {
 			return null;
 		}
 	}
-	
-	protected AbstractActivityNetwork getParentActivityNetwork() {
-		return this.parentNetwork;
-	}
-
-	//FIXME delete?
-	/*protected StateConstraint createMeetsActivityStateLink(Variable from, Variable to) {
-		StateConstraint link = new StateConstraint(FuzzyAllenIntervalConstraint.Type.Meets);
-		link.setFrom(from);
-		link.setTo(to);
-		return link;
-	}
-
-	//FIXME delete?
-	protected StateConstraint createActivityStateLink(Variable from, Variable to,
-			FuzzyAllenIntervalConstraint.Type type) {
-		StateConstraint link = new StateConstraint(type);
-		link.setFrom(from);
-		link.setTo(to);
-		return link;
-	}*/
-
 }

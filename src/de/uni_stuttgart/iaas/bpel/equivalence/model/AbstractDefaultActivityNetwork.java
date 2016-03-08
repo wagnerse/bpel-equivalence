@@ -3,8 +3,6 @@ package de.uni_stuttgart.iaas.bpel.equivalence.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Constraint;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.RelationEnum;
@@ -17,8 +15,8 @@ public abstract class AbstractDefaultActivityNetwork extends AbstractActivityNet
 	}
 
 	@Override
-	public Map<Pair<BPELStateEnum, BPELStateEnum>, RelationEnum[]> getConnectionConstraints() {
-		return new HashMap<Pair<BPELStateEnum, BPELStateEnum>, RelationEnum[]>();
+	public Map<ConstraintMappingKey, RelationEnum[]> getConnectionConstraints() {
+		return new HashMap<ConstraintMappingKey, RelationEnum[]>();
 	}
 
 	@Override

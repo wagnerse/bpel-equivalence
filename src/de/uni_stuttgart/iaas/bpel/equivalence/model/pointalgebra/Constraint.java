@@ -10,6 +10,12 @@ public class Constraint {
 		this.relations = relations;
 	}
 	
+	public Constraint(Variable from, Variable to, RelationEnum... relations) {
+		this.from = from;
+		this.to = to;
+		this.relations = relations;
+	}
+	
 	public void setFrom(Variable from) {
 		this.from = from;
 	}

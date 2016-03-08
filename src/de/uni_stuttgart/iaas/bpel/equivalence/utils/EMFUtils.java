@@ -16,5 +16,13 @@ public class EMFUtils {
 		}
 		return attribute;
 	}
+	
+	public static EObject getEListFirst(EList<EObject> list) {
+		if (list.size() > 0) {
+			return list.get(0);
+		} else {
+			return null;
+		}
+	}
 
 }

@@ -7,7 +7,7 @@ import org.eclipse.emf.ecore.EObject;
 import de.uni_stuttgart.iaas.bpel.equivalence.BpelEquivalence;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.NetworkUtils;
-import de.uni_stuttgart.iaas.bpel.equivalence.utils.BPELResourceUtils;
+import de.uni_stuttgart.iaas.bpel.equivalence.utils.BPELUtils;
 
 public class BpelAllenNetworkConsole {
 
@@ -17,7 +17,7 @@ public class BpelAllenNetworkConsole {
 		long start = System.currentTimeMillis();
 		System.out.println("Create interval network for \n" + args[0]);
 	
-		EObject process1 = (EObject) BPELResourceUtils.readProcessFromFile(args[0]);
+		EObject process1 = (EObject) BPELUtils.readProcessFromFile(args[0]);
 		
 		BpelEquivalence equivalence = new BpelEquivalence();
 		
