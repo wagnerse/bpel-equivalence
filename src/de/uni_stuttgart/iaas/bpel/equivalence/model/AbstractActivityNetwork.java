@@ -33,6 +33,7 @@ public abstract class AbstractActivityNetwork {
 	}
 
 	public Problem linkActivityNetworkLayer() {
+		System.out.println("Create Network for " + this.getNetworkName());
 
 		// create child network objects
 		this.childNetworks = createChildNetworks();
@@ -42,36 +43,23 @@ public abstract class AbstractActivityNetwork {
 		
 		// init local constraint map
 		initConstraintMap();
-		System.out.println("#of constraint mappings for " + this.getNetworkName() + ": " + this.constraintsMapping.size());
-
+		
 		// perfrom pre processing
 		doPreProcessing();
 
-		// create links between local and sender
+		// create links between local and children
 		for (AbstractActivityNetwork childNetwork : this.getChildNetworks()) {
-			System.out.println(this.getNetworkName() + ": Create Constraints for child " + childNetwork.getNetworkName());
-			for (Variable localVariable : this.getActivityConnector().getVariables()) {
-				System.out.println("Create Constraints for " + getNetworkName() + ": " + localVariable.getName());
-				for (Variable childVariable : childNetwork.getActivityConnector().getVariables()) {
-					// create Key
-					ConstraintMappingKey key = new ConstraintMappingKey(
-							this, localVariable.getTimePoint(), 
-							childNetwork, childVariable.getTimePoint());
-					
-					if (this.constraintsMapping.containsKey(key)) {
-						// create constraint link between this activity and the
-						// child activity
-						RelationEnum[] relations = this.constraintsMapping.get(key);
-						Constraint constraint = new Constraint(relations);
-						constraint.setFrom(localVariable);
-						constraint.setTo(childVariable);
-						network.addConstraint(constraint);
-					}
+			createConstraintsBetween(this, childNetwork);
+		}
+		
+		//create links between the children
+		for (AbstractActivityNetwork actNet1: this.getChildNetworks()) {
+			for (AbstractActivityNetwork actNet2: this.getChildNetworks()) {
+				if (actNet1 != actNet2) {
+					createConstraintsBetween(actNet1, actNet2);
 				}
 			}
 		}
-
-		//TODO child-child constraints
 		
 		// perform post processing
 		doPostProcessing();
@@ -82,6 +70,28 @@ public abstract class AbstractActivityNetwork {
 		}
 
 		return network;
+	}
+	
+	public void createConstraintsBetween(AbstractActivityNetwork actNet1, AbstractActivityNetwork actNet2) {
+		
+		for (Variable localVariable : actNet1.getActivityConnector().getVariables()) {			
+			for (Variable childVariable : actNet2.getActivityConnector().getVariables()) {
+				// create Key
+				ConstraintMappingKey key = new ConstraintMappingKey(
+						actNet1, localVariable.getTimePoint(), 
+						actNet2, childVariable.getTimePoint());
+				
+				if (this.constraintsMapping.containsKey(key)) {
+					// create constraint link between this activity and the
+					// child activity
+					RelationEnum[] relations = this.constraintsMapping.get(key);
+					Constraint constraint = new Constraint(relations);
+					constraint.setFrom(localVariable);
+					constraint.setTo(childVariable);
+					this.getNetwork().addConstraint(constraint);
+				}
+			}
+		}
 	}
 
 	public abstract EClass getSupportedEClass();
