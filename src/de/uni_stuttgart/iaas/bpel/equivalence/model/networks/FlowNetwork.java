@@ -113,10 +113,9 @@ public class FlowNetwork extends AbstractActivityNetwork {
 	 */
 	@Override
 	protected void initConstraintMap() {
-
 		// handle start activities and final activities
 		for (Activity act : flow.getActivities()) {
-			if (act.getSources() != null && act.getSources().getChildren().size() == 0) {
+			if (act.getTargets() == null ||(act.getTargets() != null && act.getTargets().getChildren().size() == 0)) {
 				// handle start activities
 				AbstractActivityNetwork actNetwork = this.getChildNetwork(act);
 				if (actNetwork != null) {
@@ -126,7 +125,7 @@ public class FlowNetwork extends AbstractActivityNetwork {
 							RelationEnum.EQUALS);
 				}
 			}
-			if (act.getTargets() != null && act.getTargets().getChildren().size() == 0) {
+			if (act.getSources() == null || (act.getSources() != null && act.getSources().getChildren().size() == 0)) {
 				// handle final activities
 				AbstractActivityNetwork actNetwork = this.getChildNetwork(act);
 				if (actNetwork != null) {
@@ -209,7 +208,7 @@ public class FlowNetwork extends AbstractActivityNetwork {
 		for (EObject a : flow.getActivities()) {
 			AbstractActivityNetwork activity = createChildNetwork(a);
 			if (activity != null)
-				childMap.put(this.getEObject(), activity);
+				childMap.put(a, activity);
 		}
 		return childMap;
 	}

@@ -27,7 +27,7 @@ public class NetworkUtils {
 		}
 		writer.append("\n");
 
-		// TODO write data
+		// write data
 		for (Variable vl : network.getVariables()) {
 			// write state name
 			writer.append(vl.getName() + ", ");
@@ -39,8 +39,8 @@ public class NetworkUtils {
 					Constraint constraint =  network.getConstraints(vl, vr);
 					if (constraint != null) {
 						writer.append(constraint.relationsToString());
-						writer.append(", ");
 					}
+					writer.append(", ");
 				}
 			}
 			

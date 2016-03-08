@@ -19,7 +19,7 @@ public abstract class AbstractActivityNetwork {
 	protected Map<EObject, AbstractActivityNetwork> childNetworks = new HashMap<EObject, AbstractActivityNetwork>();
 
 	private Problem network;
-	private Map<ConstraintMappingKey, RelationEnum[]> constraints = new HashMap<ConstraintMappingKey, RelationEnum[]>();
+	private Map<ConstraintMappingKey, RelationEnum[]> constraintsMapping = new HashMap<ConstraintMappingKey, RelationEnum[]>();
 
 	@SuppressWarnings("unused")
 	private AbstractActivityNetwork() {
@@ -30,17 +30,19 @@ public abstract class AbstractActivityNetwork {
 		this.parentNetwork = parentNetwork;
 		this.network = network;
 
-		// add local links
-		network.addConstraints(getLocalLinks());
 	}
 
 	public Problem linkActivityNetworkLayer() {
-		
-		// init local constraint map
-		initConstraintMap();
 
 		// create child network objects
 		this.childNetworks = createChildNetworks();
+		
+		// add local links
+		network.addConstraints(getLocalLinks());
+		
+		// init local constraint map
+		initConstraintMap();
+		System.out.println("#of constraint mappings for " + this.getNetworkName() + ": " + this.constraintsMapping.size());
 
 		// perfrom pre processing
 		doPreProcessing();
@@ -55,18 +57,22 @@ public abstract class AbstractActivityNetwork {
 					ConstraintMappingKey key = new ConstraintMappingKey(
 							this, localVariable.getTimePoint(), 
 							childNetwork, childVariable.getTimePoint());
-
-					// create constraint link between this activity and the
-					// child activity
-					RelationEnum[] relations = this.getConnectionConstraints().get(key);
-					Constraint constraint = new Constraint(relations);
-					constraint.setFrom(localVariable);
-					constraint.setTo(childVariable);
-					network.addConstraint(constraint);
+					
+					if (this.constraintsMapping.containsKey(key)) {
+						// create constraint link between this activity and the
+						// child activity
+						RelationEnum[] relations = this.constraintsMapping.get(key);
+						Constraint constraint = new Constraint(relations);
+						constraint.setFrom(localVariable);
+						constraint.setTo(childVariable);
+						network.addConstraint(constraint);
+					}
 				}
 			}
 		}
 
+		//TODO child-child constraints
+		
 		// perform post processing
 		doPostProcessing();
 
@@ -107,11 +113,11 @@ public abstract class AbstractActivityNetwork {
 	protected void putConstraint(AbstractActivityNetwork n1, TimePointDesc p1, 
 			AbstractActivityNetwork n2, TimePointDesc p2, 
 			RelationEnum... types) {
-		constraints.put(new ConstraintMappingKey(n1, p1, n2, p2), types);
+		constraintsMapping.put(new ConstraintMappingKey(n1, p1, n2, p2), types);
 	}
 
 	public Map<ConstraintMappingKey, RelationEnum[]> getConnectionConstraints() {
-		return constraints;
+		return constraintsMapping;
 	}
 
 	protected void doPostProcessing() {

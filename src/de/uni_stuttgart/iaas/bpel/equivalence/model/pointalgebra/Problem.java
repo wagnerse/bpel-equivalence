@@ -39,8 +39,18 @@ public class Problem {
 	}
 	
 	public void addConstraint(Constraint constraint) {
+		
+		// if the variables are unkonwn, add the variables
+		if (!this.variables.contains(constraint.getFrom())) {
+			this.variables.add(constraint.getFrom());
+		}
+		if (!this.variables.contains(constraint.getTo())) {
+			this.variables.add(constraint.getTo());
+		}
+		
 		Pair<Variable, Variable> key = new ImmutablePair<Variable, Variable>(constraint.getFrom(),
 				constraint.getTo());
+		// if the constraint exists, add the relatoins to the existing constraint
 		if (!this.constraints.containsKey(key)) {
 			this.constraints.put(key, constraint);
 		}

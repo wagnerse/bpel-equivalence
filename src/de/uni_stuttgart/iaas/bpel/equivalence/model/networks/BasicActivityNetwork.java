@@ -1,6 +1,8 @@
 package de.uni_stuttgart.iaas.bpel.equivalence.model.networks;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.bpel.model.Activity;
@@ -15,6 +17,7 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.TimePointDesc.TimeTypeEnum;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.networks.BasicActivityNetwork.BasicActivityConnector;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Constraint;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.RelationEnum;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Variable;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
 
@@ -22,8 +25,8 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 
 	private EClass support;
 	private Activity activity;
-	private Variable[] variables;
-	private Constraint[] constraints;
+	private List<Variable> variables = new ArrayList<Variable>();
+	private List<Constraint> constraints = new ArrayList<Constraint>();
 
 	public BasicActivityNetwork(AbstractActivityNetwork parentNetwork, EClass support, Activity subject, Problem network) {
 		super(parentNetwork, network);
@@ -46,48 +49,65 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 
 	@Override
 	public IActivityConnector getActivityConnector() {
-		return new BasicActivityConnector(variables);
+		Variable[] variableArray = new Variable[this.variables.size()];
+		variableArray = variables.toArray(variableArray);
+		return new BasicActivityConnector(variableArray);
 	}
 	
 	protected void initLocalNetwork() {
+		//create variables
 		Variable startInitial = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START));
 		Variable endInitial = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.END));
+		this.variables.add(startInitial);
+		this.variables.add(endInitial);
 		
 		Variable startDead = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START));
 		Variable endDead = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.END));
+		this.variables.add(startDead);
+		this.variables.add(endDead);
 		
 		Variable startTerminated = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.START));
 		Variable endTerminated = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.END));
+		this.variables.add(startTerminated);
+		this.variables.add(endTerminated);
 		
 		Variable startExe = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.START));
 		Variable endExe = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.END));
+		this.variables.add(startExe);
+		this.variables.add(endExe);
 		
 		Variable startFault = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START));
 		Variable endFault = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.END));
+		this.variables.add(startFault);
+		this.variables.add(endFault);		
 		
 		Variable startComp = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START));
 		Variable endComp = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.END));
+		this.variables.add(startComp);
+		this.variables.add(endComp);
 		
-		Variable[] variableArray = { 
-				startInitial,
-				endInitial,
-				startDead,
-				endDead,
-				startTerminated,
-				endTerminated,
-				startExe,
-				endExe,
-				startFault,
-				endFault,
-				startComp,
-				endComp
-		};
-		this.variables = variableArray;
+		//create intra-state constraints		
+		constraints.add(new Constraint(startInitial, endInitial, RelationEnum.LESS));
+		constraints.add(new Constraint(startDead, endDead, RelationEnum.LESS));
+		constraints.add(new Constraint(startTerminated, endTerminated, RelationEnum.LESS));
+		constraints.add(new Constraint(startExe, endExe, RelationEnum.LESS));
+		constraints.add(new Constraint(startFault, endFault, RelationEnum.LESS));
+		constraints.add(new Constraint(startComp, endComp, RelationEnum.LESS));
+		
+		//create inter-state constraints
+		constraints.add(new Constraint(endInitial, startDead, RelationEnum.EQUALS));
+		constraints.add(new Constraint(endInitial, startTerminated, RelationEnum.EQUALS));
+		constraints.add(new Constraint(endInitial, startExe, RelationEnum.EQUALS));
+		constraints.add(new Constraint(endExe, startTerminated, RelationEnum.EQUALS));
+		constraints.add(new Constraint(endExe, startComp, RelationEnum.EQUALS));
+		constraints.add(new Constraint(endExe, startFault, RelationEnum.EQUALS));
 	}
 
 	@Override
 	public Constraint[] getLocalLinks() {
-		return constraints;
+		Constraint[] constraintArray = new Constraint[this.constraints.size()];
+		constraintArray = constraints.toArray(constraintArray);
+		return constraintArray;
 	}
 
 	@Override
