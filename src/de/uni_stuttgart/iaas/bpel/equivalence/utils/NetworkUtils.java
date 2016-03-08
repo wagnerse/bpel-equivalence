@@ -35,13 +35,12 @@ public class NetworkUtils {
 			// write data
 			for (Variable vr : network.getVariables()) {
 				if (vr instanceof Variable) {
-					// constraints list
-					for (Constraint constr : network.getConstraints(vl, vr)) {
-						for (RelationEnum type : constr.getRelations()) {
-							writer.append(type.name() + " ");
-						}
+					// constraints 
+					Constraint constraint =  network.getConstraints(vl, vr);
+					if (constraint != null) {
+						writer.append(constraint.relationsToString());
+						writer.append(", ");
 					}
-					writer.append(", ");
 				}
 			}
 			

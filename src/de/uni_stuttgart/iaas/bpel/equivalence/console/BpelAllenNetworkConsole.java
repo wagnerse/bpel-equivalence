@@ -24,7 +24,7 @@ public class BpelAllenNetworkConsole {
 		Problem network1 = equivalence.createNetwork(process1);
 		
 		long duration = System.currentTimeMillis() - start;
-		System.out.println("Network created (" + network1.getConstraints().length + " constraints).");
+		System.out.println("Network created (" + network1.getConstraints().size() + " constraints).");
 		
 		System.out.println("Calculation time: " + duration + "ms.");
 		
