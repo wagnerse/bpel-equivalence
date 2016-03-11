@@ -9,9 +9,12 @@ import org.eclipse.bpel.model.Activity;
 import org.eclipse.bpel.model.BPELPackage;
 import org.eclipse.bpel.model.Flow;
 import org.eclipse.bpel.model.Link;
-import org.eclipse.bpel.model.Targets;
+import org.eclipse.bpel.model.Source;
+import org.eclipse.bpel.model.Sources;
+import org.eclipse.bpel.model.Target;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.wst.wsdl.UnknownExtensibilityElement;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.model.AbstractActivityNetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.BPELStateEnum;
@@ -107,9 +110,6 @@ public class FlowNetwork extends AbstractActivityNetwork {
 	/**
 	 * Create Constraints for start activities, final activities and the links
 	 * 
-	 * Start-Activity
-	 * 
-	 * 
 	 */
 	@Override
 	protected void initConstraintMap() {
@@ -145,10 +145,10 @@ public class FlowNetwork extends AbstractActivityNetwork {
 			}
 		}
 
-		// create unrelated between xor/parallel activities
+		// create relation between xor/parallel activities
 		for (Activity act : flow.getActivities()) {
-			if (act.getTargets() != null && act.getTargets().getChildren().size() >= 2) {
-				createXorParallelConstraints(act.getTargets());
+			if (act.getSources() != null && act.getSources().getChildren().size() >= 2) {
+				createXorParallelConstraints(act.getSources());
 			}
 		}
 	}
@@ -178,12 +178,66 @@ public class FlowNetwork extends AbstractActivityNetwork {
 		
 	}
 	
-	private void createXorParallelConstraints(Targets targets) {
-		//TODO separete in link type regions (parallel, XOR)
+	/**
+	 * Create a constraint edge between all following activities.
+	 * If the branching condition is exclusive a {@link RelationEnum.UNRELATED} relation
+	 * If the branching condition is parallel a {@link RelationEnum.EQUALS} relation
+	 * 
+	 * The branching condition should be anotated by an BPEL extension of the activity:
+	 * 
+	 * <bpel:empty>
+	 *    <bpel:sources>
+     *       <ext:equivalenceanotation>[exclusive|parallel]</ext:equivalenceanotation>
+     *       ...
+     *    </bpel:sources>
+     * </bpel:empty>
+	 * 
+	 * @param sources
+	 */
+	private void createXorParallelConstraints(Sources sources) {
+		// get extension element (<paralell/>  or <exclusive/>
+		String type = "paralell";
+		for (Object ext: sources.getEExtensibilityElements()) {
+			if (ext instanceof UnknownExtensibilityElement) {
+				org.w3c.dom.Element element = ((UnknownExtensibilityElement) ext).getElement();
+				if (element.getLocalName().equals("equivalenceanotation")) {
+					type = element.getTextContent();
+				}
+			}
+		}
 		
-		//TODO create constraints between parallel region
+		// select relation
+		RelationEnum relation;
+		if (type.equals("paralell")) {
+			relation = RelationEnum.EQUALS;
+		}
+		else if (type.equals("exclusive")) {
+			relation = RelationEnum.UNRELATED;
+		}
+		else {
+			throw new IllegalStateException("Unkown equivalenceanotation type");
+		}
 		
-		//TODO create constriants between XOR regions
+		// get targets of the outgoing links of this source
+		List<Activity> targetList = new ArrayList<Activity>();
+		for (Source src: sources.getChildren()) {
+			for (Target trg: src.getLink().getTargets()) {
+				targetList.add(trg.getActivity());
+			}
+		}
+		// create relation between all targets of the links
+		for(Activity act1: targetList) {
+			for(Activity act2: targetList) {
+				if (act1 != act2) {
+					AbstractActivityNetwork n1 = this.getChildNetwork(act1);
+					AbstractActivityNetwork n2 = this.getChildNetwork(act2);
+					this.putConstraint(
+							n1, new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.START), 
+							n2,	new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.START), 
+							relation);
+				}
+			}
+		}
 	}
 
 	@Override
