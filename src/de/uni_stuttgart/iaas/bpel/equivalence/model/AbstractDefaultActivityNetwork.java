@@ -8,6 +8,13 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.RelationEnum;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Variable;
 
+/**
+ * 
+ * @author Jonas Scheurich
+ * 
+ * This activity network supports BPEL elements without a local network.
+ *
+ */
 public abstract class AbstractDefaultActivityNetwork extends AbstractActivityNetwork{
 
 	public AbstractDefaultActivityNetwork(AbstractActivityNetwork parentNetwork, Problem network) {
@@ -15,7 +22,7 @@ public abstract class AbstractDefaultActivityNetwork extends AbstractActivityNet
 	}
 
 	@Override
-	public Map<ConstraintMappingKey, RelationEnum[]> getConnectionConstraints() {
+	public Map<ConstraintMappingKey, RelationEnum[]> getConstraintMapping() {
 		return new HashMap<ConstraintMappingKey, RelationEnum[]>();
 	}
 
@@ -25,7 +32,7 @@ public abstract class AbstractDefaultActivityNetwork extends AbstractActivityNet
 	}
 
 	@Override
-	public Constraint[] getLocalLinks() {
+	public Constraint[] getLocalConstraints() {
 		Constraint[] stateLinks = {};
 		return stateLinks;
 	}

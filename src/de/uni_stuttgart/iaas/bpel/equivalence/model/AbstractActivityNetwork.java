@@ -13,6 +13,19 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.RelationEnum;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Variable;
 
+/**
+ * 
+ * @author Jonas Scheurich
+ *
+ *  A activity network creates three parts of the point algebra network for a specific BPEL element
+ * (1) Local variables and constraints for the state model of the supported BPEL element
+ *     (inter state constraints and intra state constraints).
+ * (2) Constraints between the local variables and the variables of the child BPEL elements.
+ *     ex: flow and the containing activities (inter activity constraints).
+ * (3) Constraints between the variables of the  child BPEL elements (inter activity constraints).
+ *     ex: link between activities of a flow.
+ *
+ */
 public abstract class AbstractActivityNetwork {
 
 	private AbstractActivityNetwork parentNetwork;
@@ -32,6 +45,11 @@ public abstract class AbstractActivityNetwork {
 
 	}
 
+	/**
+	 * Create the point algebra network of the supported BPEL element and the child elements (recursive)
+	 * 
+	 * @return A point algebra network
+	 */
 	public Problem linkActivityNetworkLayer() {
 		System.out.println("Create Network for " + this.getNetworkName());
 
@@ -39,7 +57,7 @@ public abstract class AbstractActivityNetwork {
 		this.childNetworks = createChildNetworks();
 		
 		// add local links
-		network.addConstraints(getLocalLinks());
+		network.addConstraints(getLocalConstraints());
 		
 		// init local constraint map
 		initConstraintMap();
@@ -72,53 +90,100 @@ public abstract class AbstractActivityNetwork {
 		return network;
 	}
 	
+	/**
+	 * Create constraints between two activity networks. Defined in the constraint mapping.
+	 * @param actNet1
+	 * @param actNet2
+	 */
 	public void createConstraintsBetween(AbstractActivityNetwork actNet1, AbstractActivityNetwork actNet2) {
 		
-		for (Variable localVariable : actNet1.getActivityConnector().getVariables()) {			
-			for (Variable childVariable : actNet2.getActivityConnector().getVariables()) {
+		for (Variable var1 : actNet1.getActivityConnector().getVariables()) {			
+			for (Variable var2 : actNet2.getActivityConnector().getVariables()) {
 				// create Key
 				ConstraintMappingKey key = new ConstraintMappingKey(
-						actNet1, localVariable.getTimePoint(), 
-						actNet2, childVariable.getTimePoint());
+						actNet1, var1.getTimePoint(), 
+						actNet2, var2.getTimePoint());
 				
 				if (this.constraintsMapping.containsKey(key)) {
 					// create constraint link between this activity and the
 					// child activity
 					RelationEnum[] relations = this.constraintsMapping.get(key);
 					Constraint constraint = new Constraint(relations);
-					constraint.setFrom(localVariable);
-					constraint.setTo(childVariable);
+					constraint.setFrom(var1);
+					constraint.setTo(var2);
 					this.getNetwork().addConstraint(constraint);
 				}
 			}
 		}
 	}
 
+	/**
+	 * Get net EMF class object of the supported class to determine witch BPEL element
+	 * is supported by this object
+	 * 
+	 * @return {@link EClass}
+	 */
 	public abstract EClass getSupportedEClass();
 
+	/**
+	 * Get the specific {@link EObject}, are the point network is created from.
+	 * @return
+	 */
 	public abstract EObject getEObject();
 
+	/**
+	 * Get the activity connector of this activity network, that contains the local variables.
+	 * @return
+	 */
 	public abstract IActivityConnector getActivityConnector();
 
-	public abstract Constraint[] getLocalLinks();
+	/**
+	 * Get the constraints between the local variables:
+	 * (1) Intra-state-constraints
+	 * (2) Inter-state-constraints
+	 * 
+	 * @return
+	 */
+	public abstract Constraint[] getLocalConstraints();
 
+	/**
+	 * Create the activity network of the BPEL child elements of this BPEL element.
+	 * Every child network is related to a BPEL child element.
+	 * @return
+	 */
 	protected abstract Map<EObject, AbstractActivityNetwork> createChildNetworks();
 
+	/**
+	 * Initialize the constraint map with a description of the inter activity constraints.
+	 */
 	protected abstract void initConstraintMap();
 
+	/**
+	 * Get the name of this activity network.
+	 * @return
+	 */
 	public abstract String getNetworkName();
-
-	public Collection<AbstractActivityNetwork> getChildNetworks() {
-		return this.childNetworks.values();
+	
+	/**
+	 * Perform some actions before the constraints are created
+	 */
+	protected void doPostProcessing() {
+		// not implemented
 	}
 
 	/**
-	 * Add a constraint to the network.
+	 * Perform some actions after the constraints are created
+	 */
+	protected void doPreProcessing() {
+		// not implemented
+	}
+
+	/**
+	 * Add a constraint to the constraint mapping
 	 * 
 	 * @param l
 	 * @param r
 	 * @param types
-	 *            (if types are empty the constraint is unrelated
 	 */
 	protected void putConstraint(AbstractActivityNetwork n1, TimePointDesc p1, 
 			AbstractActivityNetwork n2, TimePointDesc p2, 
@@ -126,22 +191,27 @@ public abstract class AbstractActivityNetwork {
 		constraintsMapping.put(new ConstraintMappingKey(n1, p1, n2, p2), types);
 	}
 
-	public Map<ConstraintMappingKey, RelationEnum[]> getConnectionConstraints() {
+	/**
+	 * Get the constraint mapping
+	 * @return
+	 */
+	public Map<ConstraintMappingKey, RelationEnum[]> getConstraintMapping() {
 		return constraintsMapping;
 	}
 
-	protected void doPostProcessing() {
-		// not implemented
-	}
-
-	protected void doPreProcessing() {
-		// not implemented
-	}
-
+	/**
+	 * Get the current point algebra network
+	 * @return
+	 */
 	protected Problem getNetwork() {
 		return network;
 	}
 
+	/**
+	 * Create a child network from a given {@link EObject}
+	 * @param child
+	 * @return
+	 */
 	public AbstractActivityNetwork createChildNetwork(EObject child) {
 		if (child != null) {
 			return NetworkFactoryRepo.getInstance().createElementNetwork(this, child, getNetwork());
@@ -149,11 +219,13 @@ public abstract class AbstractActivityNetwork {
 			return null;
 		}
 	}
-
-	protected AbstractActivityNetwork getParentActivityNetwork() {
-		return this.parentNetwork;
-	}
 	
+
+	/**
+	 * Get all child networks.
+	 * @param subject
+	 * @return
+	 */
 	protected AbstractActivityNetwork getChildNetwork(EObject subject) {
 		if (this.childNetworks.containsKey(subject)) {
 			return childNetworks.get(subject);
@@ -162,4 +234,21 @@ public abstract class AbstractActivityNetwork {
 			return null;
 		}
 	}
+	
+	/**
+	 * Get the child networks of this network, createt from the BPEL child elements
+	 * @return
+	 */
+	public Collection<AbstractActivityNetwork> getChildNetworks() {
+		return this.childNetworks.values();
+	}
+
+	/**
+	 * Get the parent activity network of this activity network
+	 * @return
+	 */
+	protected AbstractActivityNetwork getParentActivityNetwork() {
+		return this.parentNetwork;
+	}
+	
 }

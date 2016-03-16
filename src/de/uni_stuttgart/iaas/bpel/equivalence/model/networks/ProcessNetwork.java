@@ -13,6 +13,12 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.AbstractDefaultActivityNetwo
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
 
+/**
+ * 
+ * @author Jonas Scheurich
+ * 
+ * Creates a point algebra network for the BPEL activity {@link Process}
+ */
 public class ProcessNetwork extends AbstractDefaultActivityNetwork{
 	
 	private Process process;

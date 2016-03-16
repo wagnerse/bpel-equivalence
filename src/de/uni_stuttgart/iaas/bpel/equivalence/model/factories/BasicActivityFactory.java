@@ -9,6 +9,14 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.IActivityNetworkFactory;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.networks.BasicActivityNetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
 
+/**
+ * 
+ * @author Jonas Scheurich
+ * 
+ * Creates a activity network for the BPEL basic activities
+ * receive, reply, invoke, assign, throw, exit, wait, empty
+ *
+ */
 public class BasicActivityFactory implements IActivityNetworkFactory{
 	
 	private EClass support;

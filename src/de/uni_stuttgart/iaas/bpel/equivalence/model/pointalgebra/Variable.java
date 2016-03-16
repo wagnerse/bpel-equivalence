@@ -5,6 +5,13 @@ import org.eclipse.emf.ecore.EObject;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.TimePointDesc;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
 
+/**
+ * 
+ * @author Jonas Scheurich
+ * 
+ * Describe the time point in a point algebra.
+ *
+ */
 public class Variable {
 	
 	private TimePointDesc timePoint;

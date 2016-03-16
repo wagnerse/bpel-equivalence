@@ -18,9 +18,22 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.wst.wsdl.internal.util.WSDLResourceFactoryImpl;
 import org.eclipse.xsd.util.XSDResourceFactoryImpl;
 
+/**
+ * 
+ * @author Jonas Scheurich
+ * 
+ * Provide functionalities for BPEL elements
+ *
+ */
 @SuppressWarnings("restriction")
 public class BPELUtils {
 
+	/**
+	 * Read a BPEL process file.
+	 * 
+	 * @param path
+	 * @return
+	 */
 	public static Process readProcessFromFile(String path) {
 		URI uri = URI.createFileURI(path);
 
@@ -46,6 +59,11 @@ public class BPELUtils {
 		return null;
 	}
 
+	/**
+	 * Get the sources of a {@link Link}
+	 * @param link
+	 * @return list of {@link Activity}
+	 */
 	public static List<Activity> getSources(Link link) {
 		List<Activity> result = new ArrayList<Activity>();
 		for (Source src: link.getSources()) {
@@ -54,6 +72,11 @@ public class BPELUtils {
 		return result;
 	}
 
+	/**
+	 * Get the targets of a {@link Link}
+	 * @param link
+	 * @return list of {@link Activity}
+	 */
 	public static List<Activity> getTargets(Link link) {
 		List<Activity> result = new ArrayList<Activity>();
 		for (Target target: link.getTargets()) {

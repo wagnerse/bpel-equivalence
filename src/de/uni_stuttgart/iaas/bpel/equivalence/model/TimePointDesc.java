@@ -3,6 +3,14 @@ package de.uni_stuttgart.iaas.bpel.equivalence.model;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
+/**
+ * 
+ * @author Jonas Scheurich
+ * 
+ * A time point description describes a time point (start or end) 
+ * from the state of a BPEL element (see {@link BPELStateEnum})
+ *
+ */
 public class TimePointDesc {
 
 	public enum TimeTypeEnum {

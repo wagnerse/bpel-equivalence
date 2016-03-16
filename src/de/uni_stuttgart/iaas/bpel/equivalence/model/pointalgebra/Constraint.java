@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * 
+ * @author Jonas Scheurich
+ * 
+ * A constraint describes the relation between two time points.
+ */
 public class Constraint {
 	
 	private List<RelationEnum> relations = new ArrayList<RelationEnum>();

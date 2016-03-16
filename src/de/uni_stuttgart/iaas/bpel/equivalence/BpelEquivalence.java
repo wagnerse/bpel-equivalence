@@ -10,6 +10,13 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.ProcessNetworkFact
 import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.ScopeNetworkFactory;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
 
+/**
+ * 
+ * @author Jonas Scheurich
+ *
+ * Calculate the equivalence of two BPEL processes
+ *
+ */
 public class BpelEquivalence {
 	
 	public BpelEquivalence() {
@@ -36,10 +43,21 @@ public class BpelEquivalence {
 			
 	}
 	
+	/**
+	 * Create point algebra network of a {@link EObject} and the containing child's.
+	 * @param eObject
+	 * @return Point algebra network
+	 */
 	public Problem createNetwork(EObject eObject) {
 		return NetworkFactoryRepo.getInstance().createElementNetwork(null, eObject, new Problem()).linkActivityNetworkLayer();
 	}
 	
+	/**
+	 * Check the equivalence of two BPEL elements with point algebra networks
+	 * @param network1
+	 * @param network2
+	 * @return
+	 */
 	public boolean checkBpelEquivalence(Problem network1, Problem network2) {
 		//TODO implement
 		return false;

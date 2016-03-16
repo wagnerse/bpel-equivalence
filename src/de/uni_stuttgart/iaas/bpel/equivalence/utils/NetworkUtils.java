@@ -9,8 +9,21 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.RelationEnum;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Variable;
 
+/**
+ * 
+ * @author Jonas Scheurich
+ * 
+ * Provide functionalities for activity networks
+ *
+ */
 public class NetworkUtils {
 
+	/**
+	 * Save the activity network as csv representation.
+	 * @param network
+	 * @param file
+	 * @throws IOException
+	 */
 	public static void saveAsCSV(Problem network, File file) throws IOException {
 
 		FileWriter writer = new FileWriter(file);

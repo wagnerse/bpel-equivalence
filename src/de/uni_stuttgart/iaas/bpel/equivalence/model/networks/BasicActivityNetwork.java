@@ -21,6 +21,14 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.RelationEnum;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Variable;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
 
+/**
+ * 
+ * @author Jonas Scheurich
+ * 
+ * Creates a point algebra network for the BPEL basic activities
+ * receive, reply, invoke, assign, throw, exit, wait, empty
+ *
+ */
 public class BasicActivityNetwork extends AbstractActivityNetwork {
 
 	private EClass support;
@@ -104,7 +112,7 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 	}
 
 	@Override
-	public Constraint[] getLocalLinks() {
+	public Constraint[] getLocalConstraints() {
 		Constraint[] constraintArray = new Constraint[this.constraints.size()];
 		constraintArray = constraints.toArray(constraintArray);
 		return constraintArray;
