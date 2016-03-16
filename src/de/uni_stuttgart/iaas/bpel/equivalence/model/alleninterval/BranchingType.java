@@ -2,6 +2,15 @@ package de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval;
 
 import org.metacsp.time.qualitative.QualitativeAllenIntervalConstraint.Type;
 
+/**
+ * 
+ * @author Jonas Scheurich
+ * 
+ * Allens intervall constraints extended with branching constraints
+ * 
+ * See paper Rangi etal. - Branching Allen Reasoning with Intervals in Branching Time
+ *
+ */
 public enum BranchingType {
 
 	

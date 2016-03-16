@@ -3,9 +3,6 @@ package de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.complexity;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.pointalgebra.Condition;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.pointalgebra.ConditionSet;
-
 /**
  * 
  * @author Jonas Scheurich

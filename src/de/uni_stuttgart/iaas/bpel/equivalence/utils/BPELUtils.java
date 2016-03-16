@@ -1,9 +1,15 @@
 package de.uni_stuttgart.iaas.bpel.equivalence.utils;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.eclipse.bpel.model.Activity;
 import org.eclipse.bpel.model.BPELPlugin;
+import org.eclipse.bpel.model.Link;
 import org.eclipse.bpel.model.Process;
+import org.eclipse.bpel.model.Source;
+import org.eclipse.bpel.model.Target;
 import org.eclipse.bpel.model.resource.BPELResource;
 import org.eclipse.bpel.model.resource.BPELResourceFactoryImpl;
 import org.eclipse.emf.common.util.URI;
@@ -12,9 +18,22 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.wst.wsdl.internal.util.WSDLResourceFactoryImpl;
 import org.eclipse.xsd.util.XSDResourceFactoryImpl;
 
+/**
+ * 
+ * @author Jonas Scheurich
+ * 
+ * Provide functionalities for BPEL elements
+ *
+ */
 @SuppressWarnings("restriction")
-public class BPELResourceUtils {
+public class BPELUtils {
 
+	/**
+	 * Read a BPEL process file.
+	 * 
+	 * @param path
+	 * @return
+	 */
 	public static Process readProcessFromFile(String path) {
 		URI uri = URI.createFileURI(path);
 
@@ -25,11 +44,11 @@ public class BPELResourceUtils {
 			rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("bpel", new BPELResourceFactoryImpl());
 			rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("wsdl", new WSDLResourceFactoryImpl());
 			rs.getResourceFactoryRegistry().getExtensionToFactoryMap().put("xsd", new XSDResourceFactoryImpl());
-			
+
 			BPELResource resource = (BPELResource) rs.createResource(uri);
 			resource.setOptionUseNSPrefix(false);
 			resource.load(null);
-			
+
 			Process process = resource.getProcess();
 
 			return process;
@@ -38,7 +57,32 @@ public class BPELResourceUtils {
 			e.printStackTrace();
 		}
 		return null;
+	}
 
+	/**
+	 * Get the sources of a {@link Link}
+	 * @param link
+	 * @return list of {@link Activity}
+	 */
+	public static List<Activity> getSources(Link link) {
+		List<Activity> result = new ArrayList<Activity>();
+		for (Source src: link.getSources()) {
+			result.add(src.getActivity());
+		}
+		return result;
+	}
+
+	/**
+	 * Get the targets of a {@link Link}
+	 * @param link
+	 * @return list of {@link Activity}
+	 */
+	public static List<Activity> getTargets(Link link) {
+		List<Activity> result = new ArrayList<Activity>();
+		for (Target target: link.getTargets()) {
+			result.add(target.getActivity());
+		}
+		return result;	
 	}
 
 }

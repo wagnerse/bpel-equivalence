@@ -3,25 +3,27 @@ package de.uni_stuttgart.iaas.bpel.equivalence.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EObject;
-import org.metacsp.time.qualitative.QualitativeAllenIntervalConstraint.Type;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Constraint;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.RelationEnum;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Variable;
 
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.ActivityState;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.StateConstraint;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.BPELStateEnum;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.NetworkSolver;
-
+/**
+ * 
+ * @author Jonas Scheurich
+ * 
+ * This activity network supports BPEL elements without a local network.
+ *
+ */
 public abstract class AbstractDefaultActivityNetwork extends AbstractActivityNetwork{
 
-	public AbstractDefaultActivityNetwork(AbstractActivityNetwork parentNetwork, NetworkSolver network) {
+	public AbstractDefaultActivityNetwork(AbstractActivityNetwork parentNetwork, Problem network) {
 		super(parentNetwork, network);
 	}
 
 	@Override
-	public Map<Pair<BPELStateEnum, BPELStateEnum>, Type[]> getConnectionConstraints() {
-		return new HashMap<Pair<BPELStateEnum, BPELStateEnum>, Type[]>();
+	public Map<ConstraintMappingKey, RelationEnum[]> getConstraintMapping() {
+		return new HashMap<ConstraintMappingKey, RelationEnum[]>();
 	}
 
 	@Override
@@ -30,20 +32,20 @@ public abstract class AbstractDefaultActivityNetwork extends AbstractActivityNet
 	}
 
 	@Override
-	public StateConstraint[] getLocalLinks() {
-		StateConstraint[] stateLinks = {};
+	public Constraint[] getLocalConstraints() {
+		Constraint[] stateLinks = {};
 		return stateLinks;
 	}
 	
 	public class DefaultConnector implements IActivityConnector {
 
-		private ActivityState[] states = {};
+		private Variable[] states = {};
 
 		public DefaultConnector() {
 		}
 
 		@Override
-		public ActivityState[] getConnectionStates() {
+		public Variable[] getVariables() {
 			return states;
 		}
 
