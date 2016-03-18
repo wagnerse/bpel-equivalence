@@ -26,8 +26,8 @@ public class BpelAllenNetworkConsole {
 		long duration = System.currentTimeMillis() - start;
 		System.out.println(
 				"Network created (" 
-				+ network1.getConstraints().size() + " constraints, " 
-				+ network1.getVariables().size() + " variables"
+				+ network1.getConstraints().length + " constraints, " 
+				+ network1.getVariables().length + " variables"
 				+ ").");
 		
 		System.out.println("Calculation time: " + duration + "ms.");

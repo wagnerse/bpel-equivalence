@@ -4,10 +4,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Constraint;
+import org.metacsp.framework.Variable;
+
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PAConstraint;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PAVariable;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.RelationEnum;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Variable;
 
 /**
  * 
@@ -34,29 +35,30 @@ public class NetworkUtils {
 		// write head line;
 		writer.append(",");
 		for (Variable v : network.getVariables()) {
-
-			writer.append(v.getName() + ", ");
-
+			if (v instanceof PAVariable) {
+				writer.append(((PAVariable) v).getName() + ", ");
+			}
 		}
 		writer.append("\n");
 
 		// write data
 		for (Variable vl : network.getVariables()) {
 			// write state name
-			writer.append(vl.getName() + ", ");
-
-			// write data
-			for (Variable vr : network.getVariables()) {
-				if (vr instanceof Variable) {
-					// constraints 
-					Constraint constraint =  network.getConstraints(vl, vr);
-					if (constraint != null) {
-						writer.append(constraint.relationsToString());
-					}
-					writer.append(", ");
-				}
-			}
 			
+			if (vl instanceof PAVariable) {
+				writer.append(((PAVariable) vl).getName() + ", ");
+				// write data
+				for (Variable vr : network.getVariables()) {
+					if (vr instanceof PAVariable) {
+						// constraints 
+						PAConstraint constraint = (PAConstraint) network.getConstraint(vl, vr);
+						if (constraint != null) {
+							writer.append(constraint.relationsToString());
+						}
+						writer.append(", ");
+					}
+				} 
+			}
 			// end of line
 			writer.append("\n");
 		}

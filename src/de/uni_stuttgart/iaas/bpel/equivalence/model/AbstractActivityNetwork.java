@@ -8,10 +8,10 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.NetworkFactoryRepo;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Constraint;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PAConstraint;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PAVariable;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.RelationEnum;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Variable;
 
 /**
  * 
@@ -97,8 +97,8 @@ public abstract class AbstractActivityNetwork {
 	 */
 	public void createConstraintsBetween(AbstractActivityNetwork actNet1, AbstractActivityNetwork actNet2) {
 		
-		for (Variable var1 : actNet1.getActivityConnector().getVariables()) {			
-			for (Variable var2 : actNet2.getActivityConnector().getVariables()) {
+		for (PAVariable var1 : actNet1.getActivityConnector().getVariables()) {			
+			for (PAVariable var2 : actNet2.getActivityConnector().getVariables()) {
 				// create Key
 				ConstraintMappingKey key = new ConstraintMappingKey(
 						actNet1, var1.getTimePoint(), 
@@ -108,7 +108,7 @@ public abstract class AbstractActivityNetwork {
 					// create constraint link between this activity and the
 					// child activity
 					RelationEnum[] relations = this.constraintsMapping.get(key);
-					Constraint constraint = new Constraint(relations);
+					PAConstraint constraint = new PAConstraint(relations);
 					constraint.setFrom(var1);
 					constraint.setTo(var2);
 					this.getNetwork().addConstraint(constraint);
@@ -144,7 +144,7 @@ public abstract class AbstractActivityNetwork {
 	 * 
 	 * @return
 	 */
-	public abstract Constraint[] getLocalConstraints();
+	public abstract PAConstraint[] getLocalConstraints();
 
 	/**
 	 * Create the activity network of the BPEL child elements of this BPEL element.

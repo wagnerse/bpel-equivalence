@@ -15,10 +15,10 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.IActivityConnector;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.TimePointDesc;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.TimePointDesc.TimeTypeEnum;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.networks.BasicActivityNetwork.BasicActivityConnector;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Constraint;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PAConstraint;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PAVariable;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.RelationEnum;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Variable;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
 
 /**
@@ -33,8 +33,8 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 
 	private EClass support;
 	private Activity activity;
-	private List<Variable> variables = new ArrayList<Variable>();
-	private List<Constraint> constraints = new ArrayList<Constraint>();
+	private List<PAVariable> variables = new ArrayList<PAVariable>();
+	private List<PAConstraint> constraints = new ArrayList<PAConstraint>();
 
 	public BasicActivityNetwork(AbstractActivityNetwork parentNetwork, EClass support, Activity subject, Problem network) {
 		super(parentNetwork, network);
@@ -57,63 +57,63 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 
 	@Override
 	public IActivityConnector getActivityConnector() {
-		Variable[] variableArray = new Variable[this.variables.size()];
+		PAVariable[] variableArray = new PAVariable[this.variables.size()];
 		variableArray = variables.toArray(variableArray);
 		return new BasicActivityConnector(variableArray);
 	}
 	
 	protected void initLocalNetwork() {
 		//create variables
-		Variable startInitial = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START));
-		Variable endInitial = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.END));
+		PAVariable startInitial = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START));
+		PAVariable endInitial = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.END));
 		this.variables.add(startInitial);
 		this.variables.add(endInitial);
 		
-		Variable startDead = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START));
-		Variable endDead = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.END));
+		PAVariable startDead = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START));
+		PAVariable endDead = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.END));
 		this.variables.add(startDead);
 		this.variables.add(endDead);
 		
-		Variable startTerminated = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.START));
-		Variable endTerminated = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.END));
+		PAVariable startTerminated = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.START));
+		PAVariable endTerminated = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.END));
 		this.variables.add(startTerminated);
 		this.variables.add(endTerminated);
 		
-		Variable startExe = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.START));
-		Variable endExe = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.END));
+		PAVariable startExe = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.START));
+		PAVariable endExe = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.END));
 		this.variables.add(startExe);
 		this.variables.add(endExe);
 		
-		Variable startFault = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START));
-		Variable endFault = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.END));
+		PAVariable startFault = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START));
+		PAVariable endFault = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.END));
 		this.variables.add(startFault);
 		this.variables.add(endFault);		
 		
-		Variable startComp = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START));
-		Variable endComp = new Variable(this.getEObject(), new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.END));
+		PAVariable startComp = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START));
+		PAVariable endComp = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.END));
 		this.variables.add(startComp);
 		this.variables.add(endComp);
 		
 		//create intra-state constraints		
-		constraints.add(new Constraint(startInitial, endInitial, RelationEnum.LESS));
-		constraints.add(new Constraint(startDead, endDead, RelationEnum.LESS));
-		constraints.add(new Constraint(startTerminated, endTerminated, RelationEnum.LESS));
-		constraints.add(new Constraint(startExe, endExe, RelationEnum.LESS));
-		constraints.add(new Constraint(startFault, endFault, RelationEnum.LESS));
-		constraints.add(new Constraint(startComp, endComp, RelationEnum.LESS));
+		constraints.add(new PAConstraint(startInitial, endInitial, RelationEnum.LESS));
+		constraints.add(new PAConstraint(startDead, endDead, RelationEnum.LESS));
+		constraints.add(new PAConstraint(startTerminated, endTerminated, RelationEnum.LESS));
+		constraints.add(new PAConstraint(startExe, endExe, RelationEnum.LESS));
+		constraints.add(new PAConstraint(startFault, endFault, RelationEnum.LESS));
+		constraints.add(new PAConstraint(startComp, endComp, RelationEnum.LESS));
 		
 		//create inter-state constraints
-		constraints.add(new Constraint(endInitial, startDead, RelationEnum.EQUALS));
-		constraints.add(new Constraint(endInitial, startTerminated, RelationEnum.EQUALS));
-		constraints.add(new Constraint(endInitial, startExe, RelationEnum.EQUALS));
-		constraints.add(new Constraint(endExe, startTerminated, RelationEnum.EQUALS));
-		constraints.add(new Constraint(endExe, startComp, RelationEnum.EQUALS));
-		constraints.add(new Constraint(endExe, startFault, RelationEnum.EQUALS));
+		constraints.add(new PAConstraint(endInitial, startDead, RelationEnum.EQUALS));
+		constraints.add(new PAConstraint(endInitial, startTerminated, RelationEnum.EQUALS));
+		constraints.add(new PAConstraint(endInitial, startExe, RelationEnum.EQUALS));
+		constraints.add(new PAConstraint(endExe, startTerminated, RelationEnum.EQUALS));
+		constraints.add(new PAConstraint(endExe, startComp, RelationEnum.EQUALS));
+		constraints.add(new PAConstraint(endExe, startFault, RelationEnum.EQUALS));
 	}
 
 	@Override
-	public Constraint[] getLocalConstraints() {
-		Constraint[] constraintArray = new Constraint[this.constraints.size()];
+	public PAConstraint[] getLocalConstraints() {
+		PAConstraint[] constraintArray = new PAConstraint[this.constraints.size()];
 		constraintArray = constraints.toArray(constraintArray);
 		return constraintArray;
 	}
@@ -126,14 +126,14 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 
 	public class BasicActivityConnector implements IActivityConnector {
 
-		private Variable[] states;
+		private PAVariable[] states;
 
-		public BasicActivityConnector(Variable[] states) {
+		public BasicActivityConnector(PAVariable[] states) {
 			this.states = states;
 		}
 
 		@Override
-		public Variable[] getVariables() {
+		public PAVariable[] getVariables() {
 			return states;
 		}
 	}

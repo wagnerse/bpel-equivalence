@@ -3,10 +3,10 @@ package de.uni_stuttgart.iaas.bpel.equivalence.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Constraint;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PAConstraint;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PAVariable;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.RelationEnum;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Variable;
 
 /**
  * 
@@ -32,20 +32,20 @@ public abstract class AbstractDefaultActivityNetwork extends AbstractActivityNet
 	}
 
 	@Override
-	public Constraint[] getLocalConstraints() {
-		Constraint[] stateLinks = {};
+	public PAConstraint[] getLocalConstraints() {
+		PAConstraint[] stateLinks = {};
 		return stateLinks;
 	}
 	
 	public class DefaultConnector implements IActivityConnector {
 
-		private Variable[] states = {};
+		private PAVariable[] states = {};
 
 		public DefaultConnector() {
 		}
 
 		@Override
-		public Variable[] getVariables() {
+		public PAVariable[] getVariables() {
 			return states;
 		}
 

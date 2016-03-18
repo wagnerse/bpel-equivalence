@@ -1,14 +1,7 @@
 package de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.emf.ecore.EObject;
+import org.metacsp.framework.ConstraintNetwork;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.model.BPELStateEnum;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.TimePointDesc;
@@ -20,12 +13,16 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.TimePointDesc.TimeTypeEnum;
  *
  * A Problem contains a point algebra network for BPEL processes
  */
-public class Problem {
+public class Problem extends ConstraintNetwork{
+
+	private static final long serialVersionUID = -474348422217169204L;
 	
-	private List<Variable> variables = new ArrayList<Variable>();
-	private Map<Pair<Variable, Variable>, Constraint> constraints = new HashMap<Pair<Variable, Variable>, Constraint>();
+	private PASolver solver;
 	
-	public Problem() {
+	public Problem(PASolver solver) {
+		super(solver);
+		this.solver = solver;
+		this.solver.setProblem(this);
 	}
 	
 	/**
@@ -36,7 +33,7 @@ public class Problem {
 	 * @param timeType
 	 * @return
 	 */
-	public Variable createVariable(EObject bpelElement, BPELStateEnum timeState, TimeTypeEnum timeType) {
+	public PAVariable createVariable(EObject bpelElement, BPELStateEnum timeState, TimeTypeEnum timeType) {
 		return this.createVariable(bpelElement, new TimePointDesc(timeState, timeType));
 	}
 	
@@ -47,88 +44,42 @@ public class Problem {
 	 * @param timePoint
 	 * @return
 	 */
-	public Variable createVariable(EObject bpelElement, TimePointDesc timePoint) {
-		Variable variable = new Variable(bpelElement, timePoint);
-		this.variables.add(variable);
+	public PAVariable createVariable(EObject bpelElement, TimePointDesc timePoint) {
+		PAVariable variable = (PAVariable) solver.createVariable();
+		variable.setBpelElement(bpelElement);
+		variable.setTimePoint(timePoint);
+		
 		return variable;
 	}
 	
 	/**
-	 * Add some constraints to the point algebra network.
-	 * Unknown variables will be registered.
-	 * 
-	 * If a constraint exists the new and the old constraint will be disjuncted
-	 * 
-	 * @param constraints
+	 * Reduce a constraint 
+	 * @param newConstraint
+	 * @return
+	 * @throws IllegalStateException if the constraint is a contradiction (empty constraint)
 	 */
-	public void addConstraints(Constraint... constraints) {
-		for (Constraint c: constraints) {
-			this.addConstraint(c);
-		}
-	}
-	
-	/**
-	 * Add a constraint to the point algebra network.
-	 * Unknown variables will be registered.
-	 * 
-	 * If a constraint exists the new and the old constraint will be disjuncted
-	 * 
-	 * @param constraint
-	 */
-	public void addConstraint(Constraint constraint) {
+	public boolean reduceConstraint(PAConstraint newConstraint) {
 		
-		// if the variables are unknown, add the variables
-		if (!this.variables.contains(constraint.getFrom())) {
-			this.variables.add(constraint.getFrom());
-		}
-		if (!this.variables.contains(constraint.getTo())) {
-			this.variables.add(constraint.getTo());
+		//check contradiction
+		if (newConstraint.getRelations().size() == 0) {
+			throw new IllegalStateException("Contradiction in " + newConstraint.toString());
 		}
 		
-		Pair<Variable, Variable> key = new ImmutablePair<Variable, Variable>(constraint.getFrom(),
-				constraint.getTo());
-		// if the constraint exists, add the relatoins to the existing constraint
-		if (!this.constraints.containsKey(key)) {
-			this.constraints.put(key, constraint);
+		PAConstraint oldConstraint = (PAConstraint) this.getConstraint(newConstraint.getFrom(), newConstraint.getTo());
+		
+		// return if unavailable
+		if (oldConstraint == null) return false;
+		
+		//check relations
+		for (RelationEnum rel: newConstraint.getRelations()) {
+			if(!oldConstraint.getRelations().contains(rel)) {
+				return false;
+			}
 		}
-		else {
-			this.constraints.get(key).addRelations(constraint.getRelations());
-		}
+		
+		//reduce constraint
+		oldConstraint.setRelations(newConstraint.getRelations());
+		
+		return true;
 	}
-	
-	/**
-	 * Get all constraints of the point algebra network
-	 * 
-	 * @return
-	 */
-	public Collection<Constraint> getConstraints() {
-		return this.constraints.values();
-	}
-
-	/**
-	 * Get all variables of the point algebra network
-	 * 
-	 * @return
-	 */
-	public Collection<Variable> getVariables() {
-		return this.variables;
-	}
-
-	/**
-	 * Get the constraint between two variables.
-	 * 
-	 * @param vl
-	 * @param vr
-	 * @return
-	 */
-	public Constraint getConstraints(Variable vl, Variable vr) {
-		Pair<Variable, Variable> key = new ImmutablePair<Variable, Variable>(vl, vr);
-		if (this.constraints.containsKey(key)) {
-			return this.constraints.get(key);
-		}
-		else {
-			return null;
-		}
-	}
-
 }

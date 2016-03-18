@@ -11,7 +11,7 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
  * from the state of a BPEL element (see {@link BPELStateEnum})
  *
  */
-public class TimePointDesc {
+public class TimePointDesc implements Comparable<Object> {
 
 	public enum TimeTypeEnum {
 		START, END
@@ -21,6 +21,7 @@ public class TimePointDesc {
 	private TimeTypeEnum timeType;
 
 	public TimePointDesc(BPELStateEnum state, TimeTypeEnum timeType) {
+		super();
 		this.state = state;
 		this.timeType = timeType;
 	}
@@ -47,5 +48,37 @@ public class TimePointDesc {
 
 		TimePointDesc rhs = (TimePointDesc) obj;
 		return new EqualsBuilder().append(state, rhs.state).append(timeType, rhs.timeType).isEquals();
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		if(!(o instanceof TimePointDesc)) throw new IllegalArgumentException();
+		
+		if (this.state == ((TimePointDesc) o).getState())
+		{
+			if (this.timeType == ((TimePointDesc) o).getTimeType()) {
+				return 0;
+			}
+			else if (this.timeType.ordinal() < ((TimePointDesc) o).getTimeType().ordinal()) {
+				return -1;
+			}
+			else {
+				return 1;
+			}
+		}
+		else {
+			if (this.state.ordinal() < ((TimePointDesc) o).getState().ordinal()) {
+				return -1;
+			}
+			else {
+				return 1;
+			}
+		}
+	}
+
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

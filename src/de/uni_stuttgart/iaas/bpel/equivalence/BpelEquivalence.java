@@ -8,27 +8,28 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.FHCatchNetworkFact
 import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.FlowNetworkFactory;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.ProcessNetworkFactory;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.ScopeNetworkFactory;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PASolver;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
 
 /**
  * 
  * @author Jonas Scheurich
  *
- * Calculate the equivalence of two BPEL processes
+ *         Calculate the equivalence of two BPEL processes
  *
  */
 public class BpelEquivalence {
-	
+
 	public BpelEquivalence() {
 		initRepo();
 	}
-	
+
 	private void initRepo() {
 
 		NetworkFactoryRepo.getInstance().registerFactory(new ProcessNetworkFactory());
 		NetworkFactoryRepo.getInstance().registerFactory(new ScopeNetworkFactory());
 		NetworkFactoryRepo.getInstance().registerFactory(new FlowNetworkFactory());
-		
+
 		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(BPELPackage.eINSTANCE.getReceive()));
 		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(BPELPackage.eINSTANCE.getReply()));
 		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(BPELPackage.eINSTANCE.getInvoke()));
@@ -37,30 +38,34 @@ public class BpelEquivalence {
 		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(BPELPackage.eINSTANCE.getExit()));
 		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(BPELPackage.eINSTANCE.getWait()));
 		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(BPELPackage.eINSTANCE.getEmpty()));
-		//TODO check compensate, compensateScope, rethrow, validate
-		
+		// TODO check compensate, compensateScope, rethrow, validate
+
 		NetworkFactoryRepo.getInstance().registerFactory(new FHCatchNetworkFactory());
-			
+
 	}
-	
+
 	/**
-	 * Create point algebra network of a {@link EObject} and the containing child's.
+	 * Create point algebra network of a {@link EObject} and the containing
+	 * child's.
+	 * 
 	 * @param eObject
 	 * @return Point algebra network
 	 */
 	public Problem createNetwork(EObject eObject) {
-		return NetworkFactoryRepo.getInstance().createElementNetwork(null, eObject, new Problem()).linkActivityNetworkLayer();
+		return NetworkFactoryRepo.getInstance()
+				.createElementNetwork(null, eObject, new Problem(new PASolver())).linkActivityNetworkLayer();
 	}
-	
+
 	/**
 	 * Check the equivalence of two BPEL elements with point algebra networks
+	 * 
 	 * @param network1
 	 * @param network2
 	 * @return
 	 */
 	public boolean checkBpelEquivalence(Problem network1, Problem network2) {
-		//TODO implement
+		// TODO implement
 		return false;
 	}
-	
+
 }
