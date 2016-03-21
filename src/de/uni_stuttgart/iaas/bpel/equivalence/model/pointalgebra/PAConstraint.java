@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
+import org.metacsp.framework.Variable;
 
 /**
  * 
@@ -26,6 +27,12 @@ public class PAConstraint extends org.metacsp.framework.BinaryConstraint {
 		this.setFrom(from);
 		this.setTo(to);
 		this.relations.addAll(Arrays.asList(relations));
+	}
+
+	public PAConstraint(Variable to, Variable from, List<RelationEnum> relations) {
+		this.setFrom(from);
+		this.setTo(to);
+		this.relations.addAll(relations);
 	}
 
 	public void addRelations(RelationEnum... newRelations) {
@@ -151,9 +158,29 @@ public class PAConstraint extends org.metacsp.framework.BinaryConstraint {
 		return result;
 	}
 
-	public PAConstraint invert() {
+	/**
+	 * Get the relations in reverted direction.
+	 * Less and greater are reverted in greater and less.
+	 * Equals and unrelated are unchanged.
+	 * 
+	 * @return
+	 */
+	public PAConstraint revert() {
+		List<RelationEnum> result = new ArrayList<RelationEnum>();
+		
+		for (RelationEnum r: this.relations) {
+			if (r == RelationEnum.LESS) {
+				result.add(RelationEnum.GREATER);
+			}
+			else if (r == RelationEnum.GREATER) {
+				result.add(RelationEnum.LESS);
+			}
+			else {
+				result.add(r);
+			}
+		}
 
-		return null;
+		return new PAConstraint(this.getTo(), this.getFrom(), result);
 	}
 
 	public static PAConstraint newTConstraint(PAVariable from, PAVariable to) {

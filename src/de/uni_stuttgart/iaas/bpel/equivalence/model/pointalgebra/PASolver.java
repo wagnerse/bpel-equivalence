@@ -1,6 +1,5 @@
 package de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 
 import org.metacsp.framework.Constraint;
@@ -33,9 +32,16 @@ public class PASolver extends ConstraintSolver{
 				queue.addLast(c);
 			}
 		}
+		
+		boolean init = false;
+		if (problem.getConstraints().length == 0)
+		//FIXME case no constraints
+		//FIXME merge constraints
+		
 		if (queue.size() == 0) return true;
 		//FIXME problem contains no constraints: theNetwork and problem are different?
-		while(queue.isEmpty()) {
+		while(queue.isEmpty() || init) {
+			init = false;
 			PAConstraint c = (PAConstraint) queue.getFirst();
 			queue.removeFirst();
 			
@@ -55,23 +61,23 @@ public class PASolver extends ConstraintSolver{
 				
 				//check direction of the constraints
 				if (!c1.getFrom().equals(from)) {
-					c1 = c1.invert();
+					c1 = c1.revert();
 				}
 				if (!c2.getTo().equals(to)) {
-					c2 = c2.invert();
+					c2 = c2.revert();
 				}
 				
 				//check v1 -c1- v2
 				PAConstraint temp1 = c1.cut(c.compose(c2));
 				if (!temp1.equals(c1)) {
-					problem.reduceConstraint(temp1);
+					problem.reduceConstraint(temp1, true);
 					queue.addLast(temp1);
 				}
 				
 				//check v2 -c2- v3
 				PAConstraint temp2 = c2.cut(c1.compose(c));
 				if (!temp2.equals(c2)) {
-					problem.reduceConstraint(temp2);
+					problem.reduceConstraint(temp2, true);
 					queue.addLast(temp2);
 				}
 			}
