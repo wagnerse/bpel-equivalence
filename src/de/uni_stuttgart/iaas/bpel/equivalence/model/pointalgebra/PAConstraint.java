@@ -22,6 +22,10 @@ public class PAConstraint extends org.metacsp.framework.BinaryConstraint {
 	public PAConstraint(RelationEnum... relations) {
 		this.relations.addAll(Arrays.asList(relations));
 	}
+	
+	public PAConstraint(List<RelationEnum> relations) {
+		this.relations.addAll(relations);
+	}
 
 	public PAConstraint(PAVariable from, PAVariable to, RelationEnum... relations) {
 		this.setFrom(from);
@@ -65,6 +69,12 @@ public class PAConstraint extends org.metacsp.framework.BinaryConstraint {
 		}
 
 		return sb.toString();
+	}
+	
+	public String getName() {
+		return ((PAVariable) this.getFrom()).getName() 
+				+ " " + relationsToString() 
+				+ " " + ((PAVariable) this.getTo()).getName();
 	}
 
 	@Override
@@ -145,7 +155,7 @@ public class PAConstraint extends org.metacsp.framework.BinaryConstraint {
 		PAConstraint result = new PAConstraint();
 		result.setTo(this.getTo());
 		result.setFrom(this.getFrom());
-
+		
 		List<RelationEnum> relationCut = new ArrayList<RelationEnum>();
 
 		for (RelationEnum r : this.getRelations()) {
@@ -153,9 +163,19 @@ public class PAConstraint extends org.metacsp.framework.BinaryConstraint {
 				relationCut.add(r);
 			}
 		}
+		
+		//System.out.println("Cut " + this + " with " + c + " = " + relationCut);
 
 		result.addRelations(relationCut);
 		return result;
+	}
+	
+	public void cutAdd(PAConstraint c) {
+		PAConstraint result = this.cut(c);
+		this.relations.clear();
+		for(RelationEnum r: result.getRelations()) {
+			this.relations.add(r);
+		}
 	}
 
 	/**
@@ -179,10 +199,21 @@ public class PAConstraint extends org.metacsp.framework.BinaryConstraint {
 				result.add(r);
 			}
 		}
+		
+		PAConstraint revConstraint = new PAConstraint(result);
+		revConstraint.setTo(this.getFrom());
+		revConstraint.setFrom(this.getTo());
 
-		return new PAConstraint(this.getTo(), this.getFrom(), result);
+		return revConstraint;
 	}
 
+	/**
+	 * Calculate the cut of this constraint with a second This constraint will
+	 * be changed.
+	 * 
+	 * @param c
+	 * @return
+	 */
 	public static PAConstraint newTConstraint(PAVariable from, PAVariable to) {
 		PAConstraint tConstraint = new PAConstraint(from, to, 
 				RelationEnum.LESS, 

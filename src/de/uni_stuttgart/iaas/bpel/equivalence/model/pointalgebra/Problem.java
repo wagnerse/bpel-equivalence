@@ -2,7 +2,6 @@ package de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra;
 
 import org.eclipse.emf.ecore.EObject;
 import org.metacsp.framework.Constraint;
-import org.metacsp.framework.ConstraintNetwork;
 import org.metacsp.framework.Variable;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.model.BPELStateEnum;
@@ -15,14 +14,11 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.TimePointDesc.TimeTypeEnum;
  *
  *         A Problem contains a point algebra network for BPEL processes
  */
-public class Problem extends ConstraintNetwork {
-
-	private static final long serialVersionUID = -474348422217169204L;
+public class Problem {
 
 	private PASolver solver;
 
 	public Problem(PASolver solver) {
-		super(solver);
 		this.solver = solver;
 		this.solver.setProblem(this);
 	}
@@ -36,7 +32,9 @@ public class Problem extends ConstraintNetwork {
 	 * @return
 	 */
 	public PAVariable createVariable(EObject bpelElement, BPELStateEnum timeState, TimeTypeEnum timeType) {
-		return this.createVariable(bpelElement, new TimePointDesc(timeState, timeType));
+		PAVariable newVariable = this.createVariable(bpelElement, new TimePointDesc(timeState, timeType));
+		createTConstraints(newVariable);		
+		return newVariable;
 	}
 
 	/**
@@ -47,11 +45,63 @@ public class Problem extends ConstraintNetwork {
 	 * @return
 	 */
 	public PAVariable createVariable(EObject bpelElement, TimePointDesc timePoint) {
-		PAVariable variable = (PAVariable) solver.createVariable();
-		variable.setBpelElement(bpelElement);
-		variable.setTimePoint(timePoint);
+		PAVariable newVariable = (PAVariable) solver.createVariable();
+		newVariable.setBpelElement(bpelElement);
+		newVariable.setTimePoint(timePoint);
+		createTConstraints(newVariable);
+		return newVariable;
+	}
+	
+	/**
+	 * Create T constraints (containing all relations) between a given variable
+	 * an all other variables of the problem network.
+	 * @param variable
+	 */
+	private void createTConstraints(PAVariable variable) {
+		for (Variable v: this.getVariables()) {
+			if (!v.equals(variable) && this.getTwoWayConstraint(variable, v) == null) {
+				PAConstraint newConstraint = PAConstraint.newTConstraint(variable, (PAVariable) v);
+				boolean created = this.addConstraint(newConstraint);
+				//System.out.println("Create [" + created + "] " + newConstraint.toString());
+			}
+		}
+	}
+	
+	public boolean containsConstraint(Variable from, Variable to) {
+		Constraint constraints = this.getConstraint(from, to);
+		if (constraints != null) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	public boolean containsToWayConstraint(Variable from, Variable to) {
+		Constraint constraints = this.getTwoWayConstraint(from, to);
+		if (constraints != null) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 
-		return variable;
+	public boolean addConstraint(PAConstraint c) {
+		if (containsToWayConstraint(c.getFrom(), c.getTo())) {
+			reduceTwoWayConstraint(c, true);
+			return this.solver.propagate();
+		}
+		else {
+			return this.solver.addConstraint(c);
+		}
+				
+	}
+	
+	public void addConstraints(PAConstraint...constraints) {
+		for (PAConstraint c: constraints) {
+			addConstraint(c);
+		}
 	}
 
 	/**
@@ -66,13 +116,15 @@ public class Problem extends ConstraintNetwork {
 	 * @throws IllegalStateException
 	 *             if the constraint is multidirected (two constraints)
 	 */
-	public boolean reduceConstraint(PAConstraint newConstraint, boolean create) {
+	public PAConstraint reduceTwoWayConstraint(PAConstraint newConstraint, boolean create) {
 
 		// check contradiction
 		if (newConstraint.getRelations().size() == 0) {
-			throw new IllegalStateException("Contradiction in " + newConstraint.toString());
+			throw new IllegalStateException("Contradiction in " + newConstraint.getName());
 		}
 
+		// get the old constraint in original and reversed direction
+		// only one should be found.
 		PAConstraint oldConstraint = (PAConstraint) this.getConstraint(
 				newConstraint.getFrom(), 
 				newConstraint.getTo());
@@ -80,17 +132,21 @@ public class Problem extends ConstraintNetwork {
 				newConstraint.getTo(),
 				newConstraint.getFrom());
 
-		// return if unavailable
-		if (!create && oldConstraint == null && oldConstraintRev == null) {
-			return false;
-		}
-		else {
-			oldConstraint = PAConstraint.newTConstraint(
-					(PAVariable) newConstraint.getFrom(), 
-					(PAVariable) newConstraint.getTo());
+		// return if the constraint is unavailable
+		if (oldConstraint == null && oldConstraintRev == null) {
+			if (create) {
+				// if create mode is selected, create a T transition
+				oldConstraint = PAConstraint.newTConstraint(
+						(PAVariable) newConstraint.getFrom(), 
+						(PAVariable) newConstraint.getTo());
+			}
+			else {
+				return null;
+			}
 		}
 
-		// select constraint
+		// select original or reverted constraint
+		// throw exception, if a original and a reversed constraint exists.
 		PAConstraint opOldConstraint;
 		PAConstraint opNewConstraint;
 		if (oldConstraint != null && oldConstraintRev == null) {
@@ -101,31 +157,46 @@ public class Problem extends ConstraintNetwork {
 			opNewConstraint = newConstraint.revert();
 		} else {
 			throw new IllegalStateException(
-					"Bidirected edge found " + oldConstraint.toString() + ", " + oldConstraintRev.toString());
-		}
-
-		// check relations
-		for (RelationEnum rel : opNewConstraint.getRelations()) {
-			if (!opOldConstraint.getRelations().contains(rel)) {
-				return false;
-			}
+					"Bidirected edge found " + oldConstraint.getName() + ", " + oldConstraintRev.getName());
 		}
 
 		// reduce constraint
-		opOldConstraint.setRelations(opNewConstraint.getRelations());
-
-		return true;
+		opOldConstraint.cutAdd(opNewConstraint);
+		
+		// return the reduced constraint.
+		return opOldConstraint;
+	}
+	
+	public Constraint[] getConstraints() {
+		return this.solver.getConstraints();
+	}
+	
+	public void removeConstraint(Constraint c) {
+		this.solver.removeConstraint(c);
 	}
 
-	public void mergeConstraints() {
+	public Variable[] getVariables() {
+		 return this.solver.getVariables();
+	}
 
-		for (Variable v1 : this.getVariables()) {
-			for (Variable v2 : this.getVariables()) {
-				Constraint[] c = this.getConstraints(v1, v2);
-				Constraint[] cRev = this.getConstraints(v2, v1);
-
-				// TODO
-			}
+	public Constraint getConstraint(Variable from, Variable to) {
+		Constraint[] constraints = this.solver.getConstraints(from, to);
+		if (constraints.length != 0) {
+			return constraints[0];
+		}
+		else {
+			return null;
 		}
 	}
+	
+	public PAConstraint getTwoWayConstraint(Variable from, Variable to) {
+		PAConstraint c = (PAConstraint) this.getConstraint(from, to);
+		PAConstraint cRev = (PAConstraint) this.getConstraint(to, from);
+		
+		if (c != null && cRev == null) return c;
+		else if (cRev != null && c == null) return cRev.revert();
+		else if (c == null && cRev == null) return null;
+		else throw new IllegalStateException("Multiple constraints.");
+	}
+	
 }
