@@ -22,6 +22,10 @@ public class Problem {
 		this.solver = solver;
 		this.solver.setProblem(this);
 	}
+	
+	public boolean probagate() {
+		return this.solver.propagate();
+	}
 
 	/**
 	 * Create a variable for a BPEL element and a time point
@@ -61,8 +65,7 @@ public class Problem {
 		for (Variable v: this.getVariables()) {
 			if (!v.equals(variable) && this.getTwoWayConstraint(variable, v) == null) {
 				PAConstraint newConstraint = PAConstraint.newTConstraint(variable, (PAVariable) v);
-				boolean created = this.addConstraint(newConstraint);
-				//System.out.println("Create [" + created + "] " + newConstraint.toString());
+				this.addConstraint(newConstraint);
 			}
 		}
 	}
@@ -90,7 +93,7 @@ public class Problem {
 	public boolean addConstraint(PAConstraint c) {
 		if (containsToWayConstraint(c.getFrom(), c.getTo())) {
 			reduceTwoWayConstraint(c, true);
-			return this.solver.propagate();
+			return true; //return this.solver.propagate();
 		}
 		else {
 			return this.solver.addConstraint(c);

@@ -52,8 +52,12 @@ public class BpelEquivalence {
 	 * @return Point algebra network
 	 */
 	public Problem createNetwork(EObject eObject) {
-		return NetworkFactoryRepo.getInstance()
+		Problem problem =  NetworkFactoryRepo.getInstance()
 				.createElementNetwork(null, eObject, new Problem(new PASolver())).linkActivityNetworkLayer();
+		System.out.println("\nStart constraint probagation");
+		problem.probagate();
+		return problem;
+	
 	}
 
 	/**

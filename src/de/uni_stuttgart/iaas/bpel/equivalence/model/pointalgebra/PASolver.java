@@ -14,7 +14,7 @@ public class PASolver extends ConstraintSolver{
 
 	public PASolver() {
 		super(new Class[]{PAConstraint.class}, PAVariable.class);
-		this.setOptions(OPTIONS.NO_PROP_ON_VAR_CREATION);
+		this.setOptions(OPTIONS.MANUAL_PROPAGATE);
 	}
 
 	/**
