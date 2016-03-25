@@ -1,8 +1,14 @@
 package de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.emf.ecore.EObject;
-import org.metacsp.framework.Constraint;
-import org.metacsp.framework.Variable;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.model.BPELStateEnum;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.TimePointDesc;
@@ -14,11 +20,15 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.TimePointDesc.TimeTypeEnum;
  *
  *         A Problem contains a point algebra network for BPEL processes
  */
-public class Problem {
+public class PANetwork {
 
 	private PASolver solver;
+	private int idCount = 0;
+	
+	private List<PAVariable> variables = new LinkedList<PAVariable>();
+	private Map<Pair<PAVariable, PAVariable>, PAConstraint> constraints = new HashMap<Pair<PAVariable, PAVariable>, PAConstraint>();
 
-	public Problem(PASolver solver) {
+	public PANetwork(PASolver solver) {
 		this.solver = solver;
 		this.solver.setProblem(this);
 	}
@@ -49,9 +59,11 @@ public class Problem {
 	 * @return
 	 */
 	public PAVariable createVariable(EObject bpelElement, TimePointDesc timePoint) {
-		PAVariable newVariable = (PAVariable) solver.createVariable();
+		PAVariable newVariable = new PAVariable(idCount++);
 		newVariable.setBpelElement(bpelElement);
 		newVariable.setTimePoint(timePoint);
+		
+		this.variables.add(newVariable);
 		createTConstraints(newVariable);
 		return newVariable;
 	}
@@ -62,41 +74,21 @@ public class Problem {
 	 * @param variable
 	 */
 	private void createTConstraints(PAVariable variable) {
-		for (Variable v: this.getVariables()) {
+		for (PAVariable v: this.getVariables()) {
 			if (!v.equals(variable) && this.getTwoWayConstraint(variable, v) == null) {
-				PAConstraint newConstraint = PAConstraint.newTConstraint(variable, (PAVariable) v);
+				PAConstraint newConstraint = PAConstraint.newTConstraint(variable, v);
 				this.addConstraint(newConstraint);
 			}
 		}
 	}
-	
-	public boolean containsConstraint(Variable from, Variable to) {
-		Constraint constraints = this.getConstraint(from, to);
-		if (constraints != null) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-	
-	public boolean containsToWayConstraint(Variable from, Variable to) {
-		Constraint constraints = this.getTwoWayConstraint(from, to);
-		if (constraints != null) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
 
-	public boolean addConstraint(PAConstraint c) {
+	public void addConstraint(PAConstraint c) {
 		if (containsToWayConstraint(c.getFrom(), c.getTo())) {
 			reduceTwoWayConstraint(c, true);
-			return true; //return this.solver.propagate();
 		}
 		else {
-			return this.solver.addConstraint(c);
+			Pair<PAVariable, PAVariable> key = new MutablePair<PAVariable, PAVariable>(c.getFrom(), c.getTo());
+			this.constraints.put(key, c);
 		}
 				
 	}
@@ -128,10 +120,10 @@ public class Problem {
 
 		// get the old constraint in original and reversed direction
 		// only one should be found.
-		PAConstraint oldConstraint = (PAConstraint) this.getConstraint(
+		PAConstraint oldConstraint = this.getConstraint(
 				newConstraint.getFrom(), 
 				newConstraint.getTo());
-		PAConstraint oldConstraintRev = (PAConstraint) this.getConstraint(
+		PAConstraint oldConstraintRev = this.getConstraint(
 				newConstraint.getTo(),
 				newConstraint.getFrom());
 
@@ -140,8 +132,8 @@ public class Problem {
 			if (create) {
 				// if create mode is selected, create a T transition
 				oldConstraint = PAConstraint.newTConstraint(
-						(PAVariable) newConstraint.getFrom(), 
-						(PAVariable) newConstraint.getTo());
+						newConstraint.getFrom(), 
+						newConstraint.getTo());
 			}
 			else {
 				return null;
@@ -170,29 +162,46 @@ public class Problem {
 		return opOldConstraint;
 	}
 	
-	public Constraint[] getConstraints() {
-		return this.solver.getConstraints();
+
+	public boolean containsConstraint(PAVariable from, PAVariable to) {
+		Pair<PAVariable, PAVariable> key = new MutablePair<PAVariable, PAVariable>(from, to);
+		return this.constraints.containsKey(key);
 	}
 	
-	public void removeConstraint(Constraint c) {
-		this.solver.removeConstraint(c);
+	public boolean containsToWayConstraint(PAVariable from, PAVariable to) {
+		return this.containsConstraint(from, to) || this.containsConstraint(to, from);
 	}
-
-	public Variable[] getVariables() {
-		 return this.solver.getVariables();
+	
+	public Collection<PAConstraint> getConstraints() {
+		return this.constraints.values();
 	}
-
-	public Constraint getConstraint(Variable from, Variable to) {
-		Constraint[] constraints = this.solver.getConstraints(from, to);
-		if (constraints.length != 0) {
-			return constraints[0];
+	
+	public boolean removeConstraint(PAConstraint c) {
+		if (this.containsConstraint(c.getFrom(), c.getTo())) {
+			Pair<PAVariable, PAVariable> key = new MutablePair<PAVariable, PAVariable>(c.getFrom(), c.getTo());
+			this.constraints.remove(key);
+			return true;
 		}
 		else {
-			return null;
+			return false;
 		}
 	}
 	
-	public PAConstraint getTwoWayConstraint(Variable from, Variable to) {
+	public boolean removeTwoWayConstraint(PAConstraint c) {
+		return removeConstraint(c) || removeConstraint(c.revert());
+	}
+
+	public Collection<PAVariable> getVariables() {
+		 return this.variables;
+	}
+
+	public PAConstraint getConstraint(PAVariable from, PAVariable to) {
+		Pair<PAVariable, PAVariable> key = new MutablePair<PAVariable, PAVariable>(from, to);
+		return this.constraints.get(key);
+
+	}
+	
+	public PAConstraint getTwoWayConstraint(PAVariable from, PAVariable to) {
 		PAConstraint c = (PAConstraint) this.getConstraint(from, to);
 		PAConstraint cRev = (PAConstraint) this.getConstraint(to, from);
 		

@@ -10,11 +10,11 @@ public class TestMappingKeyConsole {
 	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 		
-		PAVariable v1a = new PAVariable(0, null , null, new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START));
-		PAVariable v1b = new PAVariable(0, null , null, new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START));
+		PAVariable v1a = new PAVariable(0, null, new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START));
+		PAVariable v1b = new PAVariable(0, null, new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START));
 		
-		PAVariable v2a = new PAVariable(0, null , null, new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.START));
-		PAVariable v2b = new PAVariable(0, null , null, new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.START));
+		PAVariable v2a = new PAVariable(0, null, new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.START));
+		PAVariable v2b = new PAVariable(0, null, new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.START));
 		
 		int keyv1a = v1a.hashCode();
 		int keyv1b = v1b.hashCode();

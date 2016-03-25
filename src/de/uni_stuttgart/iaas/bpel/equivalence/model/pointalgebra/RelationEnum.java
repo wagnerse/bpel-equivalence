@@ -16,7 +16,6 @@ public enum RelationEnum {
 	LESS,		// x < y iff x precedes y
 	GREATER, 	// x > y iff y precedes x
 	EQUALS, 	// x = Y iff x, y are at the same point
-	UNEQUALS,
 	UNRELATED;	// x || y iff x, y belong to different branches ort points	
 	
 	public RelationEnum[] compose(RelationEnum r2) {

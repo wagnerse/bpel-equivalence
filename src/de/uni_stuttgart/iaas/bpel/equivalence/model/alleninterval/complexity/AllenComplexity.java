@@ -88,7 +88,6 @@ public class AllenComplexity {
 		gammaX.add(createRelationSet(RelationEnum.UNRELATED));
 		gammaX.add(createRelationSet(RelationEnum.UNRELATED, RelationEnum.EQUALS));
 		gammaX.add(createRelationSet(RelationEnum.EQUALS));
-		gammaX.add(createRelationSet(RelationEnum.UNEQUALS));
 		gammaX.add(createRelationSet(RelationEnum.LESS, RelationEnum.UNRELATED));
 		gammaX.add(createRelationSet(RelationEnum.GREATER, RelationEnum.UNRELATED));
 		gammaX.add(createRelationSet(RelationEnum.LESS, RelationEnum.UNRELATED, RelationEnum.EQUALS));

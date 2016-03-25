@@ -3,7 +3,7 @@ package de.uni_stuttgart.iaas.bpel.equivalence.console;
 import org.eclipse.emf.ecore.EObject;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.BpelEquivalence;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PANetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.BPELUtils;
 
 public class BpelEquivalenceConsole {
@@ -17,8 +17,8 @@ public class BpelEquivalenceConsole {
 		EObject process2 = (EObject) BPELUtils.readProcessFromFile(args[1]);
 		
 		BpelEquivalence equivalence = new BpelEquivalence();
-		Problem network1 = equivalence.createNetwork(process1);
-		Problem network2 = equivalence.createNetwork(process2);
+		PANetwork network1 = equivalence.createNetwork(process1);
+		PANetwork network2 = equivalence.createNetwork(process2);
 		
 		boolean equal = equivalence.checkBpelEquivalence(network1, network2);
 		

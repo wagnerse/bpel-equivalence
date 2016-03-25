@@ -8,7 +8,7 @@ import org.eclipse.emf.ecore.EObject;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.AbstractActivityNetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.IActivityNetworkFactory;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.networks.FHCatchNetwork;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PANetwork;
 
 /**
  * 
@@ -25,7 +25,7 @@ public class FHCatchNetworkFactory implements IActivityNetworkFactory{
 	}
 
 	@Override
-	public AbstractActivityNetwork createElementNetwork(AbstractActivityNetwork parentNetwork, EObject eobject, Problem network) {
+	public AbstractActivityNetwork createElementNetwork(AbstractActivityNetwork parentNetwork, EObject eobject, PANetwork network) {
 		return new FHCatchNetwork(parentNetwork, (Catch) eobject, network);
 	}
 

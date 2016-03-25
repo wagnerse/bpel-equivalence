@@ -2,51 +2,41 @@ package de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra;
 
 import java.util.LinkedList;
 
-import org.metacsp.framework.Constraint;
-import org.metacsp.framework.ConstraintSolver;
-import org.metacsp.framework.Variable;
 
-public class PASolver extends ConstraintSolver{
-
-	private static final long serialVersionUID = -1318154361840997199L;
+public class PASolver {
 	
-	private Problem problem;
+	private PANetwork problem;
 
 	public PASolver() {
-		super(new Class[]{PAConstraint.class}, PAVariable.class);
-		this.setOptions(OPTIONS.MANUAL_PROPAGATE);
+		
 	}
 
 	/**
 	 * @return
 	 */
-	@Override
 	public boolean propagate() {
 		if (this.getProblem() == null) return false;
 		
-		LinkedList<Constraint> queue = new LinkedList<Constraint>();
+		LinkedList<PAConstraint> queue = new LinkedList<PAConstraint>();
 		
 		// initialize queue
-		for (Constraint c: getProblem().getConstraints()) {
-			if (c instanceof PAConstraint) {
-				queue.addLast(c);
-			}
+		for (PAConstraint c: getProblem().getConstraints()) {
+			queue.addLast(c);
 		}
 				
 		while(!queue.isEmpty()) {
-			PAConstraint c = (PAConstraint) queue.getFirst();
+			PAConstraint c = queue.getFirst();
 			queue.removeFirst();
 			
-			PAVariable from = (PAVariable) c.getFrom();
-			PAVariable to = (PAVariable) c.getTo();
-			for(Variable intermediate: getProblem().getVariables()) {
+			PAVariable from = c.getFrom();
+			PAVariable to = c.getTo();
+			for(PAVariable intermediate: getProblem().getVariables()) {
 				// skip to and from
 				if (intermediate.equals(from) || intermediate.equals(to)) continue;
 				
 				// get the 3-K constraints
-				PAConstraint c1 = (PAConstraint) getProblem().getTwoWayConstraint(intermediate, from);
-				PAConstraint c2 = (PAConstraint) getProblem().getTwoWayConstraint(to, intermediate);
-				//System.out.println("\nStart probagation for " + c + " with " + c1 + ", " + c2);
+				PAConstraint c1 = getProblem().getTwoWayConstraint(intermediate, from);
+				PAConstraint c2 = getProblem().getTwoWayConstraint(to, intermediate);
 				
 				//create a constraint if necessary
 				if (c1 == null || c2 == null) return false;
@@ -55,10 +45,10 @@ public class PASolver extends ConstraintSolver{
 				PAConstraint a1 = selectConstraintA(c1.getFrom(), c, c2);
 				PAConstraint b1 = selectConstraintB(c1.getTo(), c, c2);
 				//check v1 -c1- v2
-				PAConstraint comp1 = a1.compose(b1);
-				//System.out.println("Probagate " + a1 + " with " + b1 + " :: Comp: " + comp1);
-				PAConstraint temp1 = c1.cut(comp1);
-				//System.out.println("c1: " + c1.toString() + " vs. " + temp1.toString());
+				PAConstraint temp1 = c1.cut(a1.compose(b1));
+				if (temp1.getRelations().size() == 0) {
+					throw new IllegalStateException("Contradiction with " + c1 + " cut( " + a1 + " O " + b1 + " )");
+				}
 				if (!temp1.equals(c1)) {
 					queue.addLast(getProblem().reduceTwoWayConstraint(temp1, true));
 				}
@@ -67,10 +57,10 @@ public class PASolver extends ConstraintSolver{
 				PAConstraint a2 = selectConstraintA(c2.getFrom(), c1, c);
 				PAConstraint b2 = selectConstraintB(c2.getTo(), c1, c);
 				//check v2 -c2- v3
-				//System.out.println("Probagate " + a2 + " with " + b2);
-				PAConstraint comp2 = a2.compose(b2);
-				PAConstraint temp2 = c2.cut(comp2);
-				//System.out.println("c2: " + c2.toString() + " vs. " + temp2.toString());
+				PAConstraint temp2 = c2.cut(a2.compose(b2));
+				if (temp2.getRelations().size() == 0) {
+					throw new IllegalStateException("Contradiction with " + c2 + " cut( " + a2 + " O " + b2 + " )");
+				}
 				if (!temp2.equals(c2)) {
 					queue.addLast(getProblem().reduceTwoWayConstraint(temp2, true));
 				}
@@ -79,7 +69,7 @@ public class PASolver extends ConstraintSolver{
 		return true;
 	}
 	
-	private PAConstraint selectConstraintA(Variable from, PAConstraint c1, PAConstraint c2) {
+	private PAConstraint selectConstraintA(PAVariable from, PAConstraint c1, PAConstraint c2) {
 		if (from.equals(c1.getFrom())) {
 			return c1;
 		}
@@ -97,7 +87,7 @@ public class PASolver extends ConstraintSolver{
 		}
 	}
 	
-	private PAConstraint selectConstraintB(Variable to, PAConstraint c1, PAConstraint c2) {
+	private PAConstraint selectConstraintB(PAVariable to, PAConstraint c1, PAConstraint c2) {
 		if (to.equals(c1.getTo())) {
 			return c1;
 		}
@@ -115,60 +105,11 @@ public class PASolver extends ConstraintSolver{
 		}
 	}
 
-	public void setProblem(Problem problem) {
+	public void setProblem(PANetwork problem) {
 		this.problem = problem;
 	}
 	
-	public Problem getProblem() {
+	public PANetwork getProblem() {
 		return this.problem;
-	}
-
-	/**
-	 * This procedure runs before some constraints are added
-	 * @return true, if the constraints could be added.
-	 */
-	@Override
-	protected boolean addConstraintsSub(org.metacsp.framework.Constraint[] constraints) {
-		
-		for (Constraint basicConstraint: constraints) {
-			if (!(basicConstraint instanceof PAConstraint))return false;			
-		}
-		
-		return true;
-	}
-
-	/**
-	 * This procedure runs before some constraints are removed
-	 */
-	@Override
-	protected void removeConstraintsSub(org.metacsp.framework.Constraint[] c) {
-		// not implemented
-	}
-
-	/**
-	 * This procedure create some variables
-	 * @return array of {@link PAVariable}s
-	 */
-	@Override
-	protected org.metacsp.framework.Variable[] createVariablesSub(int num) {
-		PAVariable[] ret = new PAVariable[num];
-		for (int i = 0; i < num; i++) {
-			ret[i] = new PAVariable(IDs++, this);
-		}
-		
-		return ret;
-	}
-
-	/**
-	 * This procedure runs before some variables are removed
-	 */
-	@Override
-	protected void removeVariablesSub(org.metacsp.framework.Variable[] v) {
-		// not implemented
-	}
-
-	@Override
-	public void registerValueChoiceFunctions() {
-		// not implemented
 	}
 }

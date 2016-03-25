@@ -5,7 +5,7 @@ import java.io.File;
 import org.eclipse.emf.ecore.EObject;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.BpelEquivalence;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PANetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.NetworkUtils;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.BPELUtils;
 
@@ -21,13 +21,13 @@ public class BpelAllenNetworkConsole {
 		
 		BpelEquivalence equivalence = new BpelEquivalence();
 		
-		Problem network1 = equivalence.createNetwork(process1);
 		
+		PANetwork network1 = equivalence.createNetwork(process1, true);
 		long duration = System.currentTimeMillis() - start;
 		System.out.println(
 				"Network created (" 
-				+ network1.getConstraints().length + " constraints, " 
-				+ network1.getVariables().length + " variables"
+				+ network1.getConstraints().size() + " constraints, " 
+				+ network1.getVariables().size() + " variables"
 				+ ").");
 		
 		System.out.println("Calculation time: " + duration + "ms.");

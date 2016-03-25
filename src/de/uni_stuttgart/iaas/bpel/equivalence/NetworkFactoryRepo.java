@@ -8,7 +8,7 @@ import org.eclipse.emf.ecore.EObject;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.model.AbstractActivityNetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.IActivityNetworkFactory;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PANetwork;
 
 /**
  * 
@@ -47,7 +47,7 @@ public class NetworkFactoryRepo {
 	 * @param network a point algebra network
 	 * @return A activity network object
 	 */
-	public AbstractActivityNetwork createElementNetwork(AbstractActivityNetwork parentNetwork, EObject eobject, Problem network) {
+	public AbstractActivityNetwork createElementNetwork(AbstractActivityNetwork parentNetwork, EObject eobject, PANetwork network) {
 		EClass eClass = eobject.eClass();		
 		if (!factories.containsKey(eClass)) {
 			return null; //TODO stub?

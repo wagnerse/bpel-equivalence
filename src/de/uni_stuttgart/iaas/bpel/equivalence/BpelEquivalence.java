@@ -9,7 +9,7 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.FlowNetworkFactory
 import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.ProcessNetworkFactory;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.ScopeNetworkFactory;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PASolver;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PANetwork;
 
 /**
  * 
@@ -34,7 +34,6 @@ public class BpelEquivalence {
 		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(BPELPackage.eINSTANCE.getReply()));
 		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(BPELPackage.eINSTANCE.getInvoke()));
 		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(BPELPackage.eINSTANCE.getAssign()));
-		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(BPELPackage.eINSTANCE.getThrow()));
 		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(BPELPackage.eINSTANCE.getExit()));
 		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(BPELPackage.eINSTANCE.getWait()));
 		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(BPELPackage.eINSTANCE.getEmpty()));
@@ -43,19 +42,34 @@ public class BpelEquivalence {
 		NetworkFactoryRepo.getInstance().registerFactory(new FHCatchNetworkFactory());
 
 	}
+	
+	public PANetwork createNetwork(EObject eObject) {
+		return createNetwork(eObject, false);
+	}
 
 	/**
 	 * Create point algebra network of a {@link EObject} and the containing
 	 * child's.
 	 * 
-	 * @param eObject
+	 * @param eObject activity to create the network
+	 * @param tryToIncomplete propagate until a contradiction occurs
 	 * @return Point algebra network
 	 */
-	public Problem createNetwork(EObject eObject) {
-		Problem problem =  NetworkFactoryRepo.getInstance()
-				.createElementNetwork(null, eObject, new Problem(new PASolver())).linkActivityNetworkLayer();
+	public PANetwork createNetwork(EObject eObject, boolean tryToIncomplete) {
+		PANetwork problem =  NetworkFactoryRepo.getInstance()
+				.createElementNetwork(null, eObject, new PANetwork(new PASolver())).linkActivityNetworkLayer();
 		System.out.println("\nStart constraint probagation");
-		problem.probagate();
+		try {
+			problem.probagate();
+		} catch (IllegalStateException e) {
+			if (tryToIncomplete) {
+				e.printStackTrace();
+				return problem;
+			}
+			else {
+				throw e;
+			}
+		}
 		return problem;
 	
 	}
@@ -67,7 +81,7 @@ public class BpelEquivalence {
 	 * @param network2
 	 * @return
 	 */
-	public boolean checkBpelEquivalence(Problem network1, Problem network2) {
+	public boolean checkBpelEquivalence(PANetwork network1, PANetwork network2) {
 		// TODO implement
 		return false;
 	}

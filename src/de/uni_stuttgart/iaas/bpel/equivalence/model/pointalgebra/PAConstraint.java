@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
-import org.metacsp.framework.Variable;
 
 /**
  * 
@@ -13,10 +12,10 @@ import org.metacsp.framework.Variable;
  * 
  *         A constraint describes the relation between two time points.
  */
-public class PAConstraint extends org.metacsp.framework.BinaryConstraint {
+public class PAConstraint {
 
-	private static final long serialVersionUID = 7000776024374133335L;
-
+	private PAVariable from;
+	private PAVariable to;
 	private List<RelationEnum> relations = new ArrayList<RelationEnum>();
 
 	public PAConstraint(RelationEnum... relations) {
@@ -32,11 +31,21 @@ public class PAConstraint extends org.metacsp.framework.BinaryConstraint {
 		this.setTo(to);
 		this.relations.addAll(Arrays.asList(relations));
 	}
+	
+	public void setTo(PAVariable to) {
+		this.to = to;
+	}
 
-	public PAConstraint(Variable to, Variable from, List<RelationEnum> relations) {
-		this.setFrom(from);
-		this.setTo(to);
-		this.relations.addAll(relations);
+	public void setFrom(PAVariable from) {
+		this.from = from;
+	}
+	
+	public PAVariable getFrom() {
+		return from;
+	}
+	
+	public PAVariable getTo() {
+		return to;
 	}
 
 	public void addRelations(RelationEnum... newRelations) {
@@ -95,20 +104,10 @@ public class PAConstraint extends org.metacsp.framework.BinaryConstraint {
 	}
 
 	@Override
-	public String getEdgeLabel() {
-		return this.toString();
-	}
-
-	@Override
 	public Object clone() {
 		RelationEnum[] relationArray = new RelationEnum[this.relations.size()];
 		relationArray = this.relations.toArray(relationArray);
 		return new PAConstraint((PAVariable) this.getFrom(), (PAVariable) this.getTo(), relationArray);
-	}
-
-	@Override
-	public boolean isEquivalent(org.metacsp.framework.Constraint c) {
-		return this.equals(c);
 	}
 
 	/**

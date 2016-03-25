@@ -10,7 +10,7 @@ import org.eclipse.emf.ecore.EObject;
 import de.uni_stuttgart.iaas.bpel.equivalence.NetworkFactoryRepo;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PAConstraint;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PAVariable;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PANetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.RelationEnum;
 
 /**
@@ -31,7 +31,7 @@ public abstract class AbstractActivityNetwork {
 	private AbstractActivityNetwork parentNetwork;
 	protected Map<EObject, AbstractActivityNetwork> childNetworks = new HashMap<EObject, AbstractActivityNetwork>();
 
-	private Problem network;
+	private PANetwork network;
 	private Map<ConstraintMappingKey, RelationEnum[]> constraintsMapping = new HashMap<ConstraintMappingKey, RelationEnum[]>();
 
 	@SuppressWarnings("unused")
@@ -39,7 +39,7 @@ public abstract class AbstractActivityNetwork {
 
 	}
 
-	public AbstractActivityNetwork(AbstractActivityNetwork parentNetwork, Problem network) {
+	public AbstractActivityNetwork(AbstractActivityNetwork parentNetwork, PANetwork network) {
 		this.parentNetwork = parentNetwork;
 		this.network = network;
 
@@ -50,7 +50,7 @@ public abstract class AbstractActivityNetwork {
 	 * 
 	 * @return A point algebra network
 	 */
-	public Problem linkActivityNetworkLayer() {
+	public PANetwork linkActivityNetworkLayer() {
 		System.out.println("Create Network for " + this.getNetworkName());
 
 		// create child network objects
@@ -203,7 +203,7 @@ public abstract class AbstractActivityNetwork {
 	 * Get the current point algebra network
 	 * @return
 	 */
-	protected Problem getNetwork() {
+	protected PANetwork getNetwork() {
 		return network;
 	}
 

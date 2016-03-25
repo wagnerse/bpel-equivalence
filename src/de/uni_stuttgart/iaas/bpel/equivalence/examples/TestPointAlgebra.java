@@ -6,19 +6,19 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.TimePointDesc.TimeTypeEnum;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PAConstraint;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PASolver;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PAVariable;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PANetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.RelationEnum;
 
 public class TestPointAlgebra {
 
 	public static void main(String[] args) {
-		Problem problem = new Problem(new PASolver());
+		PANetwork problem = new PANetwork(new PASolver());
 		
 		PAVariable v1 = problem.createVariable(null, new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START)); //id 0
 		PAVariable v2 = problem.createVariable(null, new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.START)); //id 1
 		PAVariable v3 = problem.createVariable(null, new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START)); //id 2
 
-		System.out.println("#var: " + problem.getVariables().length + " #const: " + problem.getConstraints().length + "\n");
+		System.out.println("#var: " + problem.getVariables().size() + " #const: " + problem.getConstraints().size() + "\n");
 
 		PAConstraint c1 = new PAConstraint(v1, v2, RelationEnum.UNRELATED, RelationEnum.EQUALS);
 		

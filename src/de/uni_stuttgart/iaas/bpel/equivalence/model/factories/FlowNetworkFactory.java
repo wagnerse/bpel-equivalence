@@ -8,7 +8,7 @@ import org.eclipse.emf.ecore.EObject;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.AbstractActivityNetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.IActivityNetworkFactory;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.networks.FlowNetwork;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PANetwork;
 
 /**
  * 
@@ -26,7 +26,7 @@ public class FlowNetworkFactory implements IActivityNetworkFactory {
 
 	@Override
 	public AbstractActivityNetwork createElementNetwork(AbstractActivityNetwork parentNetwork, EObject eobject,
-			Problem network) {
+			PANetwork network) {
 		return new FlowNetwork(parentNetwork, (Flow) eobject, network);
 	}
 

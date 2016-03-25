@@ -2,7 +2,6 @@ package de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.eclipse.emf.ecore.EObject;
-import org.metacsp.framework.Domain;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.model.TimePointDesc;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
@@ -14,21 +13,18 @@ import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
  * Describe the time point in a point algebra.
  *
  */
-public class PAVariable extends org.metacsp.framework.Variable {
-
-	private static final long serialVersionUID = -3160371602789326199L;
+public class PAVariable {
 	
 	private TimePointDesc timePoint;
 	private EObject bpelElement;
-	private Domain domain;
+	private int id;
 	
-	public PAVariable(int id, PASolver solver) {
-		super(solver, id);
-		setDomain(new SimpleTimePoint(this));
+	public PAVariable(int id) {
+		this.id = id;
 	}
 	
-	public PAVariable(int id, PASolver solver, EObject bpelElement, TimePointDesc timePoint) {
-		super(solver, id);
+	public PAVariable(int id, EObject bpelElement, TimePointDesc timePoint) {
+		this.id = id;
 		this.bpelElement = bpelElement;
 		this.timePoint = timePoint;
 	}
@@ -56,9 +52,18 @@ public class PAVariable extends org.metacsp.framework.Variable {
 		return bpelName + timePoint.getState().name() + timePoint.getTimeType().name();
 	}
 	
+	public int getID() {
+		return id;
+	}
+	
 	@Override
 	public String toString() {
-		return Integer.toString(this.getID());
+		if (bpelElement != null) {
+			return this.getName();
+		}
+		else {
+			return Integer.toString(this.getID());
+		}
 	}
 	
 	@Override
@@ -75,7 +80,7 @@ public class PAVariable extends org.metacsp.framework.Variable {
 				.isEquals();
 	}
 
-	@Override
+	/*@Override
 	public int compareTo(org.metacsp.framework.Variable arg0) {
 		if (!(arg0 instanceof PAVariable)) throw new IllegalArgumentException();
 		int compareAct = this.getName().compareTo(((PAVariable) arg0).getName());
@@ -85,15 +90,5 @@ public class PAVariable extends org.metacsp.framework.Variable {
 		else {
 			return compareAct;
 		}
-	}
-
-	@Override
-	public Domain getDomain() {
-		return domain;
-	}
-
-	@Override
-	public void setDomain(Domain d) {
-		this.domain = d;
-	}
+	}*/
 }
