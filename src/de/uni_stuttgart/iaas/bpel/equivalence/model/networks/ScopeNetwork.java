@@ -20,7 +20,7 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.TimePointDesc.TimeTypeEnum;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.networks.ScopeNetwork.ScopeConnector;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PAConstraint;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PAVariable;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PANetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.RelationEnum;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
 
@@ -36,7 +36,7 @@ public class ScopeNetwork extends AbstractActivityNetwork{
 	private List<PAVariable> variables = new ArrayList<PAVariable>();
 	private List<PAConstraint> constraints = new ArrayList<PAConstraint>();
 	
-	public ScopeNetwork(AbstractActivityNetwork parentNetwork, Scope subject, Problem network) {
+	public ScopeNetwork(AbstractActivityNetwork parentNetwork, Scope subject, PANetwork network) {
 		super(parentNetwork, network);
 		this.scope = subject;
 		initLocalNetwork();
@@ -80,10 +80,10 @@ public class ScopeNetwork extends AbstractActivityNetwork{
 		this.variables.add(startFaultHandling);
 		this.variables.add(endFaultHandling);
 		
-		PAVariable startFaultUnCaught = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.FAULT_UNCOUGHT, TimeTypeEnum.START));
-		PAVariable endFaultUnCaught = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.FAULT_UNCOUGHT, TimeTypeEnum.END));
-		this.variables.add(startFaultUnCaught);
-		this.variables.add(endFaultUnCaught);
+		PAVariable startFaultCaught = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.FAULT_UNCOUGHT, TimeTypeEnum.START));
+		PAVariable endFaultCaught = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.FAULT_UNCOUGHT, TimeTypeEnum.END));
+		this.variables.add(startFaultCaught);
+		this.variables.add(endFaultCaught);
 
 		PAVariable startFault = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START));
 		PAVariable endFault = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.END));
@@ -101,7 +101,7 @@ public class ScopeNetwork extends AbstractActivityNetwork{
 		constraints.add(new PAConstraint(startTerminated, endTerminated, RelationEnum.LESS));
 		constraints.add(new PAConstraint(startExe, endExe, RelationEnum.LESS));
 		constraints.add(new PAConstraint(startFaultHandling, endFaultHandling, RelationEnum.LESS));
-		constraints.add(new PAConstraint(startFaultUnCaught, endFaultUnCaught, RelationEnum.LESS));
+		constraints.add(new PAConstraint(startFaultCaught, endFaultCaught, RelationEnum.LESS));
 		constraints.add(new PAConstraint(startFault, endFault, RelationEnum.LESS));
 		constraints.add(new PAConstraint(startComp, endComp, RelationEnum.LESS));
 		
@@ -113,7 +113,13 @@ public class ScopeNetwork extends AbstractActivityNetwork{
 		constraints.add(new PAConstraint(endExe, startComp, RelationEnum.EQUALS, RelationEnum.UNRELATED));
 		constraints.add(new PAConstraint(endExe, startFaultHandling, RelationEnum.EQUALS, RelationEnum.UNRELATED));	
 		constraints.add(new PAConstraint(endFaultHandling, startFault, RelationEnum.EQUALS, RelationEnum.UNRELATED));
-		constraints.add(new PAConstraint(endFaultHandling, startFaultUnCaught, RelationEnum.EQUALS, RelationEnum.UNRELATED));
+		constraints.add(new PAConstraint(endFaultHandling, startFaultCaught, RelationEnum.EQUALS, RelationEnum.UNRELATED));
+
+		//create inter-state constraints for exclusive flow
+		constraints.add(new PAConstraint(startDead, startExe, RelationEnum.UNRELATED));
+		constraints.add(new PAConstraint(startTerminated, startComp, RelationEnum.UNRELATED));
+		constraints.add(new PAConstraint(startFaultHandling, startComp, RelationEnum.UNRELATED));
+		constraints.add(new PAConstraint(startFault, startFaultCaught, RelationEnum.UNRELATED));
 	}
 	
 	@Override

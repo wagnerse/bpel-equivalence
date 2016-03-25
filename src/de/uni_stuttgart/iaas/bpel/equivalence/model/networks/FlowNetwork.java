@@ -24,7 +24,7 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.TimePointDesc.TimeTypeEnum;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.networks.FlowNetwork.FlowConnector;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PAConstraint;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PAVariable;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PANetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.RelationEnum;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.BPELUtils;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
@@ -43,7 +43,7 @@ public class FlowNetwork extends AbstractActivityNetwork {
 	
 	private enum LinkTypeEnum {SINGLE, PARALLEL, EXCLUSIVE};
 
-	public FlowNetwork(AbstractActivityNetwork parentNetwork, Flow subject, Problem network) {
+	public FlowNetwork(AbstractActivityNetwork parentNetwork, Flow subject, PANetwork network) {
 		super(parentNetwork, network);
 		this.flow = subject;
 
@@ -113,6 +113,11 @@ public class FlowNetwork extends AbstractActivityNetwork {
 		constraints.add(new PAConstraint(endExe, startTerminated, RelationEnum.EQUALS, RelationEnum.UNRELATED));
 		constraints.add(new PAConstraint(endExe, startComp, RelationEnum.EQUALS, RelationEnum.UNRELATED));
 		constraints.add(new PAConstraint(endExe, startFault, RelationEnum.EQUALS, RelationEnum.UNRELATED));
+
+		//create inter-state constraints for exclusive flow
+		constraints.add(new PAConstraint(startDead, startExe, RelationEnum.UNRELATED));
+		constraints.add(new PAConstraint(startTerminated, startComp, RelationEnum.UNRELATED));
+		constraints.add(new PAConstraint(startFault, startComp, RelationEnum.UNRELATED));
 	}
 
 	/**
@@ -155,6 +160,12 @@ public class FlowNetwork extends AbstractActivityNetwork {
 			this.putConstraint(this, new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.END), 
 					actNetwork, new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.END), 
 					RelationEnum.EQUALS, RelationEnum.GREATER);
+			this.putConstraint(this, new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START), 
+					actNetwork, new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START), 
+					RelationEnum.UNRELATED, RelationEnum.GREATER);
+			this.putConstraint(this, new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.START), 
+					actNetwork, new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START), 
+					RelationEnum.UNRELATED, RelationEnum.GREATER);
 			
 			
 			if (act.getTargets() == null ||(act.getTargets() != null && act.getTargets().getChildren().size() == 0)) {

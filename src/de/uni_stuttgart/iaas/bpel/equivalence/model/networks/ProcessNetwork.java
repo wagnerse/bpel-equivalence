@@ -10,7 +10,7 @@ import org.eclipse.emf.ecore.EObject;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.model.AbstractActivityNetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.AbstractDefaultActivityNetwork;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PANetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
 
 /**
@@ -23,14 +23,14 @@ public class ProcessNetwork extends AbstractDefaultActivityNetwork{
 	
 	private Process process;
 
-	public ProcessNetwork(AbstractActivityNetwork parentNetwork, Process subject, Problem network) {
+	public ProcessNetwork(AbstractActivityNetwork parentNetwork, Process subject, PANetwork network) {
 		super(parentNetwork, network);
 		this.process = subject;
 		
 		initLocalNetwork();
 	}
 	
-	public ProcessNetwork(AbstractActivityNetwork parentNetwork, EObject subject, Problem network) {		
+	public ProcessNetwork(AbstractActivityNetwork parentNetwork, EObject subject, PANetwork network) {		
 		super(parentNetwork, network);
 		this.process = (Process) subject;
 		

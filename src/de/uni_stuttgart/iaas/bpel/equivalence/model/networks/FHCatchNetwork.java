@@ -19,7 +19,7 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.TimePointDesc.TimeTypeEnum;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.networks.FHCatchNetwork.FHConnector;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PAConstraint;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PAVariable;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PANetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.RelationEnum;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
 
@@ -36,7 +36,7 @@ public class FHCatchNetwork extends AbstractActivityNetwork {
 	private List<PAVariable> variables = new ArrayList<PAVariable>();
 	private List<PAConstraint> constraints = new ArrayList<PAConstraint>();
 
-	public FHCatchNetwork(AbstractActivityNetwork parentNetwork, Catch subject, Problem network) {
+	public FHCatchNetwork(AbstractActivityNetwork parentNetwork, Catch subject, PANetwork network) {
 		super(parentNetwork, network);
 		this.faultHandlerCatch = subject;
 		this.activity = faultHandlerCatch.getActivity();
@@ -107,6 +107,11 @@ public class FHCatchNetwork extends AbstractActivityNetwork {
 		constraints.add(new PAConstraint(endExe, startTerminated, RelationEnum.EQUALS, RelationEnum.UNRELATED));
 		constraints.add(new PAConstraint(endExe, startComp, RelationEnum.EQUALS, RelationEnum.UNRELATED));
 		constraints.add(new PAConstraint(endExe, startFault, RelationEnum.EQUALS, RelationEnum.UNRELATED));	
+
+		//create inter-state constraints for exclusive flow
+		constraints.add(new PAConstraint(startDead, startExe, RelationEnum.UNRELATED));
+		constraints.add(new PAConstraint(startTerminated, startComp, RelationEnum.UNRELATED));
+		constraints.add(new PAConstraint(startFault, startComp, RelationEnum.UNRELATED));
 	}
 
 	@Override

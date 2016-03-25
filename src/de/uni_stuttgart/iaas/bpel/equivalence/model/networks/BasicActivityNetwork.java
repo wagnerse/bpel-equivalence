@@ -17,7 +17,7 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.TimePointDesc.TimeTypeEnum;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.networks.BasicActivityNetwork.BasicActivityConnector;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PAConstraint;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PAVariable;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.Problem;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PANetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.RelationEnum;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
 
@@ -36,7 +36,7 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 	private List<PAVariable> variables = new ArrayList<PAVariable>();
 	private List<PAConstraint> constraints = new ArrayList<PAConstraint>();
 
-	public BasicActivityNetwork(AbstractActivityNetwork parentNetwork, EClass support, Activity subject, Problem network) {
+	public BasicActivityNetwork(AbstractActivityNetwork parentNetwork, EClass support, Activity subject, PANetwork network) {
 		super(parentNetwork, network);
 		this.support = support;
 		this.activity = subject;
@@ -102,13 +102,18 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 		constraints.add(new PAConstraint(startFault, endFault, RelationEnum.LESS));
 		constraints.add(new PAConstraint(startComp, endComp, RelationEnum.LESS));
 		
-		//create inter-state constraints
-		constraints.add(new PAConstraint(endInitial, startDead, RelationEnum.EQUALS));
-		constraints.add(new PAConstraint(endInitial, startTerminated, RelationEnum.EQUALS));
-		constraints.add(new PAConstraint(endInitial, startExe, RelationEnum.EQUALS));
-		constraints.add(new PAConstraint(endExe, startTerminated, RelationEnum.EQUALS));
-		constraints.add(new PAConstraint(endExe, startComp, RelationEnum.EQUALS));
-		constraints.add(new PAConstraint(endExe, startFault, RelationEnum.EQUALS));
+		//create inter-state constraints for control flow
+		constraints.add(new PAConstraint(endInitial, startDead, RelationEnum.EQUALS, RelationEnum.UNRELATED));
+		constraints.add(new PAConstraint(endInitial, startTerminated, RelationEnum.EQUALS, RelationEnum.UNRELATED));
+		constraints.add(new PAConstraint(endInitial, startExe, RelationEnum.EQUALS, RelationEnum.UNRELATED));
+		constraints.add(new PAConstraint(endExe, startTerminated, RelationEnum.EQUALS, RelationEnum.UNRELATED));
+		constraints.add(new PAConstraint(endExe, startComp, RelationEnum.EQUALS, RelationEnum.UNRELATED));
+		constraints.add(new PAConstraint(endExe, startFault, RelationEnum.EQUALS, RelationEnum.UNRELATED));
+		
+		//create inter-state constraints for exclusive flow
+		constraints.add(new PAConstraint(startDead, startExe, RelationEnum.UNRELATED));
+		constraints.add(new PAConstraint(startTerminated, startComp, RelationEnum.UNRELATED));
+		constraints.add(new PAConstraint(startFault, startComp, RelationEnum.UNRELATED));
 	}
 
 	@Override
