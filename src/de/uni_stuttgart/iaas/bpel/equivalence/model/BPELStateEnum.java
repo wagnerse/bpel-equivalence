@@ -13,7 +13,7 @@ package de.uni_stuttgart.iaas.bpel.equivalence.model;
  *              |        / 
  *        fault handling 
  *        				 \ 
- *					       fault uncaught
+ *					       fault caught
  */
 public enum BPELStateEnum {
 	INITAL, 
@@ -24,7 +24,7 @@ public enum BPELStateEnum {
 	TERMINATED,	
 	
 	FAULT,
-	FAULT_UNCOUGHT,
+	FAULT_CAUGHT,
 	
-	FAULT_HANDLING	
+	FAULT_HANDLING
 }

@@ -46,7 +46,13 @@ public class NetworkUtils {
 				// write data
 				for (PAVariable vr : network.getVariables()) {
 					// constraints 
-					PAConstraint constraint = (PAConstraint) network.getConstraint(vl, vr);
+					PAConstraint constraint = network.getConstraint(vl, vr);
+					if (constraint == null){
+						PAConstraint constraintToRev = network.getConstraint(vr, vl);
+						if (constraintToRev != null) {
+							constraint = constraintToRev.revert();
+						}
+					}
 					if (constraint != null) {
 						writer.append(constraint.relationsToString());
 					}

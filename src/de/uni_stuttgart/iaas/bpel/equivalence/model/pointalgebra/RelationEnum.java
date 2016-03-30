@@ -13,10 +13,25 @@ package de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra;
  * 
  */
 public enum RelationEnum {
-	LESS,		// x < y iff x precedes y
-	GREATER, 	// x > y iff y precedes x
-	EQUALS, 	// x = Y iff x, y are at the same point
-	UNRELATED;	// x || y iff x, y belong to different branches ort points	
+	LESS("<"),		// x < y iff x precedes y
+	GREATER(">"), 	// x > y iff y precedes x
+	EQUALS("="), 	// x = Y iff x, y are at the same point
+	UNRELATED("||");	// x || y iff x, y belong to different branches ort points	
+	
+	private String value;
+	
+	private RelationEnum(String value) {
+		this.value = value;
+	}
+	
+	public String getValue() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
+        return this.getValue();
+    }
 	
 	public RelationEnum[] compose(RelationEnum r2) {
 		
@@ -38,7 +53,7 @@ public enum RelationEnum {
 				return result;
 			}
 			else {
-				throw new IllegalStateException();
+				throw new IllegalStateException("Unkown relation " + r2);
 			}
 		}
 		else if (this == RelationEnum.GREATER) {
@@ -47,7 +62,7 @@ public enum RelationEnum {
 				return result;
 			}
 			else if (r2 == RelationEnum.GREATER) {
-				RelationEnum[] result = {RelationEnum.LESS};
+				RelationEnum[] result = {RelationEnum.GREATER};
 				return result;
 			}
 			else if (r2 == RelationEnum.UNRELATED) {
@@ -59,7 +74,7 @@ public enum RelationEnum {
 				return result;
 			}
 			else {
-				throw new IllegalStateException();
+				throw new IllegalStateException("Unkown relation " + r2);
 			}
 		}
 		else if (this == RelationEnum.UNRELATED) {
@@ -68,7 +83,7 @@ public enum RelationEnum {
 				return result;
 			}
 			else if (r2 == RelationEnum.GREATER) {
-				RelationEnum[] result = {RelationEnum.LESS, RelationEnum.UNRELATED};
+				RelationEnum[] result = {RelationEnum.GREATER, RelationEnum.UNRELATED};
 				return result;
 			}
 			else if (r2 == RelationEnum.UNRELATED) {
@@ -80,7 +95,7 @@ public enum RelationEnum {
 				return result;
 			}
 			else {
-				throw new IllegalStateException();
+				throw new IllegalStateException("Unkown relation " + r2);
 			}
 		}
 		else if (this == RelationEnum.EQUALS) {
@@ -101,11 +116,11 @@ public enum RelationEnum {
 				return result;
 			}
 			else {
-				throw new IllegalStateException();
+				throw new IllegalStateException("Unkown relation " + r2);
 			}
 		}
 		else {
-			throw new IllegalStateException();
+			throw new IllegalStateException("Unkown relation " + this);
 		}
 	}
 }

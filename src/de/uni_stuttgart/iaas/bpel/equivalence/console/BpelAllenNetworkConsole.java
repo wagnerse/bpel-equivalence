@@ -38,12 +38,11 @@ public class BpelAllenNetworkConsole {
 			System.out.println("Write csv file ...");
 			try {
 				NetworkUtils.saveAsCSV(network1, new File(args[1]));
+				System.out.println("File written: " + args[1]);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			System.out.println("File written: " + args[1]);
 		}
-		
 	}
 }

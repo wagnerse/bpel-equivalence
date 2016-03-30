@@ -74,9 +74,8 @@ public class PAConstraint {
 			if (!r.equals(relations.get(0))) {
 				sb.append(" ");
 			}
-			sb.append(r.name());
+			sb.append(r.toString());
 		}
-
 		return sb.toString();
 	}
 	

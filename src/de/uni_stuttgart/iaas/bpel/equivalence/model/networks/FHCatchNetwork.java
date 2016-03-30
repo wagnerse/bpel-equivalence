@@ -109,8 +109,14 @@ public class FHCatchNetwork extends AbstractActivityNetwork {
 		constraints.add(new PAConstraint(endExe, startFault, RelationEnum.EQUALS, RelationEnum.UNRELATED));	
 
 		//create inter-state constraints for exclusive flow
+		//successor of init
 		constraints.add(new PAConstraint(startDead, startExe, RelationEnum.UNRELATED));
+		constraints.add(new PAConstraint(startExe, startTerminated, RelationEnum.UNRELATED));
+		constraints.add(new PAConstraint(startDead, startTerminated, RelationEnum.UNRELATED));
+		
+		//successor of executing
 		constraints.add(new PAConstraint(startTerminated, startComp, RelationEnum.UNRELATED));
+		constraints.add(new PAConstraint(startTerminated, startFault, RelationEnum.UNRELATED));
 		constraints.add(new PAConstraint(startFault, startComp, RelationEnum.UNRELATED));
 	}
 

@@ -94,6 +94,10 @@ public class AllenComplexity {
 		gammaX.add(createRelationSet(RelationEnum.GREATER, RelationEnum.UNRELATED, RelationEnum.EQUALS));
 	}
 	
+	public List<HashSet<RelationEnum>> getGammaX() {
+		return gammaX;
+	}
+	
 	/**
 	 * Create a HashSet from a RelationEnum array.
 	 * @param relations RelationEnum array
