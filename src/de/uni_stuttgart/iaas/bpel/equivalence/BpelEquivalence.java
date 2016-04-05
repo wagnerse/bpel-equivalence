@@ -1,5 +1,8 @@
 package de.uni_stuttgart.iaas.bpel.equivalence;
 
+import java.io.IOException;
+import java.util.logging.Level;
+
 import org.eclipse.bpel.model.BPELPackage;
 import org.eclipse.emf.ecore.EObject;
 
@@ -9,6 +12,7 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.FlowNetworkFactory
 import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.ProcessNetworkFactory;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.ScopeNetworkFactory;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PASolver;
+import de.uni_stuttgart.iaas.bpel.equivalence.utils.logger.PALogger;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PANetwork;
 
 /**
@@ -22,6 +26,15 @@ public class BpelEquivalence {
 
 	public BpelEquivalence() {
 		initRepo();
+		
+		// init logger
+		try {
+			PALogger.setup(Level.INFO);
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Problems with creating the log files");
+
+		}
 	}
 
 	private void initRepo() {

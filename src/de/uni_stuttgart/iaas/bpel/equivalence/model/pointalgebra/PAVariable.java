@@ -49,7 +49,7 @@ public class PAVariable {
 		Object nameAttr = EMFUtils.getAttributeByName(bpelElement, "name");
 		String bpelName = (nameAttr instanceof String)? (String) nameAttr : "";
 		
-		return bpelName + timePoint.getState().name() + timePoint.getTimeType().name();
+		return bpelName + timePoint.getState().name() + "_" + timePoint.getTimeType().name();
 	}
 	
 	public int getID() {

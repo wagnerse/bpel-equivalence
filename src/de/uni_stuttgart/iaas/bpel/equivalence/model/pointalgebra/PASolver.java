@@ -1,9 +1,13 @@
 package de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra;
 
 import java.util.LinkedList;
+import java.util.logging.Logger;
+
 
 
 public class PASolver {
+	
+	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	
 	private PANetwork problem;
 
@@ -51,6 +55,7 @@ public class PASolver {
 				}
 				if (!temp1.equals(c1)) {
 					queue.addLast(getProblem().reduceTwoWayConstraint(temp1, true));
+					LOGGER.info("Probagate " + a1 + " o " + b1 + " to " + temp1);
 				}
 				
 				//check direction of the constraints c1 and c, to match c2
@@ -63,6 +68,7 @@ public class PASolver {
 				}
 				if (!temp2.equals(c2)) {
 					queue.addLast(getProblem().reduceTwoWayConstraint(temp2, true));
+					LOGGER.info("Probagate " + a2 + " o " + b2 + " to " + temp2);
 				}
 			}
 		}
