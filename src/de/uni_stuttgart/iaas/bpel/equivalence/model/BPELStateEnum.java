@@ -6,18 +6,19 @@ package de.uni_stuttgart.iaas.bpel.equivalence.model;
  * 
  * The states of a BPEL element
  * 
- *  dead   terminated
- *   |    /     |
+ * aborted  terminated
+ *   |          |
  * inital - executing - completed
- *              |		   fault
- *              |        / 
- *        fault handling 
+ *   |          |		   fault
+ *   |          |        / 
+ * dead    fault handling 
  *        				 \ 
  *					       fault caught
  */
 public enum BPELStateEnum {
 	INITAL, 
-	DEAD, 
+	DEAD,
+	ABORTED,
 	
 	EXECUTING,
 	COMPLETED,
