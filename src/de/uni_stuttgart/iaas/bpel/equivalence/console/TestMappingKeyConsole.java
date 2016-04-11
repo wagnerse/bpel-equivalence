@@ -3,7 +3,7 @@ package de.uni_stuttgart.iaas.bpel.equivalence.console;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.BPELStateEnum;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.TimePointDesc;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.TimePointDesc.TimeTypeEnum;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PAVariable;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PAVariable;
 
 public class TestMappingKeyConsole {
 

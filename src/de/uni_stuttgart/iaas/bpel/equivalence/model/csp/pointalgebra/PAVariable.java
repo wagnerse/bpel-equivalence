@@ -1,9 +1,10 @@
-package de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra;
+package de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.eclipse.emf.ecore.EObject;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.model.TimePointDesc;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.CSPVariable;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
 
 /**
@@ -13,18 +14,17 @@ import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
  * Describe the time point in a point algebra.
  *
  */
-public class PAVariable {
+public class PAVariable extends CSPVariable {
 	
 	private TimePointDesc timePoint;
 	private EObject bpelElement;
-	private int id;
 	
 	public PAVariable(int id) {
-		this.id = id;
+		super(id);
 	}
-	
+		
 	public PAVariable(int id, EObject bpelElement, TimePointDesc timePoint) {
-		this.id = id;
+		super(id);
 		this.bpelElement = bpelElement;
 		this.timePoint = timePoint;
 	}
@@ -50,10 +50,6 @@ public class PAVariable {
 		String bpelName = (nameAttr instanceof String)? (String) nameAttr : "";
 		
 		return bpelName + timePoint.getState().name() + "_" + timePoint.getTimeType().name();
-	}
-	
-	public int getID() {
-		return id;
 	}
 	
 	@Override

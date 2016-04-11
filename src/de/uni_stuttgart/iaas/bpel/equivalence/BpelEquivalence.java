@@ -6,14 +6,14 @@ import java.util.logging.Level;
 import org.eclipse.bpel.model.BPELPackage;
 import org.eclipse.emf.ecore.EObject;
 
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PANetwork;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PASolver;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.BasicActivityFactory;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.FHCatchNetworkFactory;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.FlowNetworkFactory;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.ProcessNetworkFactory;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.ScopeNetworkFactory;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PASolver;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.logger.PALogger;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PANetwork;
 
 /**
  * 

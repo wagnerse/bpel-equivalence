@@ -1,4 +1,4 @@
-package de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra;
+package de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,16 +6,16 @@ import java.util.List;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.CSPConstraint;
+
 /**
  * 
  * @author Jonas Scheurich
  * 
  *         A constraint describes the relation between two time points.
  */
-public class PAConstraint {
+public class PAConstraint extends CSPConstraint{
 
-	private PAVariable from;
-	private PAVariable to;
 	private List<RelationEnum> relations = new ArrayList<RelationEnum>();
 
 	public PAConstraint(RelationEnum... relations) {
@@ -27,25 +27,8 @@ public class PAConstraint {
 	}
 
 	public PAConstraint(PAVariable from, PAVariable to, RelationEnum... relations) {
-		this.setFrom(from);
-		this.setTo(to);
+		super(from, to);
 		this.relations.addAll(Arrays.asList(relations));
-	}
-	
-	public void setTo(PAVariable to) {
-		this.to = to;
-	}
-
-	public void setFrom(PAVariable from) {
-		this.from = from;
-	}
-	
-	public PAVariable getFrom() {
-		return from;
-	}
-	
-	public PAVariable getTo() {
-		return to;
 	}
 
 	public void addRelations(RelationEnum... newRelations) {

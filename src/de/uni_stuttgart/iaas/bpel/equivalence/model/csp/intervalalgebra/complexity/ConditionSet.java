@@ -1,4 +1,4 @@
-package de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.complexity;
+package de.uni_stuttgart.iaas.bpel.equivalence.model.csp.intervalalgebra.complexity;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -6,9 +6,9 @@ import java.util.Map;
 
 import org.metacsp.time.qualitative.QualitativeAllenIntervalConstraint.Type;
 
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.BranchingType;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.complexity.Condition.PointEnum;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.RelationEnum;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.intervalalgebra.BranchingType;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.intervalalgebra.complexity.Condition.PointEnum;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.RelationEnum;
 
 /**
  * 

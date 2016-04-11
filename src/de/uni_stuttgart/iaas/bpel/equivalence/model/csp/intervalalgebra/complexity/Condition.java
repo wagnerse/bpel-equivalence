@@ -1,9 +1,9 @@
-package de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.complexity;
+package de.uni_stuttgart.iaas.bpel.equivalence.model.csp.intervalalgebra.complexity;
 
 import java.util.Arrays;
 import java.util.HashSet;
 
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.RelationEnum;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.RelationEnum;
 
 /**
  * 

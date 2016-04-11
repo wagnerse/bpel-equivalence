@@ -1,4 +1,4 @@
-package de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval;
+package de.uni_stuttgart.iaas.bpel.equivalence.model.csp.intervalalgebra;
 
 import org.metacsp.time.qualitative.QualitativeAllenIntervalConstraint.Type;
 

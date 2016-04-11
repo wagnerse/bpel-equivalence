@@ -1,4 +1,4 @@
-package de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra;
+package de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra;
 
 /**
  * 

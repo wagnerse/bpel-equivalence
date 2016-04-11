@@ -1,4 +1,4 @@
-package de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.complexity;
+package de.uni_stuttgart.iaas.bpel.equivalence.model.csp.intervalalgebra.complexity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,9 +7,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.BranchingType;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.complexity.TractableClassResult.ComplexityResult;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.RelationEnum;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.intervalalgebra.BranchingType;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.intervalalgebra.complexity.TractableClassResult.ComplexityResult;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.RelationEnum;
 
 /**
  * 

@@ -3,10 +3,10 @@ package de.uni_stuttgart.iaas.bpel.equivalence.console;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.BranchingType;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.complexity.AllenComplexity;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.complexity.Condition;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.complexity.TractableClassResult;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.intervalalgebra.BranchingType;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.intervalalgebra.complexity.AllenComplexity;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.intervalalgebra.complexity.Condition;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.intervalalgebra.complexity.TractableClassResult;
 
 public class ComplexityConsole {
 

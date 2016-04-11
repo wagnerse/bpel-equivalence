@@ -1,4 +1,4 @@
-package de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra;
+package de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra;
 
 import java.util.LinkedList;
 import java.util.logging.Logger;
@@ -32,8 +32,8 @@ public class PASolver {
 			PAConstraint c = queue.getFirst();
 			queue.removeFirst();
 			
-			PAVariable from = c.getFrom();
-			PAVariable to = c.getTo();
+			PAVariable from = (PAVariable) c.getFrom();
+			PAVariable to = (PAVariable) c.getTo();
 			for(PAVariable intermediate: getProblem().getVariables()) {
 				// skip to and from
 				if (intermediate.equals(from) || intermediate.equals(to)) continue;
@@ -46,8 +46,8 @@ public class PASolver {
 				if (c1 == null || c2 == null) return false;
 				
 				//check direction of the constraints c and c2, to match c1
-				PAConstraint a1 = selectConstraintA(c1.getFrom(), c, c2);
-				PAConstraint b1 = selectConstraintB(c1.getTo(), c, c2);
+				PAConstraint a1 = selectConstraintA((PAVariable) c1.getFrom(), c, c2);
+				PAConstraint b1 = selectConstraintB((PAVariable) c1.getTo(), c, c2);
 				//check v1 -c1- v2
 				PAConstraint temp1 = c1.cut(a1.compose(b1));
 				if (temp1.getRelations().size() == 0) {
@@ -59,8 +59,8 @@ public class PASolver {
 				}
 				
 				//check direction of the constraints c1 and c, to match c2
-				PAConstraint a2 = selectConstraintA(c2.getFrom(), c1, c);
-				PAConstraint b2 = selectConstraintB(c2.getTo(), c1, c);
+				PAConstraint a2 = selectConstraintA((PAVariable) c2.getFrom(), c1, c);
+				PAConstraint b2 = selectConstraintB((PAVariable) c2.getTo(), c1, c);
 				//check v2 -c2- v3
 				PAConstraint temp2 = c2.cut(a2.compose(b2));
 				if (temp2.getRelations().size() == 0) {

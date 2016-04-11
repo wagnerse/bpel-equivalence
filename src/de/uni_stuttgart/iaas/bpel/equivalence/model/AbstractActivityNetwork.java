@@ -8,10 +8,10 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.NetworkFactoryRepo;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PAConstraint;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PAVariable;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PANetwork;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.RelationEnum;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PAConstraint;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PANetwork;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PAVariable;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.RelationEnum;
 
 /**
  * 

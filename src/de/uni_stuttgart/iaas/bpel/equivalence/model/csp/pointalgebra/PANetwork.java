@@ -1,4 +1,4 @@
-package de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra;
+package de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -83,11 +83,11 @@ public class PANetwork {
 	}
 
 	public void addConstraint(PAConstraint c) {
-		if (containsToWayConstraint(c.getFrom(), c.getTo())) {
+		if (containsToWayConstraint((PAVariable) c.getFrom(), (PAVariable) c.getTo())) {
 			reduceTwoWayConstraint(c, true);
 		}
 		else {
-			Pair<PAVariable, PAVariable> key = new MutablePair<PAVariable, PAVariable>(c.getFrom(), c.getTo());
+			Pair<PAVariable, PAVariable> key = new MutablePair<PAVariable, PAVariable>((PAVariable) c.getFrom(), (PAVariable) c.getTo());
 			this.constraints.put(key, c);
 		}
 				
@@ -121,19 +121,19 @@ public class PANetwork {
 		// get the old constraint in original and reversed direction
 		// only one should be found.
 		PAConstraint oldConstraint = this.getConstraint(
-				newConstraint.getFrom(), 
-				newConstraint.getTo());
+				(PAVariable) newConstraint.getFrom(), 
+				(PAVariable) newConstraint.getTo());
 		PAConstraint oldConstraintRev = this.getConstraint(
-				newConstraint.getTo(),
-				newConstraint.getFrom());
+				(PAVariable) newConstraint.getTo(),
+				(PAVariable) newConstraint.getFrom());
 
 		// return if the constraint is unavailable
 		if (oldConstraint == null && oldConstraintRev == null) {
 			if (create) {
 				// if create mode is selected, create a T transition
 				oldConstraint = PAConstraint.newTConstraint(
-						newConstraint.getFrom(), 
-						newConstraint.getTo());
+						(PAVariable) newConstraint.getFrom(), 
+						(PAVariable) newConstraint.getTo());
 			}
 			else {
 				return null;
@@ -177,8 +177,8 @@ public class PANetwork {
 	}
 	
 	public boolean removeConstraint(PAConstraint c) {
-		if (this.containsConstraint(c.getFrom(), c.getTo())) {
-			Pair<PAVariable, PAVariable> key = new MutablePair<PAVariable, PAVariable>(c.getFrom(), c.getTo());
+		if (this.containsConstraint((PAVariable) c.getFrom(), (PAVariable) c.getTo())) {
+			Pair<PAVariable, PAVariable> key = new MutablePair<PAVariable, PAVariable>((PAVariable) c.getFrom(), (PAVariable) c.getTo());
 			this.constraints.remove(key);
 			return true;
 		}

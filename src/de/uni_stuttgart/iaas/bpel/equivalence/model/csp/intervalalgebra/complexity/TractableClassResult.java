@@ -1,4 +1,4 @@
-package de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.complexity;
+package de.uni_stuttgart.iaas.bpel.equivalence.model.csp.intervalalgebra.complexity;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -3,10 +3,10 @@ package de.uni_stuttgart.iaas.bpel.equivalence.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PAConstraint;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PAVariable;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PANetwork;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.RelationEnum;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PAConstraint;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PANetwork;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PAVariable;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.RelationEnum;
 
 /**
  * 

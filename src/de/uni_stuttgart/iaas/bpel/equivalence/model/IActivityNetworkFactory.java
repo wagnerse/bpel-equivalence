@@ -3,7 +3,7 @@ package de.uni_stuttgart.iaas.bpel.equivalence.model;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PANetwork;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PANetwork;
 
 /**
  * 

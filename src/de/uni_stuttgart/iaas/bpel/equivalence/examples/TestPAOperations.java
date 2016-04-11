@@ -9,12 +9,12 @@ import java.util.List;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.BPELStateEnum;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.TimePointDesc;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.TimePointDesc.TimeTypeEnum;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.alleninterval.complexity.AllenComplexity;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PAConstraint;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PANetwork;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PASolver;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.PAVariable;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.pointalgebra.RelationEnum;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.intervalalgebra.complexity.AllenComplexity;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PAConstraint;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PANetwork;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PASolver;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PAVariable;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.RelationEnum;
 
 public class TestPAOperations {
 
