@@ -1,5 +1,7 @@
 package de.uni_stuttgart.iaas.bpel.equivalence.PA2IA;
 
+import org.apache.commons.lang.builder.EqualsBuilder;
+
 import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.intervalalgebra.BranchingType;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PAConstraint;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.RelationEnum;
@@ -26,6 +28,10 @@ public class IAMatch {
 		this.sI_sJ = sI_sJ;
 		this.eI_eJ = eI_eJ;
 		this.intervalRelation = intervalRelation;
+	}
+	
+	public BranchingType getIntervalRelation() {
+		return intervalRelation;
 	}
 
 	/**
@@ -60,5 +66,38 @@ public class IAMatch {
 			
 		return result;
 	}
+	
+	public boolean equalsRelations(Object obj) {
+		if (!(obj instanceof IAMatch))
+			return false;
+		if (obj == this)
+			return true;
 
+		IAMatch rhs = (IAMatch) obj;
+		return new EqualsBuilder()
+				.append(sI_eJ, rhs.sI_eJ)
+				.append(sJ_eI, rhs.sJ_eI)
+				.append(sI_sJ, rhs.sI_sJ)
+				.append(eI_eJ, rhs.eI_eJ)
+				.isEquals();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof IAMatch))
+			return false;
+		if (obj == this)
+			return true;
+
+		IAMatch rhs = (IAMatch) obj;
+		return new EqualsBuilder()
+				.append(intervalRelation, rhs.intervalRelation)
+				.isEquals()
+				&& this.equalsRelations(rhs);
+	}
+
+	@Override
+	public String toString() {
+		return "{IAMatch " + this.intervalRelation.name() + "}";
+	}
 }

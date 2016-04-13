@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import org.eclipse.bpel.model.BPELPackage;
 import org.eclipse.emf.ecore.EObject;
 
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.CSPNetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PANetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PASolver;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.BasicActivityFactory;
@@ -92,7 +93,7 @@ public class BpelEquivalence {
 	 * @param network2
 	 * @return
 	 */
-	public boolean checkBpelEquivalence(PANetwork network1, PANetwork network2) {
+	public boolean checkBpelEquivalence(CSPNetwork network1, CSPNetwork network2) {
 		// TODO implement
 		return false;
 	}

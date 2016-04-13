@@ -32,11 +32,28 @@ public class PA2IA {
 
 	private PANetwork pointAlgebra;
 	private List<IAMatch> matchDefinitions = new ArrayList<IAMatch>();
+	private Map<IAVariable, Pair<PAVariable, PAVariable>> trace = new HashMap<IAVariable, Pair<PAVariable, PAVariable>>();
 
 	public PA2IA(PANetwork pointAlgebra) {
 		this.pointAlgebra = pointAlgebra;
 		initMatchDefLinear();
 		initMatchDefBranching();
+	}
+	
+	/**
+	 * Get the transformation trace, that describes the mapping of 
+	 * a start end end time point to an interval.
+	 * 
+	 * @return
+	 */
+	public Map<IAVariable, Pair<PAVariable, PAVariable>> getTrace() {
+		return trace;
+	}
+	
+	public List<IAMatch> getMatchDefinitionsCopy() {
+		List<IAMatch> matchDefinitionsCopy = new ArrayList<IAMatch>();
+		for (IAMatch m: this.matchDefinitions) matchDefinitionsCopy.add(m);
+		return matchDefinitionsCopy;
 	}
 
 	/**
@@ -47,8 +64,6 @@ public class PA2IA {
 	public IANetwork transfrom() {
 		IANetwork intervalAlgebra = new IANetwork();
 		Collection<Pair<PAVariable, PAVariable>> variablePairs = pointAlgebra.getVariablePairs();
-
-		Map<IAVariable, Pair<PAVariable, PAVariable>> trace = new HashMap<IAVariable, Pair<PAVariable, PAVariable>>();
 
 		// create interval algebra variables
 		for (Pair<PAVariable, PAVariable> pair : variablePairs) {
