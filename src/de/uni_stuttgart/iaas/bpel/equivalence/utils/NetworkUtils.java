@@ -4,26 +4,25 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PAConstraint;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PANetwork;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PAVariable;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.CSPConstraint;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.CSPNetwork;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.CSPVariable;
 
 /**
+ * Provide functionalities for {@link CSPNetwork} objects.
  * 
  * @author Jonas Scheurich
- * 
- * Provide functionalities for activity networks
- *
  */
 public class NetworkUtils {
 
 	/**
-	 * Save the activity network as csv representation.
+	 * Write a {@link CSPNetwork} into a csv file.
+	 * 
 	 * @param network
 	 * @param file
 	 * @throws IOException
 	 */
-	public static void saveAsCSV(PANetwork network, File file) throws IOException {
+	public static void saveAsCSV(CSPNetwork network, File file) throws IOException {
 
 		FileWriter writer = new FileWriter(file);
 
@@ -32,33 +31,32 @@ public class NetworkUtils {
 
 		// write head line;
 		writer.append(",");
-		for (PAVariable v : network.getVariables()) {
-			writer.append(((PAVariable) v).getName() + ", ");
+		for (CSPVariable v : network.getVariables()) {
+			writer.append(v.getName() + ", ");
 		}
 		writer.append("\n");
 
 		// write data
-		for (PAVariable vl : network.getVariables()) {
+		for (CSPVariable vl : network.getVariables()) {
 			// write state name
 			
-			if (vl instanceof PAVariable) {
-				writer.append(((PAVariable) vl).getName() + ", ");
-				// write data
-				for (PAVariable vr : network.getVariables()) {
-					// constraints 
-					PAConstraint constraint = network.getConstraint(vl, vr);
-					if (constraint == null){
-						PAConstraint constraintToRev = network.getConstraint(vr, vl);
-						if (constraintToRev != null) {
-							constraint = constraintToRev.revert();
-						}
+			writer.append(vl.getName() + ", ");
+			// write data
+			for (CSPVariable vr : network.getVariables()) {
+				// constraints 
+				CSPConstraint constraint = network.getConstraint(vl, vr);
+				if (constraint == null){
+					CSPConstraint constraintToRev = network.getConstraint(vr, vl);
+					if (constraintToRev != null) {
+						constraint = constraintToRev.revert();
 					}
-					if (constraint != null) {
-						writer.append(constraint.relationsToString());
-					}
-					writer.append(", ");
-				} 
-			}
+				}
+				if (constraint != null) {
+					writer.append(constraint.valueToString());
+				}
+				writer.append(", ");
+			} 
+			
 			// end of line
 			writer.append("\n");
 		}

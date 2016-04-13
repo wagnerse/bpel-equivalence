@@ -25,10 +25,9 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.networks.ScopeNetwork.ScopeC
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
 
 /**
+ * Creates a point algebra network for the BPEL activity {@link Scope}
  * 
  * @author Jonas Scheurich
- * 
- * Creates a point algebra network for the BPEL activity {@link Scope}
  */
 public class ScopeNetwork extends AbstractActivityNetwork{
 	

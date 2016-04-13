@@ -14,9 +14,6 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PAVariable;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.RelationEnum;
 
 /**
- * 
- * @author Jonas Scheurich
- *
  *  A activity network creates three parts of the point algebra network for a specific BPEL element
  * (1) Local variables and constraints for the state model of the supported BPEL element
  *     (inter state constraints and intra state constraints).
@@ -25,6 +22,8 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.RelationEnu
  * (3) Constraints between the variables of the  child BPEL elements (inter activity constraints).
  *     ex: link between activities of a flow.
  *
+ * @author Jonas Scheurich
+ * 
  */
 public abstract class AbstractActivityNetwork {
 

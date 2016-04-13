@@ -214,5 +214,98 @@ public enum BranchingType {
 			throw new IllegalStateException("Can not transform branching types.");
 		}
 	}
+	
+	public static BranchingType revert(BranchingType t) {
+		if (t == BranchingType.Before) {
+			return BranchingType.After;
+		}
+		else if (t == BranchingType.After) {
+			return BranchingType.Before;
+		}
+		else if (t == BranchingType.Meets) {
+			return BranchingType.MetBy;
+		}
+		else if (t == BranchingType.MetBy) {
+			return BranchingType.Meets;
+		}
+		else if (t == BranchingType.Overlaps) {
+			return BranchingType.OverlappedBy;
+		}
+		else if (t == BranchingType.OverlappedBy) {
+			return BranchingType.Overlaps;
+		}
+		else if (t == BranchingType.During) {
+			return BranchingType.Contains;
+		}
+		else if (t == BranchingType.Contains) {
+			return BranchingType.During;
+		}
+		else if (t == BranchingType.Starts) {
+			return BranchingType.StartedBy;
+		}
+		else if (t == BranchingType.StartedBy) {
+			return BranchingType.Starts;
+		}
+		else if (t == BranchingType.Finishes) {
+			return BranchingType.FinishedBy;
+		}
+		else if (t == BranchingType.FinishedBy) {
+			return BranchingType.Finishes;
+		}
+		else if (t == BranchingType.Equals) {
+			return BranchingType.Equals;
+		}
+		else if (t == BranchingType.PartiallyBefore) {
+			return BranchingType.PartiallyAfter;
+		}
+		else if (t == BranchingType.PartiallyAfter) {
+			return BranchingType.PartiallyBefore;
+		}
+		else if (t == BranchingType.PartiallyMeets) {
+			return BranchingType.PartiallyMetBy;
+		}
+		else if (t == BranchingType.PartiallyMetBy) {
+			return BranchingType.PartiallyMeets;
+		}
+		else if (t == BranchingType.PartiallyStarts) {
+			return BranchingType.PartiallyStarts;
+		}
+		else if (t == BranchingType.PartiallyOverlaps) {
+			return BranchingType.PartiallyOverlappedBy;
+		}
+		else if (t == BranchingType.PartiallyOverlappedBy) {
+			return BranchingType.PartiallyOverlaps;
+		}
+		else if (t == BranchingType.Adjacent) {
+			return BranchingType.AdjacentBy;
+		}
+		else if (t == BranchingType.AdjacentBy) {
+			return BranchingType.Adjacent;
+		}
+		else if (t == BranchingType.Touches) {
+			return BranchingType.Touches;
+		}
+		else if (t == BranchingType.Unrelated) {
+			return BranchingType.Unrelated;
+		}
+		else if (t == BranchingType.InitiallyBefore) {
+			return BranchingType.InitiallyAfter;
+		}
+		else if (t == BranchingType.InitiallyAfter) {
+			return BranchingType.InitiallyBefore;
+		}
+		else if (t == BranchingType.InitiallyMeets) {
+			return BranchingType.InitiallyMetBy;
+		}
+		else if (t == BranchingType.InitiallyMetBy) {
+			return BranchingType.InitiallyMeets;
+		}
+		else if (t == BranchingType.InitiallyEquals) {
+			return BranchingType.InitiallyEquals;
+		}
+		else {
+			return t;
+		}
+	}
 
 }

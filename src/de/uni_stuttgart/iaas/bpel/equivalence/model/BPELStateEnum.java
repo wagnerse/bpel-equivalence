@@ -2,8 +2,6 @@ package de.uni_stuttgart.iaas.bpel.equivalence.model;
 
 /**
  * 
- * @author Jonas Scheurich
- * 
  * The states of a BPEL element
  * 
  * aborted  terminated
@@ -14,6 +12,9 @@ package de.uni_stuttgart.iaas.bpel.equivalence.model;
  * dead    fault handling 
  *        				 \ 
  *					       fault caught
+ *
+ * @author Jonas Scheurich
+ *
  */
 public enum BPELStateEnum {
 	INITAL, 

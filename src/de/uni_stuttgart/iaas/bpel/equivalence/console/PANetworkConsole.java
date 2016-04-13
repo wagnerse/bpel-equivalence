@@ -9,13 +9,13 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PANetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.NetworkUtils;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.BPELUtils;
 
-public class BpelAllenNetworkConsole {
+public class PANetworkConsole {
 
 	public static void main(String[] args) {
 		if(!(0 < args.length && args.length  <= 2)) return;
 
 		long start = System.currentTimeMillis();
-		System.out.println("Create interval network for \n" + args[0]);
+		System.out.println("Create point algebra network for \n" + args[0]);
 	
 		EObject process1 = (EObject) BPELUtils.readProcessFromFile(args[0]);
 		

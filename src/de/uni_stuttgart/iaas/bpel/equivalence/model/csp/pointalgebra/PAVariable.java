@@ -8,10 +8,9 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.CSPVariable;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
 
 /**
+ * Describes the time point in a point algebra.
  * 
  * @author Jonas Scheurich
- * 
- * Describe the time point in a point algebra.
  *
  */
 public class PAVariable extends CSPVariable {
@@ -45,6 +44,7 @@ public class PAVariable extends CSPVariable {
 		return timePoint;
 	}
 	
+	@Override
 	public String getName() {
 		Object nameAttr = EMFUtils.getAttributeByName(bpelElement, "name");
 		String bpelName = (nameAttr instanceof String)? (String) nameAttr : "";

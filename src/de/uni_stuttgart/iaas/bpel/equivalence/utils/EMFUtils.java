@@ -5,11 +5,9 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 
 /**
+ * Provide functionalities for EMF elements
  * 
  * @author Jonas Scheurich
- * 
- * Provide functionalities for EMF elements
- *
  */
 public class EMFUtils {
 

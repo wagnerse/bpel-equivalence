@@ -9,6 +9,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+/**
+ * Logger adapted from vogella.com
+ * 
+ * @author Jonas Scheurich
+ *
+ */
 public class PALogger {
 
 	private static FileHandler fileTxt;

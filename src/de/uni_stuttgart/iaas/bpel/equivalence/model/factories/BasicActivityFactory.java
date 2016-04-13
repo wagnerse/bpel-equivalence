@@ -10,11 +10,10 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PANetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.networks.BasicActivityNetwork;
 
 /**
- * 
- * @author Jonas Scheurich
- * 
  * Creates a activity network for the BPEL basic activities
  * receive, reply, invoke, assign, throw, exit, wait, empty
+ * 
+ * @author Jonas Scheurich
  *
  */
 public class BasicActivityFactory implements IActivityNetworkFactory{

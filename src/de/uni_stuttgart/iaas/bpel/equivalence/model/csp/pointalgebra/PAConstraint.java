@@ -9,10 +9,10 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.CSPConstraint;
 
 /**
+ * A point algebra constraint describes the relation between two time points.
  * 
  * @author Jonas Scheurich
  * 
- *         A constraint describes the relation between two time points.
  */
 public class PAConstraint extends CSPConstraint{
 
@@ -51,7 +51,8 @@ public class PAConstraint extends CSPConstraint{
 		return relations;
 	}
 
-	public String relationsToString() {
+	@Override
+	public String valueToString() {
 		StringBuilder sb = new StringBuilder();
 		for (RelationEnum r : this.relations) {
 			if (!r.equals(relations.get(0))) {
@@ -61,16 +62,10 @@ public class PAConstraint extends CSPConstraint{
 		}
 		return sb.toString();
 	}
-	
-	public String getName() {
-		return ((PAVariable) this.getFrom()).getName() 
-				+ " " + relationsToString() 
-				+ " " + ((PAVariable) this.getTo()).getName();
-	}
 
 	@Override
 	public String toString() {
-		return this.getFrom().toString() + " " + relationsToString() + " " + this.getTo().toString();
+		return this.getFrom().toString() + " " + valueToString() + " " + this.getTo().toString();
 	}
 
 	@Override
@@ -166,6 +161,7 @@ public class PAConstraint extends CSPConstraint{
 	 * 
 	 * @return
 	 */
+	@Override
 	public PAConstraint revert() {
 		List<RelationEnum> result = new ArrayList<RelationEnum>();
 		
@@ -188,20 +184,14 @@ public class PAConstraint extends CSPConstraint{
 		return revConstraint;
 	}
 
-	/**
-	 * Calculate the cut of this constraint with a second This constraint will
-	 * be changed.
-	 * 
-	 * @param c
-	 * @return
-	 */
-	public static PAConstraint newTConstraint(PAVariable from, PAVariable to) {
-		PAConstraint tConstraint = new PAConstraint(from, to, 
-				RelationEnum.LESS, 
-				RelationEnum.EQUALS, 
-				RelationEnum.UNRELATED,
-				RelationEnum.GREATER);
-		
-		return tConstraint;
+	@Override
+	public boolean contradiction() {
+		return (this.relations.size() == 0);
+	}
+	
+	@Override
+	public void reduceAction(CSPConstraint constraint) {
+		if (!(constraint instanceof PAConstraint)) return;
+		this.cutAdd((PAConstraint) constraint);
 	}
 }

@@ -1,6 +1,12 @@
 package de.uni_stuttgart.iaas.bpel.equivalence.model.csp;
 
-public class CSPVariable {
+/**
+ * Describes a variable in a csp network.
+ * 
+ * @author Jonas Scheurich
+ *
+ */
+public abstract class CSPVariable {
 	private int id;
 
 	public CSPVariable(int id) {
@@ -10,4 +16,10 @@ public class CSPVariable {
 	public int getID() {
 		return id;
 	}
+	
+	public abstract String getName();
+	
+	@Override
+	public abstract boolean equals(Object obj);
+	
 }

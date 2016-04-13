@@ -32,7 +32,7 @@ public class TestPAOperations {
 			for (HashSet<RelationEnum> rel : comp.getGammaX()) {
 				List<RelationEnum> relList = new ArrayList<RelationEnum>(rel);
 				PAConstraint c = new PAConstraint(relList);
-				writer.append(c.relationsToString() + ", ");
+				writer.append(c.valueToString() + ", ");
 			}
 			writer.append("\n");
 
@@ -50,7 +50,7 @@ public class TestPAOperations {
 				c1.setFrom(v1);
 				c1.setTo(v2);
 				
-				writer.append(c1.relationsToString() + ", ");
+				writer.append(c1.valueToString() + ", ");
 
 				for (HashSet<RelationEnum> rel2 : comp.getGammaX()) {
 					List<RelationEnum> rel2List = new ArrayList<RelationEnum>(rel2);
@@ -60,7 +60,7 @@ public class TestPAOperations {
 
 					// compose constraints
 					PAConstraint composition = c1.compose(c2);
-					writer.append(composition.relationsToString() + ", ");
+					writer.append(composition.valueToString() + ", ");
 				}
 				writer.append("\n");
 			}

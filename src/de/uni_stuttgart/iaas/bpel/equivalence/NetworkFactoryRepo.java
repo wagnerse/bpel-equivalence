@@ -11,12 +11,10 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.IActivityNetworkFactory;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PANetwork;
 
 /**
- * 
- * @author Jonas Scheurich
- * 
  * The NetworkFactoryRepo contains the factory objects for all supported activity networks.
  * This class creates a network object for a given BPEL element if this element is supported.
- *
+ * 
+ * @author Jonas Scheurich
  */
 public class NetworkFactoryRepo {
 	

@@ -4,11 +4,10 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
- * 
- * @author Jonas Scheurich
- * 
  * The constraint mapping key relates the start and end of a constraint
  * This class is used as hash key for the constraint mapping.
+ *
+ * @author Jonas Scheurich
  *
  */
 public class ConstraintMappingKey {

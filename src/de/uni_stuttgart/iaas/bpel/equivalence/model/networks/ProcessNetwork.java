@@ -14,10 +14,10 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PANetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
 
 /**
+ * Creates a point algebra network for the BPEL activity {@link Process}
  * 
  * @author Jonas Scheurich
  * 
- * Creates a point algebra network for the BPEL activity {@link Process}
  */
 public class ProcessNetwork extends AbstractDefaultActivityNetwork{
 	

@@ -30,10 +30,10 @@ import de.uni_stuttgart.iaas.bpel.equivalence.utils.BPELUtils;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
 
 /**
+ * Creates a point algebra network for the BPEL activity {@link Flow}
  * 
  * @author Jonas Scheurich
  * 
- * Creates a point algebra network for the BPEL activity {@link Flow}
  */
 public class FlowNetwork extends AbstractActivityNetwork {
 

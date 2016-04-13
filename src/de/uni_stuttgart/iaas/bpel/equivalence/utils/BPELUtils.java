@@ -19,11 +19,9 @@ import org.eclipse.wst.wsdl.internal.util.WSDLResourceFactoryImpl;
 import org.eclipse.xsd.util.XSDResourceFactoryImpl;
 
 /**
+ * Provide functionalities for BPEL elements
  * 
  * @author Jonas Scheurich
- * 
- * Provide functionalities for BPEL elements
- *
  */
 @SuppressWarnings("restriction")
 public class BPELUtils {

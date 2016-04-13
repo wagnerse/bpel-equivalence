@@ -3,6 +3,9 @@ package de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra;
 import java.util.LinkedList;
 import java.util.logging.Logger;
 
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.CSPConstraint;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.CSPVariable;
+
 
 
 public class PASolver {
@@ -24,8 +27,13 @@ public class PASolver {
 		LinkedList<PAConstraint> queue = new LinkedList<PAConstraint>();
 		
 		// initialize queue
-		for (PAConstraint c: getProblem().getConstraints()) {
-			queue.addLast(c);
+		for (CSPConstraint c: getProblem().getConstraints()) {
+			if (!(c instanceof PAConstraint)) continue;
+			
+			//ignore self constraints
+			if(!c.getFrom().equals(c.getTo())) {
+				queue.addLast((PAConstraint) c);
+			}
 		}
 				
 		while(!queue.isEmpty()) {
@@ -34,13 +42,14 @@ public class PASolver {
 			
 			PAVariable from = (PAVariable) c.getFrom();
 			PAVariable to = (PAVariable) c.getTo();
-			for(PAVariable intermediate: getProblem().getVariables()) {
+			for(CSPVariable intermediate: getProblem().getVariables()) {
+				if (!(intermediate instanceof PAVariable)) continue;
 				// skip to and from
 				if (intermediate.equals(from) || intermediate.equals(to)) continue;
 				
 				// get the 3-K constraints
-				PAConstraint c1 = getProblem().getTwoWayConstraint(intermediate, from);
-				PAConstraint c2 = getProblem().getTwoWayConstraint(to, intermediate);
+				PAConstraint c1 = (PAConstraint) getProblem().getTwoWayConstraint(intermediate, from);
+				PAConstraint c2 = (PAConstraint) getProblem().getTwoWayConstraint(to, intermediate);
 				
 				//create a constraint if necessary
 				if (c1 == null || c2 == null) return false;
@@ -54,7 +63,7 @@ public class PASolver {
 					throw new IllegalStateException("Contradiction with " + c1 + " cut( " + a1 + " O " + b1 + " )");
 				}
 				if (!temp1.equals(c1)) {
-					queue.addLast(getProblem().reduceTwoWayConstraint(temp1, true));
+					queue.addLast((PAConstraint) getProblem().reduceTwoWayConstraint(temp1, true));
 					LOGGER.info("Probagate " + a1 + " o " + b1 + " to " + temp1);
 				}
 				
@@ -67,7 +76,7 @@ public class PASolver {
 					throw new IllegalStateException("Contradiction with " + c2 + " cut( " + a2 + " O " + b2 + " )");
 				}
 				if (!temp2.equals(c2)) {
-					queue.addLast(getProblem().reduceTwoWayConstraint(temp2, true));
+					queue.addLast((PAConstraint) getProblem().reduceTwoWayConstraint(temp2, true));
 					LOGGER.info("Probagate " + a2 + " o " + b2 + " to " + temp2);
 				}
 			}

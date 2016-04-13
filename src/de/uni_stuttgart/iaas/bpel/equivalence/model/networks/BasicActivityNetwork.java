@@ -22,11 +22,10 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.networks.BasicActivityNetwor
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
 
 /**
- * 
- * @author Jonas Scheurich
- * 
  * Creates a point algebra network for the BPEL basic activities
  * receive, reply, invoke, assign, throw, exit, wait, empty
+ * 
+ * @author Jonas Scheurich
  *
  */
 public class BasicActivityNetwork extends AbstractActivityNetwork {

@@ -78,7 +78,6 @@ public class TimePointDesc implements Comparable<Object> {
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getState().name() + this.getTimeType().name();
 	}
 }

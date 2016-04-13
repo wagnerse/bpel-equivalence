@@ -16,11 +16,9 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.ScopeNetworkFactor
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.logger.PALogger;
 
 /**
+ * Calculate the equivalence of two BPEL processes
  * 
  * @author Jonas Scheurich
- *
- *         Calculate the equivalence of two BPEL processes
- *
  */
 public class BpelEquivalence {
 

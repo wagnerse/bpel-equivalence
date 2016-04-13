@@ -1,6 +1,12 @@
 package de.uni_stuttgart.iaas.bpel.equivalence.model.csp;
 
-public class CSPConstraint {
+/**
+ * A csp constraint describes the relation between two csp variables.
+ * 
+ * @author Jonas Scheurich
+ *
+ */
+public abstract class CSPConstraint {
 	
 	private CSPVariable from;
 	private CSPVariable to;
@@ -29,5 +35,28 @@ public class CSPConstraint {
 	public CSPVariable getTo() {
 		return to;
 	}
+	
+	public String getName() {
+		return (this.getFrom()).getName() 
+				+ " " + valueToString() 
+				+ " " + (this.getTo()).getName();
+	}
+
+	public abstract CSPConstraint revert();
+
+	@Override
+	public abstract String toString();
+	
+	public abstract String valueToString();
+	
+	@Override
+	public abstract Object clone();
+	
+	@Override
+	public abstract boolean equals(Object obj);
+	
+	public abstract boolean contradiction();
+	
+	public abstract void reduceAction(CSPConstraint constraint);
 
 }

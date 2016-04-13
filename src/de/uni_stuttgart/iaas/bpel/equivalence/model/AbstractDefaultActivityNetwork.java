@@ -9,11 +9,10 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PAVariable;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.RelationEnum;
 
 /**
- * 
- * @author Jonas Scheurich
- * 
  * This activity network supports BPEL elements without a local network.
  *
+ * @author Jonas Scheurich
+ * 
  */
 public abstract class AbstractDefaultActivityNetwork extends AbstractActivityNetwork{
 

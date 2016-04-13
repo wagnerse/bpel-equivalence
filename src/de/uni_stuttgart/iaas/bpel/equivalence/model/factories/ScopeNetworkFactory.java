@@ -11,11 +11,10 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PANetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.networks.ScopeNetwork;
 
 /**
+ * Creates a activity network for the BPEL activity {@link Scope}
  * 
  * @author Jonas Scheurich
  * 
- * Creates a activity network for the BPEL activity {@link Scope}
- *
  */
 public class ScopeNetworkFactory implements IActivityNetworkFactory {
 

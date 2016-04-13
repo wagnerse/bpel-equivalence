@@ -24,10 +24,10 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.networks.FHCatchNetwork.FHCo
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
 
 /**
+ * Creates a point algebra network for the BPEL activity {@link Catch} (of a fault handler)
  * 
  * @author Jonas Scheurich
  * 
- * Creates a point algebra network for the BPEL activity {@link Catch} (of a fault handler)
  */
 public class FHCatchNetwork extends AbstractActivityNetwork {
 
