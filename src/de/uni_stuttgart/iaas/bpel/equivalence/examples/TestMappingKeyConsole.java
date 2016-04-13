@@ -1,4 +1,4 @@
-package de.uni_stuttgart.iaas.bpel.equivalence.console;
+package de.uni_stuttgart.iaas.bpel.equivalence.examples;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.model.BPELStateEnum;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.TimePointDesc;
