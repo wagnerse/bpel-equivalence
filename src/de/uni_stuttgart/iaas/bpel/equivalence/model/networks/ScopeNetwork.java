@@ -69,6 +69,11 @@ public class ScopeNetwork extends AbstractActivityNetwork{
 		this.variables.add(startAborted);
 		this.variables.add(endAborted);
 		
+		PAVariable startTerminating = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START));
+		PAVariable endTerminating = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.END));
+		this.variables.add(startTerminating);
+		this.variables.add(endTerminating);
+
 		PAVariable startTerminated = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.START));
 		PAVariable endTerminated = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.END));
 		this.variables.add(startTerminated);
@@ -103,18 +108,20 @@ public class ScopeNetwork extends AbstractActivityNetwork{
 		constraints.add(new PAConstraint(startInitial, endInitial, RelationEnum.LESS));
 		constraints.add(new PAConstraint(startDead, endDead, RelationEnum.LESS));
 		constraints.add(new PAConstraint(startAborted, endAborted, RelationEnum.LESS));
-		constraints.add(new PAConstraint(startTerminated, endTerminated, RelationEnum.LESS));
+		constraints.add(new PAConstraint(startTerminating, endTerminating, RelationEnum.LESS));
 		constraints.add(new PAConstraint(startExe, endExe, RelationEnum.LESS));
 		constraints.add(new PAConstraint(startFaultHandling, endFaultHandling, RelationEnum.LESS));
 		constraints.add(new PAConstraint(startFaultCaught, endFaultCaught, RelationEnum.LESS));
 		constraints.add(new PAConstraint(startFault, endFault, RelationEnum.LESS));
 		constraints.add(new PAConstraint(startComp, endComp, RelationEnum.LESS));
+		constraints.add(new PAConstraint(startTerminated, endTerminated, RelationEnum.LESS));
 		
 		//create inter-state constraints for control flow
 		constraints.add(new PAConstraint(endInitial, startDead, RelationEnum.EQUALS));
 		constraints.add(new PAConstraint(endInitial, startAborted, RelationEnum.EQUALS));
 		constraints.add(new PAConstraint(endInitial, startExe, RelationEnum.EQUALS));
-		constraints.add(new PAConstraint(endExe, startTerminated, RelationEnum.EQUALS));
+		constraints.add(new PAConstraint(endExe, startTerminating, RelationEnum.EQUALS));
+		constraints.add(new PAConstraint(endTerminating, startTerminated, RelationEnum.EQUALS));
 		constraints.add(new PAConstraint(endExe, startComp, RelationEnum.EQUALS));
 		constraints.add(new PAConstraint(endExe, startFaultHandling, RelationEnum.EQUALS));
 		constraints.add(new PAConstraint(endFaultHandling, startFault, RelationEnum.EQUALS));
@@ -127,9 +134,9 @@ public class ScopeNetwork extends AbstractActivityNetwork{
 		constraints.add(new PAConstraint(endDead, endAborted, RelationEnum.UNRELATED));
 		
 		//successor of executing
-		constraints.add(new PAConstraint(endTerminated, endComp, RelationEnum.UNRELATED));
+		constraints.add(new PAConstraint(endTerminating, endComp, RelationEnum.UNRELATED));
 		constraints.add(new PAConstraint(endFaultHandling, endComp, RelationEnum.UNRELATED));
-		constraints.add(new PAConstraint(endTerminated, endFault, RelationEnum.UNRELATED));
+		constraints.add(new PAConstraint(endTerminating, endFault, RelationEnum.UNRELATED));
 		
 		//successor of fault handling
 		constraints.add(new PAConstraint(startFault, startFaultCaught, RelationEnum.UNRELATED));
@@ -189,11 +196,11 @@ public class ScopeNetwork extends AbstractActivityNetwork{
 					RelationEnum.EQUALS, RelationEnum.UNRELATED);
 			
 			// if the scope or the activity is terminated, transfer scope/activity to terminated
-			this.putConstraint(this, new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.START), 
-					actNetwork, new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.START), 
+			this.putConstraint(this, new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START), 
+					actNetwork, new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START), 
 					RelationEnum.EQUALS);
-			this.putConstraint(this, new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.END), 
-					actNetwork, new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.END), 
+			this.putConstraint(this, new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.END), 
+					actNetwork, new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.END), 
 					RelationEnum.EQUALS, RelationEnum.UNRELATED);
 			
 			// if the activity is completed, transfer the scope to completed.
@@ -248,11 +255,11 @@ public class ScopeNetwork extends AbstractActivityNetwork{
 						RelationEnum.EQUALS, RelationEnum.UNRELATED);
 				
 				// if the scope terminates, terminate the fault handler
-				this.putConstraint(this, new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.START), 
-						fhNetwork,	new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.START), 
+				this.putConstraint(this, new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START), 
+						fhNetwork,	new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START), 
 						RelationEnum.EQUALS, RelationEnum.UNRELATED);
-				this.putConstraint(this, new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.END), 
-						fhNetwork,	new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.END), 
+				this.putConstraint(this, new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.END), 
+						fhNetwork,	new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.END), 
 						RelationEnum.EQUALS, RelationEnum.UNRELATED);
 				
 				// if the fault handler completes, mark the scope as fault caught or fault

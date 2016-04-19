@@ -78,6 +78,11 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 		this.variables.add(startAborted);
 		this.variables.add(endAborted);
 		
+		PAVariable startTerminating = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START));
+		PAVariable endTerminating = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.END));
+		this.variables.add(startTerminating);
+		this.variables.add(endTerminating);
+		
 		PAVariable startTerminated = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.START));
 		PAVariable endTerminated = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.END));
 		this.variables.add(startTerminated);
@@ -102,16 +107,18 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 		constraints.add(new PAConstraint(startInitial, endInitial, RelationEnum.LESS));
 		constraints.add(new PAConstraint(startDead, endDead, RelationEnum.LESS));
 		constraints.add(new PAConstraint(startAborted, endAborted, RelationEnum.LESS));
-		constraints.add(new PAConstraint(startTerminated, endTerminated, RelationEnum.LESS));
+		constraints.add(new PAConstraint(startTerminating, endTerminating, RelationEnum.LESS));
 		constraints.add(new PAConstraint(startExe, endExe, RelationEnum.LESS));
 		constraints.add(new PAConstraint(startFault, endFault, RelationEnum.LESS));
 		constraints.add(new PAConstraint(startComp, endComp, RelationEnum.LESS));
+		constraints.add(new PAConstraint(startTerminated, endTerminated, RelationEnum.LESS));
 		
 		//create inter-state constraints for control flow
 		constraints.add(new PAConstraint(endInitial, startDead, RelationEnum.EQUALS));
 		constraints.add(new PAConstraint(endInitial, startAborted, RelationEnum.EQUALS));
 		constraints.add(new PAConstraint(endInitial, startExe, RelationEnum.EQUALS));
-		constraints.add(new PAConstraint(endExe, startTerminated, RelationEnum.EQUALS));
+		constraints.add(new PAConstraint(endExe, startTerminating, RelationEnum.EQUALS));
+		constraints.add(new PAConstraint(endTerminating, startTerminated, RelationEnum.EQUALS));
 		constraints.add(new PAConstraint(endExe, startComp, RelationEnum.EQUALS));
 		constraints.add(new PAConstraint(endExe, startFault, RelationEnum.EQUALS));
 		
@@ -122,9 +129,9 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 		constraints.add(new PAConstraint(endDead, endAborted, RelationEnum.UNRELATED));
 		
 		//successor of executing
-		constraints.add(new PAConstraint(endTerminated, endComp, RelationEnum.UNRELATED));
+		constraints.add(new PAConstraint(endTerminating, endComp, RelationEnum.UNRELATED));
 		constraints.add(new PAConstraint(endFault, endComp, RelationEnum.UNRELATED));
-		constraints.add(new PAConstraint(endTerminated, endFault, RelationEnum.UNRELATED));
+		constraints.add(new PAConstraint(endTerminating, endFault, RelationEnum.UNRELATED));
 				
 	}
 

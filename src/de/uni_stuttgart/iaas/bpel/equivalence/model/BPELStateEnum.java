@@ -4,7 +4,7 @@ package de.uni_stuttgart.iaas.bpel.equivalence.model;
  * 
  * The states of a BPEL element
  * 
- * aborted  terminated
+ * aborted  terminating - terminated
  *   |          |
  * inital - executing - completed
  *   |          |		   fault
@@ -23,7 +23,8 @@ public enum BPELStateEnum {
 	
 	EXECUTING,
 	COMPLETED,
-	TERMINATED,	
+	TERMINATED,
+	TERMINATING,
 	
 	FAULT,
 	FAULT_CAUGHT,
