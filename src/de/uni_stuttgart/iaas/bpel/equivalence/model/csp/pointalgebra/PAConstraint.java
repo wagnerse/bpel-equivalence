@@ -79,6 +79,15 @@ public class PAConstraint extends CSPConstraint{
 		return new EqualsBuilder().append(getFrom(), rhs.getFrom()).append(getRelations(), rhs.getRelations())
 				.append(getTo(), rhs.getTo()).isEquals();
 	}
+	
+	public boolean equalsRelations(CSPConstraint obj) {
+		if (!(obj instanceof PAConstraint))
+			return false;
+		if (obj == this)
+			return true;
+		PAConstraint rhs = (PAConstraint) obj;
+		return new EqualsBuilder().append(getRelations(), rhs.getRelations()).isEquals();
+	}
 
 	@Override
 	public Object clone() {

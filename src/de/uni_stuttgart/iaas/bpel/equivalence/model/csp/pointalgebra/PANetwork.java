@@ -6,11 +6,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang3.tuple.MutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.eclipse.emf.ecore.EObject;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.model.BPELStateEnum;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.BPELStateInstance;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.TimePointDesc;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.TimePointDesc.TimeTypeEnum;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.CSPNetwork;
@@ -94,8 +93,8 @@ public class PANetwork extends CSPNetwork{
 	 * right value: end point
 	 * @return
 	 */
-	public Collection<Pair<PAVariable, PAVariable>> getVariablePairs() {
-		List<Pair<PAVariable, PAVariable>> list = new LinkedList<Pair<PAVariable, PAVariable>>();
+	public Collection<BPELStateInstance> getVariablePairs() {
+		List<BPELStateInstance> list = new LinkedList<BPELStateInstance>();
 		
 		for(CSPVariable v_start: this.getVariables()) {
 			if (((PAVariable) v_start).getTimePoint().getTimeType() == TimeTypeEnum.END) continue;
@@ -105,10 +104,12 @@ public class PANetwork extends CSPNetwork{
 					((PAVariable) v_start).getTimePoint().getState(), 
 					TimeTypeEnum.END);
 			if (v_end != null) {
-				Pair<PAVariable, PAVariable> pair = new MutablePair<PAVariable, PAVariable>(
+				BPELStateInstance state = new BPELStateInstance(
+						((PAVariable) v_start).getBpelElement(),
+						((PAVariable) v_start).getTimePoint().getState(),
 						(PAVariable)  v_start, 
 						(PAVariable) v_end);
-				list.add(pair);
+				list.add(state);
 			}
 			else {
 				LOGGER.log(Level.WARNING, "Could not found variable for end time point of " + ((PAVariable) v_start).getName());

@@ -8,8 +8,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang3.tuple.Pair;
-
+import de.uni_stuttgart.iaas.bpel.equivalence.model.BPELStateInstance;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.CSPVariable;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.intervalalgebra.BranchingType;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.intervalalgebra.IAConstraint;
@@ -32,7 +31,7 @@ public class PA2IA {
 
 	private PANetwork pointAlgebra;
 	private List<IAMatch> matchDefinitions = new ArrayList<IAMatch>();
-	private Map<IAVariable, Pair<PAVariable, PAVariable>> trace = new HashMap<IAVariable, Pair<PAVariable, PAVariable>>();
+	private Map<IAVariable, BPELStateInstance> trace = new HashMap<IAVariable, BPELStateInstance>();
 
 	public PA2IA(PANetwork pointAlgebra) {
 		this.pointAlgebra = pointAlgebra;
@@ -46,7 +45,7 @@ public class PA2IA {
 	 * 
 	 * @return
 	 */
-	public Map<IAVariable, Pair<PAVariable, PAVariable>> getTrace() {
+	public Map<IAVariable, BPELStateInstance> getTrace() {
 		return trace;
 	}
 	
@@ -63,25 +62,25 @@ public class PA2IA {
 	 */
 	public IANetwork transfrom() {
 		IANetwork intervalAlgebra = new IANetwork();
-		Collection<Pair<PAVariable, PAVariable>> variablePairs = pointAlgebra.getVariablePairs();
+		Collection<BPELStateInstance> variablePairs = pointAlgebra.getVariablePairs();
 
 		// create interval algebra variables
-		for (Pair<PAVariable, PAVariable> pair : variablePairs) {
-			IAVariable interval = intervalAlgebra.createVariable(pair.getLeft().getBpelElement(),
-					pair.getLeft().getTimePoint().getState());
+		for (BPELStateInstance pair : variablePairs) {
+			IAVariable interval = intervalAlgebra.createVariable(pair.getBpelElement(),
+					pair.getState());
 			trace.put(interval, pair);
 		}
 
 		// create constraints
 		for (CSPVariable inter1 : intervalAlgebra.getVariables()) {
-			Pair<PAVariable, PAVariable> pair1 = trace.get(inter1);
+			BPELStateInstance pair1 = trace.get(inter1);
 
 			for (CSPVariable inter2 : intervalAlgebra.getVariables()) {
-				Pair<PAVariable, PAVariable> pair2 = trace.get(inter2);
+				BPELStateInstance pair2 = trace.get(inter2);
 
 				// transform relations
-				List<BranchingType> relations = getIntervalRelation(pair1.getLeft(), pair1.getRight(), pair2.getLeft(),
-						pair2.getRight());
+				List<BranchingType> relations = getIntervalRelation(pair1.getStart(), pair1.getEnd(), pair2.getStart(),
+						pair2.getEnd());
 
 				// create constraint
 				IAConstraint constraint = new IAConstraint(relations);
