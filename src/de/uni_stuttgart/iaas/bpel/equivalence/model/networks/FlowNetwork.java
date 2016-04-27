@@ -146,7 +146,6 @@ public class FlowNetwork extends AbstractActivityNetwork {
 	 */
 	@Override
 	protected void initConstraintMap() {
-		//FIXME: aborted state
 		
 		// handle start activities and final activities specialized constraints
 		for (Activity act : flow.getActivities()) {
@@ -154,41 +153,67 @@ public class FlowNetwork extends AbstractActivityNetwork {
 			if (actNetwork == null) continue;
 			
 			// handle activity basic constraint map
+			// the activity transfers into intit, if the flow transfers into init
 			this.putConstraint(this, new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START), 
 					actNetwork, new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START), 
 					RelationEnum.EQUALS);
+			
+			// the activity transfers into aborted or dead, if the flow transfers into aborted
+			// aborted ends if the flow aborted state ends.
+			this.putConstraint(this, new TimePointDesc(BPELStateEnum.ABORTED, TimeTypeEnum.START), 
+					actNetwork, new TimePointDesc(BPELStateEnum.ABORTED, TimeTypeEnum.START), 
+					RelationEnum.EQUALS);
+			this.putConstraint(this, new TimePointDesc(BPELStateEnum.ABORTED, TimeTypeEnum.START), 
+					actNetwork, new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START), 
+					RelationEnum.EQUALS);
+			this.putConstraint(this, new TimePointDesc(BPELStateEnum.ABORTED, TimeTypeEnum.END), 
+					actNetwork, new TimePointDesc(BPELStateEnum.ABORTED, TimeTypeEnum.END), 
+					RelationEnum.EQUALS);
+			
+			// the activity transfers into aborted or dead, if the flow transfers into dead
+			// dead ends, if dead state of the flow ends.
+			this.putConstraint(this, new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START), 
+					actNetwork, new TimePointDesc(BPELStateEnum.ABORTED, TimeTypeEnum.START), 
+					RelationEnum.EQUALS);
 			this.putConstraint(this, new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START), 
 					actNetwork, new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START), 
-					RelationEnum.EQUALS, RelationEnum.UNRELATED);
+					RelationEnum.EQUALS);
 			this.putConstraint(this, new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.END), 
 					actNetwork, new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.END), 
-					RelationEnum.EQUALS, RelationEnum.UNRELATED);
+					RelationEnum.EQUALS);
+			
+			// activity transfers into fault or terminating, if the flow transfers into fault
+			// fault ends if, the fault state of the flow ends
 			this.putConstraint(this, new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START), 
 					actNetwork, new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START), 
-					RelationEnum.EQUALS, RelationEnum.UNRELATED);
+					RelationEnum.EQUALS);
 			this.putConstraint(this, new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START), 
 					actNetwork, new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START), 
-					RelationEnum.EQUALS, RelationEnum.UNRELATED);
+					RelationEnum.EQUALS);
+			this.putConstraint(this, new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.END), 
+					actNetwork, new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.END), 
+					RelationEnum.EQUALS);
+			
+			// the activity transfers into terminating, if the flow transfers into terminating
+			// terminated ends, if the terminated state of the flow ends.
 			this.putConstraint(this, new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START), 
 					actNetwork, new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START), 
-					RelationEnum.EQUALS, RelationEnum.UNRELATED);
-			this.putConstraint(this, new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.END), 
-					actNetwork, new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.END), 
-					RelationEnum.EQUALS, RelationEnum.UNRELATED);
+					RelationEnum.EQUALS);
+			this.putConstraint(this, new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.END), 
+					actNetwork, new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.END), 
+					RelationEnum.EQUALS);
+			
+			// the activity transfers into completed state, before or when the flow transfers into the completed state
+			// completed ends, if the completed state of the flow ends.
 			this.putConstraint(this, new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START), 
 					actNetwork, new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START), 
-					RelationEnum.EQUALS, RelationEnum.GREATER, RelationEnum.UNRELATED);
+					RelationEnum.LESS, RelationEnum.EQUALS);			
 			this.putConstraint(this, new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.END), 
 					actNetwork, new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.END), 
-					RelationEnum.EQUALS, RelationEnum.GREATER);
-			this.putConstraint(this, new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START), 
-					actNetwork, new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START), 
-					RelationEnum.UNRELATED, RelationEnum.GREATER);
-			this.putConstraint(this, new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START), 
-					actNetwork, new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START), 
-					RelationEnum.UNRELATED, RelationEnum.GREATER);
+					RelationEnum.EQUALS);
 			
 			
+			// handle unsynchronized and end activities
 			if (act.getTargets() == null ||(act.getTargets() != null && act.getTargets().getChildren().size() == 0)) {
 				// handle start activities specialized constraints
 				this.putConstraint(
@@ -241,13 +266,13 @@ public class FlowNetwork extends AbstractActivityNetwork {
 			executionConstraints = parallel;
 		}
 		else if (linkType == LinkTypeEnum.EXCLUSIVE) {
-			RelationEnum[] exclusive = {RelationEnum.EQUALS, RelationEnum.UNRELATED};
+			RelationEnum[] exclusive = {RelationEnum.EQUALS};
 			executionConstraints = exclusive;
 		}
 		else {
 			throw new IllegalStateException();
 		}
-		RelationEnum[] deadConstraints = {RelationEnum.EQUALS, RelationEnum.UNRELATED};
+		RelationEnum[] deadConstraints = {RelationEnum.EQUALS};
 
 		// Create constraint from src to trg state of the activities
 		for (Activity src : sources) {
@@ -321,12 +346,14 @@ public class FlowNetwork extends AbstractActivityNetwork {
 		if (linkType == LinkTypeEnum.SINGLE) return;
 		
 		// get extension element (<paralell/>  or <exclusive/>
-		RelationEnum relation;
+		RelationEnum[] relations;
 		if (linkType == LinkTypeEnum.PARALLEL) {
-			relation = RelationEnum.EQUALS;
+			RelationEnum[] relList = {RelationEnum.LESS, RelationEnum.EQUALS, RelationEnum.GREATER};
+			relations = relList;
 		}
 		else if (linkType == LinkTypeEnum.EXCLUSIVE) {
-			relation = RelationEnum.UNRELATED;
+			RelationEnum[] relList = {RelationEnum.UNRELATED};
+			relations = relList;
 		}
 		else {
 			throw new IllegalStateException();
@@ -346,9 +373,9 @@ public class FlowNetwork extends AbstractActivityNetwork {
 					AbstractActivityNetwork n1 = this.getChildNetwork(act1);
 					AbstractActivityNetwork n2 = this.getChildNetwork(act2);
 					this.putConstraint(
-							n1, new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.START), 
-							n2,	new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.START), 
-							relation);
+							n1, new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.END), 
+							n2,	new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.END), 
+							relations);
 				}
 			}
 		}
