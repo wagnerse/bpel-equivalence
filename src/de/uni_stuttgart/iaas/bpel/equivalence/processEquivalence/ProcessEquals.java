@@ -2,6 +2,7 @@ package de.uni_stuttgart.iaas.bpel.equivalence.processEquivalence;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -13,6 +14,8 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PANetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
 
 public class ProcessEquals {
+	
+	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	
 	private ProcessDifference result = null;
 
@@ -37,8 +40,17 @@ public class ProcessEquals {
 					Pair<BPELStateInstance, BPELStateInstance> pairA = states.get(new MutablePair<String, BPELStateEnum>(activityA, s));
 					Pair<BPELStateInstance, BPELStateInstance> pairB = states.get(new MutablePair<String, BPELStateEnum>(activityB, s));
 					
-					PAConstraint constraint1 = (PAConstraint) process1.getConstraint(pairA.getLeft().getEnd(), pairB.getLeft().getStart());
-					PAConstraint constraint2 = (PAConstraint) process1.getConstraint(pairA.getRight().getEnd(), pairB.getRight().getStart());
+					// get constraints
+					PAConstraint constraint1 = (PAConstraint) process1.getTwoWayConstraint(pairA.getLeft().getEnd(), pairB.getLeft().getStart());
+					PAConstraint constraint2 = (PAConstraint) process2.getTwoWayConstraint(pairA.getRight().getEnd(), pairB.getRight().getStart());
+					
+					// check & correct constraint direction
+					if (!constraint1.equalsDirection(constraint2)) {
+						constraint2 = constraint2.revert();
+						LOGGER.info("Process equal check: Revert constraint " 
+								+ "to be conform with first process constraint: "
+								+ constraint2);
+					}
 					
 					if (!constraint1.equalsRelations(constraint2)) {
 						this.result.addUnequalsConstraints(constraint1, constraint2);

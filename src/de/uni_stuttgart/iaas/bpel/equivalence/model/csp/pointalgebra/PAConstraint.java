@@ -88,6 +88,20 @@ public class PAConstraint extends CSPConstraint{
 		PAConstraint rhs = (PAConstraint) obj;
 		return new EqualsBuilder().append(getRelations(), rhs.getRelations()).isEquals();
 	}
+	
+	public boolean equalsDirection(PAConstraint obj) {
+		boolean result = true;
+		if (!(((PAVariable)this.getFrom()).getTimePoint().getTimeType() 
+				== ((PAVariable)obj.getFrom()).getTimePoint().getTimeType())) {
+			result = false;
+		}
+		if (!(((PAVariable)this.getTo()).getTimePoint().getTimeType() 
+				== ((PAVariable)obj.getTo()).getTimePoint().getTimeType())) {
+			result = false;
+		}
+		
+		return result;
+	}
 
 	@Override
 	public Object clone() {

@@ -232,12 +232,13 @@ public class FlowNetwork extends AbstractActivityNetwork {
 		}
 		
 		// handle link constraints
-		for (Link link : flow.getLinks().getChildren()) {
-			if (link.getSources().size() > 0 && link.getTargets().size() > 0) {
-				createLinkConstraints(link, getLinkType(link));
-			}
+		if (flow.getLinks() != null) {
+			for (Link link : flow.getLinks().getChildren()) {
+				if (link.getSources().size() > 0 && link.getTargets().size() > 0) {
+					createLinkConstraints(link, getLinkType(link));
+				}
+			} 
 		}
-
 		// handle constraints between xor/parallel activities
 		for (Activity act : flow.getActivities()) {
 			if (act.getSources() != null) {

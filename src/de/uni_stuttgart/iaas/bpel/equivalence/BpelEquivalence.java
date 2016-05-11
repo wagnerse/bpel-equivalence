@@ -74,7 +74,7 @@ public class BpelEquivalence {
 	public PANetwork createNetwork(EObject eObject, boolean tryToIncomplete) {
 		PANetwork problem =  NetworkFactoryRepo.getInstance()
 				.createElementNetwork(null, eObject, new PANetwork(new PASolver())).linkActivityNetworkLayer();
-		System.out.println("\nStart constraint probagation");
+		System.out.println("Start constraint probagation");
 		try {
 			problem.probagate();
 		} catch (IllegalStateException e) {

@@ -1,5 +1,7 @@
 package de.uni_stuttgart.iaas.bpel.equivalence.model.csp;
 
+import org.apache.commons.lang.builder.HashCodeBuilder;
+
 /**
  * Describes a variable in a csp network.
  * 
@@ -21,5 +23,12 @@ public abstract class CSPVariable {
 	
 	@Override
 	public abstract boolean equals(Object obj);
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder(61, 79)
+				.append(id)
+				.toHashCode();
+	}
 	
 }

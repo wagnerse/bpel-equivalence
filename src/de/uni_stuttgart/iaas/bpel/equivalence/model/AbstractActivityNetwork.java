@@ -3,6 +3,7 @@ package de.uni_stuttgart.iaas.bpel.equivalence.model;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -26,6 +27,8 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.RelationEnu
  * 
  */
 public abstract class AbstractActivityNetwork {
+	
+	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
 	private AbstractActivityNetwork parentNetwork;
 	protected Map<EObject, AbstractActivityNetwork> childNetworks = new HashMap<EObject, AbstractActivityNetwork>();
@@ -50,7 +53,7 @@ public abstract class AbstractActivityNetwork {
 	 * @return A point algebra network
 	 */
 	public PANetwork linkActivityNetworkLayer() {
-		System.out.println("Create Network for " + this.getNetworkName());
+		LOGGER.info("Create Network for " + this.getNetworkName());
 
 		// create child network objects
 		this.childNetworks = createChildNetworks();

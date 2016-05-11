@@ -76,15 +76,4 @@ public class PAVariable extends CSPVariable {
 				.isEquals();
 	}
 
-	/*@Override
-	public int compareTo(org.metacsp.framework.Variable arg0) {
-		if (!(arg0 instanceof PAVariable)) throw new IllegalArgumentException();
-		int compareAct = this.getName().compareTo(((PAVariable) arg0).getName());
-		if (compareAct == 0) {
-			return this.timePoint.compareTo(((PAVariable) arg0).getTimePoint());
-		}
-		else {
-			return compareAct;
-		}
-	}*/
 }
