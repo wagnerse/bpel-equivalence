@@ -6,8 +6,16 @@ import java.util.logging.Logger;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.CSPConstraint;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.CSPVariable;
 
-
-
+/**
+ * Perform the constraint propagation algorithm of Allen.
+ * 
+ * see the following publications:
+ * Allen, J. F. Maintaining Knowledge About Temporal Intervals
+ * Vilain, M. B. & Kautz, H. A. Constraint Propagation Algorithms for Temporal Reasoning: A Revised Report
+ * 
+ * @author Jonas Scheurich
+ *
+ */
 public class PASolver {
 	
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
@@ -19,6 +27,7 @@ public class PASolver {
 	}
 
 	/**
+	 * Calculate the closure of the given point algebra problem
 	 * @return
 	 */
 	public boolean propagate() {
@@ -84,6 +93,16 @@ public class PASolver {
 		return true;
 	}
 	
+	/**
+	 * Select the constraints for the first part of the constraint propagation
+	 * Select the constraint that contains the given variable as start or end point
+	 * and revert the constraint if necessary.
+	 * 
+	 * @param from
+	 * @param c1
+	 * @param c2
+	 * @return
+	 */
 	private PAConstraint selectConstraintA(PAVariable from, PAConstraint c1, PAConstraint c2) {
 		if (from.equals(c1.getFrom())) {
 			return c1;
@@ -102,6 +121,16 @@ public class PASolver {
 		}
 	}
 	
+	/**
+	 * Select the constraints for the second part of the constraint propagation
+	 * Select the constraint that contains the given variable as start or end point
+	 * and revert the constraint if necessary.
+	 * 
+	 * @param to
+	 * @param c1
+	 * @param c2
+	 * @return
+	 */
 	private PAConstraint selectConstraintB(PAVariable to, PAConstraint c1, PAConstraint c2) {
 		if (to.equals(c1.getTo())) {
 			return c1;

@@ -12,14 +12,18 @@ import de.uni_stuttgart.iaas.bpel.equivalence.processEquivalence.EqualsConfigura
 import de.uni_stuttgart.iaas.bpel.equivalence.processEquivalence.ProcessDifference;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.BPELUtils;
 
+/**
+ * Check the equivalence of two given processes on given BPEL states and activities.
+ * 
+ * @author Jonas Scheurich
+ *
+ */
 public class BpelEquivalenceConsole {
 
 	/**
-	 * Parameter
+	 * Check the equivalence of two given processes on given BPEL states and activities.
 	 * 
-	 * <path process 1> <path process 2> [-s]{<state>} [-a]{<activity name>}
-	 * 
-	 * @param args
+	 * @param args <path process 1> <path process 2> [-s]{<state>} [-a]{<activity name>}
 	 */
 	public static void main(String[] args) {
 		

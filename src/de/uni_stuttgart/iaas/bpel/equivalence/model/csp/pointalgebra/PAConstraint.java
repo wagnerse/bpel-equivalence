@@ -80,6 +80,11 @@ public class PAConstraint extends CSPConstraint{
 				.append(getTo(), rhs.getTo()).isEquals();
 	}
 	
+	/**
+	 * Returns true, if the relations of two constraints are equals.
+	 * @param obj
+	 * @return
+	 */
 	public boolean equalsRelations(CSPConstraint obj) {
 		if (!(obj instanceof PAConstraint))
 			return false;
@@ -89,6 +94,14 @@ public class PAConstraint extends CSPConstraint{
 		return new EqualsBuilder().append(getRelations(), rhs.getRelations()).isEquals();
 	}
 	
+	/**
+	 * Returns true, if the direction of two constraints is equals. 
+	 * The direction analysis is performed only on the {@link TimeTypeEnum}
+	 * of the variables.
+	 * 
+	 * @param obj
+	 * @return
+	 */
 	public boolean equalsDirection(PAConstraint obj) {
 		boolean result = true;
 		if (!(((PAVariable)this.getFrom()).getTimePoint().getTimeType() 

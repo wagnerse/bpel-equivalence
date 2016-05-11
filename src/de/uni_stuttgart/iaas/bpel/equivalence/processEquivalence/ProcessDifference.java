@@ -9,6 +9,13 @@ import org.apache.commons.lang3.tuple.Pair;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.BPELStateInstance;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.CSPConstraint;
 
+/**
+ * The process difference describes the difference between two BPEL processes.
+ * This class holds missing activities and the constraints that are different.
+ * 
+ * @author Jonas Scheurich
+ *
+ */
 public class ProcessDifference {
 
 	private boolean isEquals = false;
@@ -35,10 +42,18 @@ public class ProcessDifference {
 		return isEquals;
 	}
 	
+	/**
+	 * List of the BPEL states, that are missing in one of the processes.
+	 * @return
+	 */
 	public List<BPELStateInstance> getUnexpectedStates() {
 		return unexpectedStates;
 	}
 	
+	/**
+	 * List of the constraints, that are different in the two processes.
+	 * @return
+	 */
 	public List<Pair<CSPConstraint, CSPConstraint>> getUnequalConstraints() {
 		return unequalConstraints;
 	}

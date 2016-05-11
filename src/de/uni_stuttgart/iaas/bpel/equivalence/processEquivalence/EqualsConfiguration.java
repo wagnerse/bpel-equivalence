@@ -6,6 +6,13 @@ import java.util.List;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.model.BPELStateEnum;
 
+/**
+ * The equals configuration holds the states and the activity names which
+ * should be checked by the analysis performed by {@link ProcessEquals}.
+ * 
+ * @author Jonas Scheurich
+ *
+ */
 public class EqualsConfiguration {
 
 	private List<String> activities = new ArrayList<String>();

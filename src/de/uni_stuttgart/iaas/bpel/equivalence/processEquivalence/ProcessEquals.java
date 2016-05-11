@@ -13,12 +13,31 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PAConstrain
 import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PANetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
 
+/**
+ * Checks if two BPEL processes are equivalent. 
+ * 
+ * @author Jonas Scheurich
+ *
+ */
 public class ProcessEquals {
 	
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	
 	private ProcessDifference result = null;
 
+	/**
+	 * Check if two BPEL processes (represented as point algebra network) are equivalent
+	 * by this two conditions:
+	 * 
+	 * (1) Both processes holds the same time points 
+	 *     that are requested by the configuration
+	 * (2) The relations between this time points are equals.
+	 * 
+	 * @param process1
+	 * @param process2
+	 * @param config
+	 * @return
+	 */
 	public boolean equalProcesses(PANetwork process1, PANetwork process2, EqualsConfiguration config) {
 		this.result = new ProcessDifference();
 		Map<Pair<String, BPELStateEnum>, Pair<BPELStateInstance, BPELStateInstance>> states = 
@@ -65,6 +84,12 @@ public class ProcessEquals {
 		return true;
 	}
 	
+	/**
+	 * Check if the BPEL states of a activity are hold in both processes.
+	 * 
+	 * @param intervalls
+	 * @return
+	 */
 	private boolean checkStates(Map<Pair<String, BPELStateEnum>, Pair<BPELStateInstance, BPELStateInstance>> intervalls) {
 		
 		for (Pair<BPELStateInstance, BPELStateInstance> pair: intervalls.values()) {
@@ -84,6 +109,19 @@ public class ProcessEquals {
 		}
 	}
 
+	/**
+	 * Init the states map with the pair of the activities of the two processes
+	 * in respect of the configuration. States outside the configuration are not
+	 * part of the map.
+	 * 
+	 * Each value contains the both corresponding activities of the two processes.
+	 * The key of the map is created by the activity name and a {@link BPELStateEnum}.
+	 * 
+	 * @param process1
+	 * @param process2
+	 * @param config
+	 * @return
+	 */
 	private Map<Pair<String, BPELStateEnum>, Pair<BPELStateInstance, BPELStateInstance>> initMap(PANetwork process1, PANetwork process2, EqualsConfiguration config)  {
 		Map<Pair<String, BPELStateEnum>, Pair<BPELStateInstance, BPELStateInstance>>  map = 
 				new HashMap<Pair<String, BPELStateEnum>, Pair<BPELStateInstance, BPELStateInstance>> ();
@@ -128,6 +166,10 @@ public class ProcessEquals {
 		return map;
 	}
 	
+	/**
+	 * Get the difference report of the last analysis run.
+	 * @return
+	 */
 	public ProcessDifference getProcessDifference() {
 		return this.result;
 	}

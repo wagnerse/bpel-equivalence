@@ -5,6 +5,13 @@ import org.eclipse.emf.ecore.EObject;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PAVariable;
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
 
+/**
+ * A BPEL state instance assigns the start and the end time point of a BPEL activity state 
+ * to a state object and a BPEL activity object.
+ * 
+ * @author Jonas Scheurich
+ *
+ */
 public class BPELStateInstance {
 	
 	private EObject activity;
