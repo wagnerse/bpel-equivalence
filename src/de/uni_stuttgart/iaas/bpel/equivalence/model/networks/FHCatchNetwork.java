@@ -62,115 +62,62 @@ public class FHCatchNetwork extends AbstractActivityNetwork {
 
 	protected void initLocalNetwork() {
 		//create variables
-		PAVariable startInitial = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START));
-		PAVariable endInitial = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.END));
-		this.variables.add(startInitial);
-		this.variables.add(endInitial);
-		
-		PAVariable startDead = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START));
-		PAVariable endDead = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.END));
-		this.variables.add(startDead);
-		this.variables.add(endDead);
-		
-		PAVariable startAborted = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.ABORTED, TimeTypeEnum.START));
-		PAVariable endAborted = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.ABORTED, TimeTypeEnum.END));
-		this.variables.add(startAborted);
-		this.variables.add(endAborted);
-		
-		PAVariable startTerminating = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START));
-		PAVariable endTerminating = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.END));
-		this.variables.add(startTerminating);
-		this.variables.add(endTerminating);
-		
-		PAVariable startTerminated = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.START));
-		PAVariable endTerminated = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.END));
-		this.variables.add(startTerminated);
-		this.variables.add(endTerminated);
-		
-		PAVariable startExe = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.START));
-		PAVariable endExe = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.END));
-		this.variables.add(startExe);
-		this.variables.add(endExe);
-		
-		PAVariable startFault = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START));
-		PAVariable endFault = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.END));
-		this.variables.add(startFault);
-		this.variables.add(endFault);		
-		
-		PAVariable startComp = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START));
-		PAVariable endComp = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.END));
-		this.variables.add(startComp);
-		this.variables.add(endComp);
-		
-		//create intra-state constraints		
-		constraints.add(new PAConstraint(startInitial, endInitial, RelationEnum.LESS));
-		constraints.add(new PAConstraint(startDead, endDead, RelationEnum.LESS));
-		constraints.add(new PAConstraint(startAborted, endAborted, RelationEnum.LESS));
-		constraints.add(new PAConstraint(startTerminating, endTerminating, RelationEnum.LESS));
-		constraints.add(new PAConstraint(startExe, endExe, RelationEnum.LESS));
-		constraints.add(new PAConstraint(startFault, endFault, RelationEnum.LESS));
-		constraints.add(new PAConstraint(startComp, endComp, RelationEnum.LESS));
-		constraints.add(new PAConstraint(startTerminated, endTerminated, RelationEnum.LESS));
-		
-		//create inter-state constraints for control flow
-		constraints.add(new PAConstraint(endInitial, startDead, RelationEnum.EQUALS));
-		constraints.add(new PAConstraint(endInitial, startAborted, RelationEnum.EQUALS));
-		constraints.add(new PAConstraint(endInitial, startExe, RelationEnum.EQUALS));
-		constraints.add(new PAConstraint(endExe, startTerminating, RelationEnum.EQUALS));
-		constraints.add(new PAConstraint(endTerminating, startTerminated, RelationEnum.EQUALS));
-		constraints.add(new PAConstraint(endExe, startComp, RelationEnum.EQUALS));
-		constraints.add(new PAConstraint(endExe, startFault, RelationEnum.EQUALS));
-		
-		//create inter-state constraints for exclusive flow
-		//successor of init
-		constraints.add(new PAConstraint(endDead, endExe, RelationEnum.UNRELATED));
-		constraints.add(new PAConstraint(endAborted, endExe, RelationEnum.UNRELATED));
-		constraints.add(new PAConstraint(endDead, endAborted, RelationEnum.UNRELATED));
-		
-		//successor of executing
-		constraints.add(new PAConstraint(endTerminating, endComp, RelationEnum.UNRELATED));
-		constraints.add(new PAConstraint(endFault, endComp, RelationEnum.UNRELATED));
-		constraints.add(new PAConstraint(endTerminating, endFault, RelationEnum.UNRELATED));
+				PAVariable startInitial = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START));
+				this.variables.add(startInitial);
 				
+				PAVariable startDead = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START));
+				this.variables.add(startDead);
+				
+				PAVariable startAborted = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.ABORTED, TimeTypeEnum.START));
+				this.variables.add(startAborted);
+				
+				PAVariable startTerminating = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START));
+				this.variables.add(startTerminating);
+				
+				PAVariable startTerminated = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.START));
+				this.variables.add(startTerminated);
+				
+				PAVariable startExe = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.START));
+				this.variables.add(startExe);
+				
+				PAVariable startFault = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START));
+				this.variables.add(startFault);
+				
+				PAVariable startComp = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START));
+				this.variables.add(startComp);
+				
+				//create inter-state constraints for control flow
+				constraints.add(new PAConstraint(startInitial, startDead, RelationEnum.LESS));
+				constraints.add(new PAConstraint(startInitial, startAborted, RelationEnum.LESS));
+				constraints.add(new PAConstraint(startInitial, startExe, RelationEnum.LESS));
+				constraints.add(new PAConstraint(startExe, startTerminating, RelationEnum.LESS));
+				constraints.add(new PAConstraint(startExe, startComp, RelationEnum.LESS));
+				constraints.add(new PAConstraint(startExe, startFault, RelationEnum.LESS));
+				constraints.add(new PAConstraint(startTerminating, startTerminated, RelationEnum.LESS));
+				
+				//create inter-state constraints for exclusive flow
+				//successor of init
+				constraints.add(new PAConstraint(startDead, startExe, RelationEnum.UNRELATED));
+				constraints.add(new PAConstraint(startAborted, startExe, RelationEnum.UNRELATED));
+				constraints.add(new PAConstraint(startDead, startAborted, RelationEnum.UNRELATED));
+				
+				//successor of executing
+				constraints.add(new PAConstraint(startTerminating, startComp, RelationEnum.UNRELATED));
+				constraints.add(new PAConstraint(startFault, startComp, RelationEnum.UNRELATED));
+				constraints.add(new PAConstraint(startTerminating, startFault, RelationEnum.UNRELATED));
 	}
 
 	@Override
 	protected void initConstraintMap() {
-		//FIXME aborted state
+		//FIXME aborted state, without end state
 		
 		AbstractActivityNetwork actNetwork = super.getChildNetwork(activity);
 		if (actNetwork == null) return;
 		
-		this.putConstraint(this, new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START), 
+		//TODO implement
+		/*this.putConstraint(this, new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START), 
 				actNetwork, new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START), 
-				RelationEnum.EQUALS);
-		this.putConstraint(this, new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.START), 
-				actNetwork, new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.START), 
-				RelationEnum.EQUALS, RelationEnum.UNRELATED);
-		this.putConstraint(this, new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START), 
-				actNetwork, new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START), 
-				RelationEnum.EQUALS, RelationEnum.UNRELATED);
-		this.putConstraint(this, new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.END), 
-				actNetwork, new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.END), 
-				RelationEnum.EQUALS, RelationEnum.UNRELATED);
-		this.putConstraint(this, new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START), 
-				actNetwork, new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START), 
-				RelationEnum.EQUALS, RelationEnum.UNRELATED);
-		this.putConstraint(this, new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.END), 
-				actNetwork, new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.END), 
-				RelationEnum.EQUALS, RelationEnum.UNRELATED);
-		this.putConstraint(this, new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START), 
-				actNetwork, new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START), 
-				RelationEnum.EQUALS, RelationEnum.UNRELATED);
-		this.putConstraint(this, new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.END), 
-				actNetwork, new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.END), 
-				RelationEnum.EQUALS, RelationEnum.UNRELATED);
-		this.putConstraint(this, new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START), 
-				actNetwork, new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START), 
-				RelationEnum.EQUALS, RelationEnum.UNRELATED);
-		this.putConstraint(this, new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.END), 
-				actNetwork, new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.END), 
-				RelationEnum.EQUALS, RelationEnum.UNRELATED);
+				RelationEnum.EQUALS);*/
 	}
 	
 	@Override

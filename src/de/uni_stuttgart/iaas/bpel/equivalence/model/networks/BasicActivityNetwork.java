@@ -22,8 +22,8 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.networks.BasicActivityNetwor
 import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
 
 /**
- * Creates a point algebra network for the BPEL basic activities
- * receive, reply, invoke, assign, throw, exit, wait, empty
+ * Creates a point algebra network for the BPEL basic activities receive, reply,
+ * invoke, assign, throw, exit, wait, empty
  * 
  * @author Jonas Scheurich
  *
@@ -35,18 +35,19 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 	private List<PAVariable> variables = new ArrayList<PAVariable>();
 	private List<PAConstraint> constraints = new ArrayList<PAConstraint>();
 
-	public BasicActivityNetwork(AbstractActivityNetwork parentNetwork, EClass support, Activity subject, PANetwork network) {
+	public BasicActivityNetwork(AbstractActivityNetwork parentNetwork, EClass support, Activity subject,
+			PANetwork network) {
 		super(parentNetwork, network);
 		this.support = support;
 		this.activity = subject;
-		
+
 		initLocalNetwork();
 	}
-	
+
 	@Override
 	public String getNetworkName() {
 		Object attribute = EMFUtils.getAttributeByName(activity, "name");
-		return (attribute instanceof String)? (String) attribute : "[Activity]";
+		return (attribute instanceof String) ? (String) attribute : "[Activity]";
 	}
 
 	@Override
@@ -60,79 +61,60 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 		variableArray = variables.toArray(variableArray);
 		return new BasicActivityConnector(variableArray);
 	}
-	
+
 	protected void initLocalNetwork() {
-		//create variables
-		PAVariable startInitial = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START));
-		PAVariable endInitial = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.END));
+		// create variables
+		PAVariable startInitial = this.getNetwork().createVariable(this.getEObject(),
+				new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START));
 		this.variables.add(startInitial);
-		this.variables.add(endInitial);
-		
-		PAVariable startDead = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START));
-		PAVariable endDead = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.END));
+
+		PAVariable startDead = this.getNetwork().createVariable(this.getEObject(),
+				new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START));
 		this.variables.add(startDead);
-		this.variables.add(endDead);
-		
-		PAVariable startAborted = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.ABORTED, TimeTypeEnum.START));
-		PAVariable endAborted = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.ABORTED, TimeTypeEnum.END));
+
+		PAVariable startAborted = this.getNetwork().createVariable(this.getEObject(),
+				new TimePointDesc(BPELStateEnum.ABORTED, TimeTypeEnum.START));
 		this.variables.add(startAborted);
-		this.variables.add(endAborted);
-		
-		PAVariable startTerminating = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START));
-		PAVariable endTerminating = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.END));
+
+		PAVariable startTerminating = this.getNetwork().createVariable(this.getEObject(),
+				new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START));
 		this.variables.add(startTerminating);
-		this.variables.add(endTerminating);
-		
-		PAVariable startTerminated = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.START));
-		PAVariable endTerminated = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.END));
+
+		PAVariable startTerminated = this.getNetwork().createVariable(this.getEObject(),
+				new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.START));
 		this.variables.add(startTerminated);
-		this.variables.add(endTerminated);
-		
-		PAVariable startExe = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.START));
-		PAVariable endExe = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.END));
+
+		PAVariable startExe = this.getNetwork().createVariable(this.getEObject(),
+				new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.START));
 		this.variables.add(startExe);
-		this.variables.add(endExe);
-		
-		PAVariable startFault = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START));
-		PAVariable endFault = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.END));
+
+		PAVariable startFault = this.getNetwork().createVariable(this.getEObject(),
+				new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START));
 		this.variables.add(startFault);
-		this.variables.add(endFault);		
-		
-		PAVariable startComp = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START));
-		PAVariable endComp = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.END));
+
+		PAVariable startComp = this.getNetwork().createVariable(this.getEObject(),
+				new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START));
 		this.variables.add(startComp);
-		this.variables.add(endComp);
-		
-		//create intra-state constraints		
-		constraints.add(new PAConstraint(startInitial, endInitial, RelationEnum.LESS));
-		constraints.add(new PAConstraint(startDead, endDead, RelationEnum.LESS));
-		constraints.add(new PAConstraint(startAborted, endAborted, RelationEnum.LESS));
-		constraints.add(new PAConstraint(startTerminating, endTerminating, RelationEnum.LESS));
-		constraints.add(new PAConstraint(startExe, endExe, RelationEnum.LESS));
-		constraints.add(new PAConstraint(startFault, endFault, RelationEnum.LESS));
-		constraints.add(new PAConstraint(startComp, endComp, RelationEnum.LESS));
-		constraints.add(new PAConstraint(startTerminated, endTerminated, RelationEnum.LESS));
-		
-		//create inter-state constraints for control flow
-		constraints.add(new PAConstraint(endInitial, startDead, RelationEnum.EQUALS));
-		constraints.add(new PAConstraint(endInitial, startAborted, RelationEnum.EQUALS));
-		constraints.add(new PAConstraint(endInitial, startExe, RelationEnum.EQUALS));
-		constraints.add(new PAConstraint(endExe, startTerminating, RelationEnum.EQUALS));
-		constraints.add(new PAConstraint(endTerminating, startTerminated, RelationEnum.EQUALS));
-		constraints.add(new PAConstraint(endExe, startComp, RelationEnum.EQUALS));
-		constraints.add(new PAConstraint(endExe, startFault, RelationEnum.EQUALS));
-		
-		//create inter-state constraints for exclusive flow
-		//successor of init
-		constraints.add(new PAConstraint(endDead, endExe, RelationEnum.UNRELATED));
-		constraints.add(new PAConstraint(endAborted, endExe, RelationEnum.UNRELATED));
-		constraints.add(new PAConstraint(endDead, endAborted, RelationEnum.UNRELATED));
-		
-		//successor of executing
-		constraints.add(new PAConstraint(endTerminating, endComp, RelationEnum.UNRELATED));
-		constraints.add(new PAConstraint(endFault, endComp, RelationEnum.UNRELATED));
-		constraints.add(new PAConstraint(endTerminating, endFault, RelationEnum.UNRELATED));
-				
+
+		// create inter-state constraints for control flow
+		constraints.add(new PAConstraint(startInitial, startDead, RelationEnum.LESS));
+		constraints.add(new PAConstraint(startInitial, startAborted, RelationEnum.LESS));
+		constraints.add(new PAConstraint(startInitial, startExe, RelationEnum.LESS));
+		constraints.add(new PAConstraint(startExe, startTerminating, RelationEnum.LESS));
+		constraints.add(new PAConstraint(startExe, startComp, RelationEnum.LESS));
+		constraints.add(new PAConstraint(startExe, startFault, RelationEnum.LESS));
+		constraints.add(new PAConstraint(startTerminating, startTerminated, RelationEnum.LESS));
+
+		// create inter-state constraints for exclusive flow
+		// successor of init
+		constraints.add(new PAConstraint(startDead, startExe, RelationEnum.UNRELATED));
+		constraints.add(new PAConstraint(startAborted, startExe, RelationEnum.UNRELATED));
+		constraints.add(new PAConstraint(startDead, startAborted, RelationEnum.UNRELATED));
+
+		// successor of executing
+		constraints.add(new PAConstraint(startTerminating, startComp, RelationEnum.UNRELATED));
+		constraints.add(new PAConstraint(startFault, startComp, RelationEnum.UNRELATED));
+		constraints.add(new PAConstraint(startTerminating, startFault, RelationEnum.UNRELATED));
 	}
 
 	@Override
@@ -170,6 +152,6 @@ public class BasicActivityNetwork extends AbstractActivityNetwork {
 	@Override
 	protected void initConstraintMap() {
 		// not implemented
-		
+
 	}
 }
