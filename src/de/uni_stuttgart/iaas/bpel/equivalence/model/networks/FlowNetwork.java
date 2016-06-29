@@ -138,16 +138,16 @@ public class FlowNetwork extends AbstractActivityNetwork {
 				continue;
 
 			// handle activity basic constraint map
-			// the activity transfers into intit, if the flow transfers into
+			// the activity transfers into intit, if the flow transfers into init
 			this.putConstraint(this, new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START), actNetwork,
-					new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START), RelationEnum.EQUALS);
+					new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START), RelationEnum.EQUALS, RelationEnum.UNRELATED);
 
-			// the activity transfers into aborted or dead, if the flow
+			// the activity transfers into aborted or terminating, if the flow
 			// transfers into aborted
 			this.putConstraint(this, new TimePointDesc(BPELStateEnum.ABORTED, TimeTypeEnum.START), actNetwork,
 					new TimePointDesc(BPELStateEnum.ABORTED, TimeTypeEnum.START), RelationEnum.EQUALS);
 			this.putConstraint(this, new TimePointDesc(BPELStateEnum.ABORTED, TimeTypeEnum.START), actNetwork,
-					new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START), RelationEnum.EQUALS);
+					new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START), RelationEnum.EQUALS, RelationEnum.UNRELATED);
 
 			// the activity transfers into dead, if the flow
 			// transfers into dead
@@ -157,29 +157,29 @@ public class FlowNetwork extends AbstractActivityNetwork {
 			// if the activity transfers into fault, the flow transfers into
 			// fault
 			this.putConstraint(this, new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START), actNetwork,
-					new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START), RelationEnum.EQUALS);
+					new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START), RelationEnum.EQUALS, RelationEnum.UNRELATED);
 
-			// activity transfers into aborted or terminating, if the flow
+			// activity transfers into terminating, if the flow
 			// transfers into fault
 			this.putConstraint(this, new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START), actNetwork,
-					new TimePointDesc(BPELStateEnum.ABORTED, TimeTypeEnum.START), RelationEnum.EQUALS);
-			this.putConstraint(this, new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START), actNetwork,
-					new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START), RelationEnum.EQUALS);
+					new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START), RelationEnum.EQUALS, RelationEnum.UNRELATED);
 
 			// the activity transfers into aborted or terminating, if the flow
 			// transfers
 			// into terminating
 			this.putConstraint(this, new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START), actNetwork,
-					new TimePointDesc(BPELStateEnum.ABORTED, TimeTypeEnum.START), RelationEnum.EQUALS);
+					new TimePointDesc(BPELStateEnum.ABORTED, TimeTypeEnum.START), RelationEnum.EQUALS, RelationEnum.UNRELATED);
 			this.putConstraint(this, new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START), actNetwork,
-					new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START), RelationEnum.EQUALS);
+					new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START), RelationEnum.EQUALS, RelationEnum.UNRELATED);
 
 			// the flow transfers into terminated when, of after a activity
 			// transfers into terminated
 			this.putConstraint(this, new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.START), actNetwork,
 					new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.START), 
-					RelationEnum.EQUALS, RelationEnum.GREATER);
+					RelationEnum.EQUALS, RelationEnum.GREATER, RelationEnum.UNRELATED);
 
+			
+			
 			// handle unsynchronized and end activities
 			if (act.getTargets() == null || (act.getTargets() != null && act.getTargets().getChildren().size() == 0)) {
 				// handle start activities specialized constraints
@@ -268,8 +268,12 @@ public class FlowNetwork extends AbstractActivityNetwork {
 	 * Returns the link type of a Sources element by the BPEL extension element
 	 * descibet below.
 	 * 
-	 * <bpel:empty> <bpel:sources> <ext:equivalenceanotation>[exclusive|
-	 * parallel]</ext:equivalenceanotation> ... </bpel:sources> </bpel:empty>
+	 * <bpel:empty> 
+	 *   <bpel:sources> 
+	 *     <ext:equivalenceanotation>[exclusive|parallel]</ext:equivalenceanotation> 
+	 *     ... 
+	 *   </bpel:sources>
+	 * </bpel:empty>
 	 * 
 	 * @param sources
 	 * @return {@link LinkTypeEnum}

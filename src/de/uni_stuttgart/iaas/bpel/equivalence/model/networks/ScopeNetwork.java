@@ -122,7 +122,6 @@ public class ScopeNetwork extends AbstractActivityNetwork {
 
 	@Override
 	protected void initConstraintMap() {
-		// FIXME aborted state, without end state
 
 		AbstractActivityNetwork actNetwork = super.getChildNetwork(scope.getActivity());
 
@@ -132,64 +131,44 @@ public class ScopeNetwork extends AbstractActivityNetwork {
 			// init with scope
 			this.putConstraint(this, new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START), actNetwork,
 					new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START), RelationEnum.EQUALS);
-
-			// if the scope goes to the execution state, transfer the activity
-			// to execution
+			
+			// If the scope transfers into aborted state, the activity transfers into aborted state, too
+			this.putConstraint(this, new TimePointDesc(BPELStateEnum.ABORTED, TimeTypeEnum.START), actNetwork,
+					new TimePointDesc(BPELStateEnum.ABORTED, TimeTypeEnum.START), RelationEnum.EQUALS);
+			
+			// If the scope transfers into executing state, the activity transfers into executing state, too
 			this.putConstraint(this, new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.START), actNetwork,
-					new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.START), RelationEnum.EQUALS,
-					RelationEnum.UNRELATED);
-			this.putConstraint(this, new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.END), actNetwork,
-					new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.END), RelationEnum.EQUALS,
-					RelationEnum.UNRELATED);
-
-			// if the scope goes to dead, transfer the activity to dead.
+					new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.START), RelationEnum.EQUALS);
+			
+			// If the scope transfers into dead state, the activity transfers into dead state, too
 			this.putConstraint(this, new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START), actNetwork,
-					new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START), RelationEnum.EQUALS,
-					RelationEnum.UNRELATED);
-			this.putConstraint(this, new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.END), actNetwork,
-					new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.END), RelationEnum.EQUALS,
-					RelationEnum.UNRELATED);
-
-			// if the scope goes to fault, or the activty goes to fault,
-			// transfer the other to fault.
-			// if the activity is terminated or completed, no action is
-			// performed.
+					new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START), RelationEnum.EQUALS);
+			
+			// If the activity transfers into fault state, the scope transfers into fault handling state
 			this.putConstraint(this, new TimePointDesc(BPELStateEnum.FAULT_HANDLING, TimeTypeEnum.START), actNetwork,
-					new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START), RelationEnum.EQUALS,
-					RelationEnum.UNRELATED);
-
-			// the fault state of the activity ends with the fault or
-			// fault_caught state of the scope
-			this.putConstraint(this, new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.END), actNetwork,
-					new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.END), RelationEnum.EQUALS,
-					RelationEnum.UNRELATED);
-			this.putConstraint(this, new TimePointDesc(BPELStateEnum.FAULT_CAUGHT, TimeTypeEnum.END), actNetwork,
-					new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.END), RelationEnum.EQUALS,
-					RelationEnum.UNRELATED);
-
-			// if the activity goes to fault_caught, transfer the scope to
-			// completed.
-			this.putConstraint(this, new TimePointDesc(BPELStateEnum.FAULT_CAUGHT, TimeTypeEnum.START), actNetwork,
-					new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START), RelationEnum.EQUALS,
-					RelationEnum.UNRELATED);
-			this.putConstraint(this, new TimePointDesc(BPELStateEnum.FAULT_CAUGHT, TimeTypeEnum.END), actNetwork,
-					new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.END), RelationEnum.EQUALS,
-					RelationEnum.UNRELATED);
-
-			// if the scope or the activity is terminated, transfer
-			// scope/activity to terminated
+					new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START), RelationEnum.EQUALS);
+			
+			// If the scope transfers into terminating state, the activity transfers into terminating state, too
 			this.putConstraint(this, new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START), actNetwork,
-					new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START), RelationEnum.EQUALS);
-			this.putConstraint(this, new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.END), actNetwork,
-					new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.END), RelationEnum.EQUALS,
-					RelationEnum.UNRELATED);
-
-			// if the activity is completed, transfer the scope to completed.
+					new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START), 
+					RelationEnum.EQUALS, RelationEnum.UNRELATED);
+			
+			// If the scope transfers into terminated state, the activity transfers into terminated state, too
+			this.putConstraint(this, new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.START), actNetwork,
+					new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.START), 
+					RelationEnum.EQUALS, RelationEnum.UNRELATED);
+			
+			// If the activity transfers into completed or fault caught state the scope transfers
+			// into completed state.
 			this.putConstraint(this, new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START), actNetwork,
-					new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START), RelationEnum.EQUALS);
-			this.putConstraint(this, new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.END), actNetwork,
-					new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.END), RelationEnum.EQUALS,
-					RelationEnum.UNRELATED);
+					new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START),
+					RelationEnum.EQUALS, RelationEnum.UNRELATED);
+
+			this.putConstraint(this, new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START), actNetwork,
+					new TimePointDesc(BPELStateEnum.FAULT_CAUGHT, TimeTypeEnum.START),
+					RelationEnum.EQUALS, RelationEnum.UNRELATED);
+
+			
 		}
 
 		// handle fault handler constraint map
@@ -205,59 +184,55 @@ public class ScopeNetwork extends AbstractActivityNetwork {
 	private void initFaultHandlerConstraintMap(FaultHandler faultHandler) {
 		if (faultHandler == null)
 			return;
-		//FIXME without end state
 		for (Catch bpelCatch : faultHandler.getCatch()) {
 			AbstractActivityNetwork fhNetwork = super.getChildNetwork(bpelCatch);
 			if (fhNetwork != null) {
 				// init with scope
 				this.putConstraint(this, new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START), fhNetwork,
 						new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START), RelationEnum.EQUALS);
-
-				// go to execution or dead of the fault handler if scope starts
-				// fault handling
-				this.putConstraint(this, new TimePointDesc(BPELStateEnum.FAULT_HANDLING, TimeTypeEnum.START), fhNetwork,
-						new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.START), RelationEnum.EQUALS,
-						RelationEnum.UNRELATED);
-				this.putConstraint(this, new TimePointDesc(BPELStateEnum.FAULT_HANDLING, TimeTypeEnum.START), fhNetwork,
-						new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START), RelationEnum.EQUALS,
-						RelationEnum.UNRELATED);
-
-				// got to dead of the fault handler if the scope is marked as
-				// dead
+				
+				// If the Scope transfers into aborted state, 
+				//the fault handler transfers into aborted state, too.
+				this.putConstraint(this, new TimePointDesc(BPELStateEnum.ABORTED, TimeTypeEnum.START), fhNetwork,
+						new TimePointDesc(BPELStateEnum.ABORTED, TimeTypeEnum.START), RelationEnum.EQUALS);
+				
+				// If the Scope transfers into dead state, 
+				//the fault handler transfers into dead state, too.
 				this.putConstraint(this, new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START), fhNetwork,
-						new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START), RelationEnum.EQUALS,
-						RelationEnum.UNRELATED);
-				this.putConstraint(this, new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.END), fhNetwork,
-						new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.END), RelationEnum.EQUALS,
-						RelationEnum.UNRELATED);
-
-				// if the scope completes mark the fault handler as dead.
-				this.putConstraint(this, new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START), fhNetwork,
-						new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START), RelationEnum.EQUALS,
-						RelationEnum.UNRELATED);
-
-				// if the scope terminates, terminate the fault handler
-				this.putConstraint(this, new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START), fhNetwork,
-						new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START), RelationEnum.EQUALS,
-						RelationEnum.UNRELATED);
-				this.putConstraint(this, new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.END), fhNetwork,
-						new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.END), RelationEnum.EQUALS,
-						RelationEnum.UNRELATED);
-
-				// if the fault handler completes, mark the scope as fault
-				// caught or fault
+						new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START), RelationEnum.EQUALS);
+				
+				// If the scope transfers into fault handling state,
+				// the fault handler transfers into executing state.
+				this.putConstraint(this, new TimePointDesc(BPELStateEnum.FAULT_HANDLING, TimeTypeEnum.START), fhNetwork,
+						new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.START), RelationEnum.EQUALS);
+				
+				// If the fault handler transfers into fault state,
+				// the scope transfers into fault state.
 				this.putConstraint(this, new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START), fhNetwork,
-						new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START), RelationEnum.EQUALS,
-						RelationEnum.UNRELATED);
-				this.putConstraint(this, new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.END), fhNetwork,
-						new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.END), RelationEnum.EQUALS,
-						RelationEnum.UNRELATED);
-				this.putConstraint(this, new TimePointDesc(BPELStateEnum.FAULT_CAUGHT, TimeTypeEnum.START), fhNetwork,
-						new TimePointDesc(BPELStateEnum.FAULT_CAUGHT, TimeTypeEnum.START), RelationEnum.EQUALS,
-						RelationEnum.UNRELATED);
-				this.putConstraint(this, new TimePointDesc(BPELStateEnum.FAULT_CAUGHT, TimeTypeEnum.END), fhNetwork,
-						new TimePointDesc(BPELStateEnum.FAULT_CAUGHT, TimeTypeEnum.END), RelationEnum.EQUALS,
-						RelationEnum.UNRELATED);
+						new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START),
+						RelationEnum.EQUALS, RelationEnum.UNRELATED);
+				
+				// If the fault handler transfers into completed state,
+				// the scope transfers into fault caught state.
+				this.putConstraint(this, new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START), fhNetwork,
+						new TimePointDesc(BPELStateEnum.FAULT_CAUGHT, TimeTypeEnum.START),
+						RelationEnum.EQUALS, RelationEnum.UNRELATED);
+				
+				// If the scope transfers into terminating state, 
+				// the fault handler transfers into dead or terminating state
+				this.putConstraint(this, new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START), fhNetwork,
+						new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START),
+						RelationEnum.EQUALS, RelationEnum.UNRELATED);
+				
+				this.putConstraint(this, new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START), fhNetwork,
+						new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START),
+						RelationEnum.EQUALS, RelationEnum.UNRELATED);
+				
+				// If the scope transfers into completed state,
+				// the fault handler may transfers into dead.
+				this.putConstraint(this, new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START), fhNetwork,
+						new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START),
+						RelationEnum.EQUALS, RelationEnum.UNRELATED);
 			}
 		}
 	}

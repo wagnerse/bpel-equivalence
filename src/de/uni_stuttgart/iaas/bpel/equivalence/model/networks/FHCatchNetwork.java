@@ -109,15 +109,56 @@ public class FHCatchNetwork extends AbstractActivityNetwork {
 
 	@Override
 	protected void initConstraintMap() {
-		//FIXME aborted state, without end state
 		
 		AbstractActivityNetwork actNetwork = super.getChildNetwork(activity);
 		if (actNetwork == null) return;
 		
-		//TODO implement
-		/*this.putConstraint(this, new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START), 
+		// init with fault handler
+		this.putConstraint(this, new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START), 
 				actNetwork, new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START), 
-				RelationEnum.EQUALS);*/
+				RelationEnum.EQUALS);
+		
+		// If the fault handler transfers into aborted state,
+		// the activity transfers into aborted state
+		this.putConstraint(this, new TimePointDesc(BPELStateEnum.ABORTED, TimeTypeEnum.START), 
+				actNetwork, new TimePointDesc(BPELStateEnum.ABORTED, TimeTypeEnum.START), 
+				RelationEnum.EQUALS);
+		
+		// If the fault handler transfers into executing state,
+		// the activity transfers into executing state.
+		this.putConstraint(this, new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.START), 
+				actNetwork, new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.START), 
+				RelationEnum.EQUALS);
+		
+		// If the fault handler transfers into dead state,
+		// the activity transfers into dead state.
+		this.putConstraint(this, new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START), 
+				actNetwork, new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START), 
+				RelationEnum.EQUALS);
+		
+		// If the activity transfers into fault state
+		// the fault handler transfers into fault state.
+		this.putConstraint(this, new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START), 
+				actNetwork, new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START), 
+				RelationEnum.EQUALS, RelationEnum.UNRELATED);
+		
+		// If the activity transfers into terminating state
+		// the fault handler transfers into terminating state.
+		this.putConstraint(this, new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START), 
+				actNetwork, new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START), 
+				RelationEnum.EQUALS, RelationEnum.UNRELATED);
+		
+		// If the activity transfers into completed or fault caught state,
+		// the fault handler transfers into completed state.
+		this.putConstraint(this, new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START), 
+				actNetwork, new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START), 
+				RelationEnum.EQUALS, RelationEnum.UNRELATED);
+		
+		this.putConstraint(this, new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START), 
+				actNetwork, new TimePointDesc(BPELStateEnum.FAULT_CAUGHT, TimeTypeEnum.START), 
+				RelationEnum.EQUALS, RelationEnum.UNRELATED);
+		
+		
 	}
 	
 	@Override
