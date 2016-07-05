@@ -6,8 +6,8 @@ import java.util.List;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import de.uni_stuttgart.iaas.bpel.equivalence.model.BPELStateInstance;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.CSPConstraint;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PAVariable;
 
 /**
  * The process difference describes the difference between two BPEL processes.
@@ -19,7 +19,8 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.CSPConstraint;
 public class ProcessDifference {
 
 	private boolean isEquals = false;
-	private List<BPELStateInstance> unexpectedStates = new ArrayList<BPELStateInstance>();
+	private List<PAVariable> unexpectedStates = new ArrayList<PAVariable>();
+	private List<String> missingStates = new ArrayList<String>();
 	private List<Pair<CSPConstraint, CSPConstraint>> unequalConstraints = new ArrayList<Pair<CSPConstraint, CSPConstraint>>();
 	
 	public ProcessDifference() {
@@ -30,12 +31,16 @@ public class ProcessDifference {
 		this.isEquals = isEquals;
 	}
 	
-	public void addUnexpectedStates(BPELStateInstance i) {
+	public void addUnexpectedStates(PAVariable i) {
 		this.unexpectedStates.add(i);
 	}
 	
 	public void addUnequalsConstraints(CSPConstraint c1, CSPConstraint c2) {
 		this.unequalConstraints.add(new MutablePair<CSPConstraint, CSPConstraint>(c1, c2));
+	}
+	
+	public void addMissingState(String i) {
+		this.missingStates.add(i);
 	}
 	
 	public boolean isEquals() {
@@ -46,7 +51,7 @@ public class ProcessDifference {
 	 * List of the BPEL states, that are missing in one of the processes.
 	 * @return
 	 */
-	public List<BPELStateInstance> getUnexpectedStates() {
+	public List<PAVariable> getUnexpectedStates() {
 		return unexpectedStates;
 	}
 	
@@ -56,5 +61,13 @@ public class ProcessDifference {
 	 */
 	public List<Pair<CSPConstraint, CSPConstraint>> getUnequalConstraints() {
 		return unequalConstraints;
+	}
+	
+	/**
+	 * List of states missed by the equals configuration
+	 * @return
+	 */
+	public List<String> getMissingStates() {
+		return missingStates;
 	}
 }

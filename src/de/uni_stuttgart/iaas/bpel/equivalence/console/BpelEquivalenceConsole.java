@@ -80,7 +80,10 @@ public class BpelEquivalenceConsole {
 		else {
 			System.out.println("The processes are not equals");
 			if (difference.getUnexpectedStates().size() > 0) {
-				System.out.println("Unequal activites: " + difference.getUnexpectedStates());
+				System.out.println("Unequal activity states: " + difference.getUnexpectedStates());
+			}
+			if (difference.getMissingStates().size() > 0) {
+				System.out.println("Missed states, required by the configuration: " + difference.getMissingStates());
 			}
 			if (difference.getUnequalConstraints().size() > 0) {
 				System.out.println("Unequal execution: " + difference.getUnequalConstraints());

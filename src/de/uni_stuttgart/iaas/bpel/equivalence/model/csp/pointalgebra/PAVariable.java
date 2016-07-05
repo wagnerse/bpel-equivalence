@@ -44,12 +44,16 @@ public class PAVariable extends CSPVariable {
 		return timePoint;
 	}
 	
-	@Override
-	public String getName() {
+	public String getBpelName() {
 		Object nameAttr = EMFUtils.getAttributeByName(bpelElement, "name");
 		String bpelName = (nameAttr instanceof String)? (String) nameAttr : "";
 		
-		return bpelName + timePoint.getState().name() + "_" + timePoint.getTimeType().name();
+		return bpelName;
+	}
+	
+	@Override
+	public String getName() {		
+		return this.getBpelName() + timePoint.getState().name() + "_" + timePoint.getTimeType().name();
 	}
 	
 	@Override

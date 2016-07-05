@@ -8,10 +8,11 @@ import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.model.BPELStateEnum;
-import de.uni_stuttgart.iaas.bpel.equivalence.model.BPELStateInstance;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.TimePointDesc.TimeTypeEnum;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.CSPVariable;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PAConstraint;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PANetwork;
-import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PAVariable;
 
 /**
  * Checks if two BPEL processes are equivalent. 
@@ -40,13 +41,14 @@ public class ProcessEquals {
 	 */
 	public boolean equalProcesses(PANetwork process1, PANetwork process2, EqualsConfiguration config) {
 		this.result = new ProcessDifference();
-		Map<Pair<String, BPELStateEnum>, Pair<BPELStateInstance, BPELStateInstance>> states = 
+		this.result.setEquals(true);
+		Map<Pair<String, BPELStateEnum>, Pair<PAVariable, PAVariable>> states = 
 				initMap(process1, process2, config);
 		
 		// check availability of the variables
-		if(!checkStates(states)) {
+		if(!checkStates(config, states)) {
 			this.result.setEquals(false);
-			return false;
+			return this.result.isEquals();
 		}
 
 		// check relations
@@ -55,13 +57,15 @@ public class ProcessEquals {
 				for (String activityB: config.getActivities()) {
 					if (activityA.equals(activityB)) continue;
 					
-					// get pairs
-					Pair<BPELStateInstance, BPELStateInstance> pairA = states.get(new MutablePair<String, BPELStateEnum>(activityA, s));
-					Pair<BPELStateInstance, BPELStateInstance> pairB = states.get(new MutablePair<String, BPELStateEnum>(activityB, s));
+					// create pairs of the start time points of the given state of activtity A and B
+					// Pair A contains the start time point of the given state of the activity A in both processes
+					// Pair B contains the start time point of the given state of the activity B in both processes
+					Pair<PAVariable, PAVariable> pairA = states.get(new MutablePair<String, BPELStateEnum>(activityA, s));
+					Pair<PAVariable, PAVariable> pairB = states.get(new MutablePair<String, BPELStateEnum>(activityB, s));
 					
 					// get constraints
-					PAConstraint constraint1 = (PAConstraint) process1.getTwoWayConstraint(pairA.getLeft().getEnd(), pairB.getLeft().getStart());
-					PAConstraint constraint2 = (PAConstraint) process2.getTwoWayConstraint(pairA.getRight().getEnd(), pairB.getRight().getStart());
+					PAConstraint constraint1 = (PAConstraint) process1.getTwoWayConstraint(pairA.getLeft(), pairB.getLeft());
+					PAConstraint constraint2 = (PAConstraint) process2.getTwoWayConstraint(pairA.getRight(), pairB.getRight());
 					
 					// check & correct constraint direction
 					if (!constraint1.equalsDirection(constraint2)) {
@@ -80,19 +84,20 @@ public class ProcessEquals {
 			}
 		}
 
-		this.result.setEquals(true);
-		return true;
+		return this.result.isEquals();
 	}
 	
 	/**
 	 * Check if the BPEL states of a activity are hold in both processes.
+	 * @param config 
 	 * 
 	 * @param intervalls
 	 * @return
 	 */
-	private boolean checkStates(Map<Pair<String, BPELStateEnum>, Pair<BPELStateInstance, BPELStateInstance>> intervalls) {
+	private boolean checkStates(EqualsConfiguration config, Map<Pair<String, BPELStateEnum>, Pair<PAVariable, PAVariable>> timePoints) {
 		
-		for (Pair<BPELStateInstance, BPELStateInstance> pair: intervalls.values()) {
+		// check completeness of the variable pairs
+		for (Pair<PAVariable, PAVariable> pair: timePoints.values()) {
 			if (pair.getLeft() == null && pair.getRight() != null) {
 				this.result.addUnexpectedStates(pair.getRight());
 			}
@@ -101,7 +106,22 @@ public class ProcessEquals {
 			}
 		}
 		
-		if (this.result.getUnexpectedStates().size() == 0) {
+		// check soundness to the activities in the configuration
+		for (String act: config.getActivities()) {
+			for (BPELStateEnum s: config.getStates()) {
+				// create the key to check the availability of the requested state
+				Pair<String, BPELStateEnum> key = 
+						new MutablePair<String, BPELStateEnum>(act , s);
+				
+				//check key
+				if (!timePoints.containsKey(key)) {
+					this.result.addMissingState(act);
+				}
+			}
+		}
+		
+		if (this.result.getUnexpectedStates().size() == 0
+				&& result.getMissingStates().size() == 0) {
 			return true;
 		}
 		else {
@@ -122,41 +142,51 @@ public class ProcessEquals {
 	 * @param config
 	 * @return
 	 */
-	private Map<Pair<String, BPELStateEnum>, Pair<BPELStateInstance, BPELStateInstance>> initMap(PANetwork process1, PANetwork process2, EqualsConfiguration config)  {
-		Map<Pair<String, BPELStateEnum>, Pair<BPELStateInstance, BPELStateInstance>>  map = 
-				new HashMap<Pair<String, BPELStateEnum>, Pair<BPELStateInstance, BPELStateInstance>> ();
+	private Map<Pair<String, BPELStateEnum>, Pair<PAVariable, PAVariable>> initMap(PANetwork process1, PANetwork process2, EqualsConfiguration config)  {
+		Map<Pair<String, BPELStateEnum>, Pair<PAVariable, PAVariable>>  map = 
+				new HashMap<Pair<String, BPELStateEnum>, Pair<PAVariable, PAVariable>> ();
 		
-		for (BPELStateInstance i1: process1.getVariablePairs()) {
-			if (config.getActivities().contains(i1.getBpelName()) &&
-					config.getStates().contains(i1.getState())) {
+		for (CSPVariable v1: process1.getVariables()) {
+			if (!(v1 instanceof PAVariable)) continue;
+			PAVariable time1 = (PAVariable) v1;
+			if (config.getActivities().contains(time1.getBpelName()) 
+					&& config.getStates().contains(time1.getTimePoint().getState())
+					&& time1.getTimePoint().getTimeType() == TimeTypeEnum.START) {
 				
 				// create the key
 				Pair<String, BPELStateEnum> key = 
-						new MutablePair<String, BPELStateEnum>((String) EMFUtils.getAttributeByName(i1.getBpelElement(), "name"), i1.getState());
+						new MutablePair<String, BPELStateEnum>(
+								time1.getBpelName(), 
+								time1.getTimePoint().getState());
 				// create the value with first element
-				Pair<BPELStateInstance, BPELStateInstance> value = 
-						new MutablePair<BPELStateInstance, BPELStateInstance>(i1, null);
+				Pair<PAVariable, PAVariable> value = 
+						new MutablePair<PAVariable, PAVariable>(time1, null);
 				// add to map
 				map.put(key, value);
 			}
 		}
 		
-		for (BPELStateInstance i2: process2.getVariablePairs()) {
-			if (config.getActivities().contains(i2.getBpelName()) &&
-					config.getStates().contains(i2.getState())) {
+		for (CSPVariable v2: process2.getVariables()) {
+			if (!(v2 instanceof PAVariable)) continue;
+			PAVariable time2 = (PAVariable) v2;
+			if (config.getActivities().contains(time2.getBpelName()) 
+					&& config.getStates().contains(time2.getTimePoint().getState())
+					&& time2.getTimePoint().getTimeType() == TimeTypeEnum.START) {
 				
 				// create the key
 				Pair<String, BPELStateEnum> key = 
-						new MutablePair<String, BPELStateEnum>((String) EMFUtils.getAttributeByName(i2.getBpelElement(), "name"), i2.getState());
+						new MutablePair<String, BPELStateEnum>(
+								time2.getBpelName(), 
+								time2.getTimePoint().getState());
 				// add second element to the value
-				Pair<BPELStateInstance, BPELStateInstance> value; 
+				Pair<PAVariable, PAVariable> value; 
 				if (map.containsKey(key)) {
 					value = map.get(key);
-					BPELStateInstance firstElement = value.getLeft();
-					value = new MutablePair<BPELStateInstance, BPELStateInstance>(firstElement, i2);
+					PAVariable firstElement = value.getLeft();
+					value = new MutablePair<PAVariable, PAVariable>(firstElement, time2);
 				}
 				else {
-					value = new MutablePair<BPELStateInstance, BPELStateInstance>(null, i2);
+					value = new MutablePair<PAVariable, PAVariable>(null, time2);
 				}
 				// add to map
 				map.put(key, value);
