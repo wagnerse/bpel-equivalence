@@ -129,7 +129,6 @@ public class FlowNetwork extends AbstractActivityNetwork {
 	 */
 	@Override
 	protected void initConstraintMap() {
-		// FIXME deathpath, fails, without end state
 
 		// handle start activities and final activities specialized constraints
 		for (Activity act : flow.getActivities()) {
@@ -252,10 +251,12 @@ public class FlowNetwork extends AbstractActivityNetwork {
 							executionConstraints);
 					
 					// create DPE mapping
+					//FIXME trgNetwork
 					this.putConstraint(srcNetwork, new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START),
 							srcNetwork, new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START), deadConstraints);
 					
 					//create fault mapping
+					//FIXME trgNetwork
 					this.putConstraint(srcNetwork, new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START),
 							srcNetwork, new TimePointDesc(BPELStateEnum.ABORTED, TimeTypeEnum.START), faultConstraints);
 				}

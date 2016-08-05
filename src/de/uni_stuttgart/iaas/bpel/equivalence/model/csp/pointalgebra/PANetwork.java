@@ -26,11 +26,11 @@ public class PANetwork extends CSPNetwork{
 	
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-	private PASolver solver;
+	private IPASolver solver;
 	private int idCount = 0;
 	
 	
-	public PANetwork(PASolver solver) {
+	public PANetwork(IPASolver solver) {
 		this.solver = solver;
 		this.solver.setProblem(this);
 	}

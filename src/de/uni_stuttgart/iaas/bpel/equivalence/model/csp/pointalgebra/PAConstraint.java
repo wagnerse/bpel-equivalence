@@ -202,15 +202,7 @@ public class PAConstraint extends CSPConstraint{
 		List<RelationEnum> result = new ArrayList<RelationEnum>();
 		
 		for (RelationEnum r: this.relations) {
-			if (r == RelationEnum.LESS) {
-				result.add(RelationEnum.GREATER);
-			}
-			else if (r == RelationEnum.GREATER) {
-				result.add(RelationEnum.LESS);
-			}
-			else {
-				result.add(r);
-			}
+			result.add(r.revert());
 		}
 		
 		PAConstraint revConstraint = new PAConstraint(result);

@@ -32,6 +32,18 @@ public enum RelationEnum {
     public String toString() {
         return this.getValue();
     }
+    
+    public RelationEnum revert() {
+    	if (this == RelationEnum.LESS) {
+			return RelationEnum.GREATER;
+		}
+		else if (this == RelationEnum.GREATER) {
+			return RelationEnum.LESS;
+		}
+		else {
+			return this;
+		}
+    }
 	
 	public RelationEnum[] compose(RelationEnum r2) {
 		

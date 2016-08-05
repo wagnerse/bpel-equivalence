@@ -16,7 +16,7 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.CSPVariable;
  * @author Jonas Scheurich
  *
  */
-public class PASolver {
+public class PASolver implements IPASolver{
 	
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	
@@ -30,6 +30,7 @@ public class PASolver {
 	 * Calculate the closure of the given point algebra problem
 	 * @return
 	 */
+	@Override
 	public boolean propagate() {
 		if (this.getProblem() == null) return false;
 		
@@ -149,10 +150,12 @@ public class PASolver {
 		}
 	}
 
+	@Override
 	public void setProblem(PANetwork problem) {
 		this.problem = problem;
 	}
 	
+	@Override
 	public PANetwork getProblem() {
 		return this.problem;
 	}
