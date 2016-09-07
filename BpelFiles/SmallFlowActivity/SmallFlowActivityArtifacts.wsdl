@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+<definitions name="SmallFlowActivity"
+        targetNamespace="org.uni_stuttgart.test"
+        xmlns:tns="org.uni_stuttgart.test"
+        xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+        xmlns="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+        >
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     TYPE DEFINITION - List of services participating in this BPEL process 
+     The default output of the BPEL designer uses strings as input and 
+     output to the BPEL Process. But you can define or import any XML 
+     Schema type and us them as part of the message types.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+    <types>  
+        <schema attributeFormDefault="unqualified" 
+                elementFormDefault="qualified" 
+                targetNamespace="org.uni_stuttgart.test" 
+                xmlns="http://www.w3.org/2001/XMLSchema"
+                >
+                
+            <element name="SmallFlowActivityRequest">
+                <complexType>
+                    <sequence>
+                        <element name="input" type="string" />
+                    </sequence>
+                </complexType>
+            </element>
+                  
+            <element name="SmallFlowActivityResponse">
+                <complexType>
+                    <sequence>
+                        <element name="result" type="string"/>
+                    </sequence>
+                </complexType>
+            </element>
+            
+        </schema>
+    </types>
+  
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     MESSAGE TYPE DEFINITION - Definition of the message types used as 
+     part of the port type defintions
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+    <message name="SmallFlowActivityRequestMessage">
+        <part name="payload" element="tns:SmallFlowActivityRequest"/>
+    </message>
+    
+    <message name="SmallFlowActivityResponseMessage">
+        <part name="payload" element="tns:SmallFlowActivityResponse"/>
+    </message>
+
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     PORT TYPE DEFINITION - A port type groups a set of operations into
+     a logical service unit.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- portType implemented by the SmallFlowActivity BPEL process -->
+    <portType name="SmallFlowActivity">
+        <operation name="initiate">
+            <input message="tns:SmallFlowActivityRequestMessage"/>
+        </operation>
+    </portType>
+
+    <!-- portType implemented by the requester of SmallFlowActivity BPEL process 
+         for asynchronous callback purposes
+         -->
+    <portType name="SmallFlowActivityCallback">
+        <operation name="onResult">
+            <input message="tns:SmallFlowActivityResponseMessage"/>
+        </operation>
+    </portType>
+
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     PARTNER LINK TYPE DEFINITION
+         the SmallFlowActivity partnerLinkType binds the provider and
+         requester portType into an asynchronous conversation.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+    <plnk:partnerLinkType name="SmallFlowActivity">
+        <plnk:role name="SmallFlowActivityProvider" portType="tns:SmallFlowActivity"/>
+        <plnk:role name="SmallFlowActivityRequester" portType="tns:SmallFlowActivityCallback"/>
+    </plnk:partnerLinkType>   
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     BINDING DEFINITION - Defines the message format and protocol details
+     for a web service.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <binding name="SmallFlowActivityBinding" type="tns:SmallFlowActivity">
+        <soap:binding style="document"
+    		transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="initiate">
+            <soap:operation
+    			soapAction="org.uni_stuttgart.test/initiate"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+    </binding>
+
+    <binding name="SmallFlowActivityCallbackBinding" type="tns:SmallFlowActivityCallback">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="onResult">
+            <soap:operation
+    			soapAction="org.uni_stuttgart.test/onResult"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+    </binding>
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     SERVICE DEFINITION - A service groups a set of ports into
+     a service unit.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <service name="SmallFlowActivityService">
+        <port name="SmallFlowActivityPort" binding="tns:SmallFlowActivityBinding">
+    		<soap:address location="http://localhost:8080/SmallFlowActivity"/>
+        </port>
+    </service>
+
+    <service name="SmallFlowActivityServiceCallback">
+        <port name="SmallFlowActivityPortCallbackPort" binding="tns:SmallFlowActivityCallbackBinding">
+    		<soap:address location="http://localhost:8080/SmallFlowActivityCallback"/>
+        </port>
+    </service>
+</definitions>

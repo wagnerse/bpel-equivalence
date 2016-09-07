@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+<definitions name="Process3"
+        targetNamespace="http://eclipse.org/bpel/sample"
+        xmlns:tns="http://eclipse.org/bpel/sample"
+        xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+        xmlns="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+        >
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     TYPE DEFINITION - List of services participating in this BPEL process 
+     The default output of the BPEL designer uses strings as input and 
+     output to the BPEL Process. But you can define or import any XML 
+     Schema type and us them as part of the message types.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+    <types>  
+        <schema attributeFormDefault="unqualified" 
+                elementFormDefault="qualified" 
+                targetNamespace="http://eclipse.org/bpel/sample" 
+                xmlns="http://www.w3.org/2001/XMLSchema"
+                >
+                
+            <element name="Process3Request">
+                <complexType>
+                    <sequence>
+                        <element name="input" type="string" />
+                    </sequence>
+                </complexType>
+            </element>
+                  
+            <element name="Process3Response">
+                <complexType>
+                    <sequence>
+                        <element name="result" type="string"/>
+                    </sequence>
+                </complexType>
+            </element>
+            
+        </schema>
+    </types>
+  
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     MESSAGE TYPE DEFINITION - Definition of the message types used as 
+     part of the port type defintions
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+    <message name="Process3RequestMessage">
+        <part name="payload" element="tns:Process3Request"/>
+    </message>
+    
+    <message name="Process3ResponseMessage">
+        <part name="payload" element="tns:Process3Response"/>
+    </message>
+
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     PORT TYPE DEFINITION - A port type groups a set of operations into
+     a logical service unit.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- portType implemented by the Process3 BPEL process -->
+    <portType name="Process3">
+        <operation name="initiate">
+            <input message="tns:Process3RequestMessage"/>
+        </operation>
+    </portType>
+
+    <!-- portType implemented by the requester of Process3 BPEL process 
+         for asynchronous callback purposes
+         -->
+    <portType name="Process3Callback">
+        <operation name="onResult">
+            <input message="tns:Process3ResponseMessage"/>
+        </operation>
+    </portType>
+
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     PARTNER LINK TYPE DEFINITION
+         the Process3 partnerLinkType binds the provider and
+         requester portType into an asynchronous conversation.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+    <plnk:partnerLinkType name="Process3">
+        <plnk:role name="Process3Provider" portType="tns:Process3"/>
+        <plnk:role name="Process3Requester" portType="tns:Process3Callback"/>
+    </plnk:partnerLinkType>   
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     BINDING DEFINITION - Defines the message format and protocol details
+     for a web service.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <binding name="Process3Binding" type="tns:Process3">
+        <soap:binding style="document"
+    		transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="initiate">
+            <soap:operation
+    			soapAction="http://eclipse.org/bpel/sample/initiate"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+    </binding>
+
+    <binding name="Process3CallbackBinding" type="tns:Process3Callback">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="onResult">
+            <soap:operation
+    			soapAction="http://eclipse.org/bpel/sample/onResult"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+    </binding>
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     SERVICE DEFINITION - A service groups a set of ports into
+     a service unit.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <service name="Process3Service">
+        <port name="Process3Port" binding="tns:Process3Binding">
+    		<soap:address location="http://localhost:8080/Process3"/>
+        </port>
+    </service>
+
+    <service name="Process3ServiceCallback">
+        <port name="Process3PortCallbackPort" binding="tns:Process3CallbackBinding">
+    		<soap:address location="http://localhost:8080/Process3Callback"/>
+        </port>
+    </service>
+</definitions>

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<definitions name="ScopedActivity_FH"
+        targetNamespace="de.uni_stuttgart.iaas.bpel.equivalence.test.scope_activity_fh"
+        xmlns:tns="de.uni_stuttgart.iaas.bpel.equivalence.test.scope_activity_fh"
+        xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+        xmlns="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+        >
+
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     SERVICE DEFINITION - A service groups a set of ports into
+     a service unit.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <service name="ScopedActivity_FHService">
+    </service>
+</definitions>

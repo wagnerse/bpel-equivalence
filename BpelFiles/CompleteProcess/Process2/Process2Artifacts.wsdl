@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+<definitions name="Process2"
+        targetNamespace="http://eclipse.org/bpel/sample"
+        xmlns:tns="http://eclipse.org/bpel/sample"
+        xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+        xmlns="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+        >
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     TYPE DEFINITION - List of services participating in this BPEL process 
+     The default output of the BPEL designer uses strings as input and 
+     output to the BPEL Process. But you can define or import any XML 
+     Schema type and us them as part of the message types.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+    <types>  
+        <schema attributeFormDefault="unqualified" 
+                elementFormDefault="qualified" 
+                targetNamespace="http://eclipse.org/bpel/sample" 
+                xmlns="http://www.w3.org/2001/XMLSchema"
+                >
+                
+            <element name="Process2Request">
+                <complexType>
+                    <sequence>
+                        <element name="input" type="string" />
+                    </sequence>
+                </complexType>
+            </element>
+                  
+            <element name="Process2Response">
+                <complexType>
+                    <sequence>
+                        <element name="result" type="string"/>
+                    </sequence>
+                </complexType>
+            </element>
+            
+        </schema>
+    </types>
+  
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     MESSAGE TYPE DEFINITION - Definition of the message types used as 
+     part of the port type defintions
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+    <message name="Process2RequestMessage">
+        <part name="payload" element="tns:Process2Request"/>
+    </message>
+    
+    <message name="Process2ResponseMessage">
+        <part name="payload" element="tns:Process2Response"/>
+    </message>
+
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     PORT TYPE DEFINITION - A port type groups a set of operations into
+     a logical service unit.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- portType implemented by the Process2 BPEL process -->
+    <portType name="Process2">
+        <operation name="initiate">
+            <input message="tns:Process2RequestMessage"/>
+        </operation>
+    </portType>
+
+    <!-- portType implemented by the requester of Process2 BPEL process 
+         for asynchronous callback purposes
+         -->
+    <portType name="Process2Callback">
+        <operation name="onResult">
+            <input message="tns:Process2ResponseMessage"/>
+        </operation>
+    </portType>
+
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     PARTNER LINK TYPE DEFINITION
+         the Process2 partnerLinkType binds the provider and
+         requester portType into an asynchronous conversation.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+    <plnk:partnerLinkType name="Process2">
+        <plnk:role name="Process2Provider" portType="tns:Process2"/>
+        <plnk:role name="Process2Requester" portType="tns:Process2Callback"/>
+    </plnk:partnerLinkType>   
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     BINDING DEFINITION - Defines the message format and protocol details
+     for a web service.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <binding name="Process2Binding" type="tns:Process2">
+        <soap:binding style="document"
+    		transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="initiate">
+            <soap:operation
+    			soapAction="http://eclipse.org/bpel/sample/initiate"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+    </binding>
+
+    <binding name="Process2CallbackBinding" type="tns:Process2Callback">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="onResult">
+            <soap:operation
+    			soapAction="http://eclipse.org/bpel/sample/onResult"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+    </binding>
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     SERVICE DEFINITION - A service groups a set of ports into
+     a service unit.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <service name="Process2Service">
+        <port name="Process2Port" binding="tns:Process2Binding">
+    		<soap:address location="http://localhost:8080/Process2"/>
+        </port>
+    </service>
+
+    <service name="Process2ServiceCallback">
+        <port name="Process2PortCallbackPort" binding="tns:Process2CallbackBinding">
+    		<soap:address location="http://localhost:8080/Process2Callback"/>
+        </port>
+    </service>
+</definitions>

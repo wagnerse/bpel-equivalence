@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+<definitions name="ScopeFHActivity"
+        targetNamespace="http://eclipse.org/bpel/sample"
+        xmlns:tns="http://eclipse.org/bpel/sample"
+        xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+        xmlns="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+        >
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     TYPE DEFINITION - List of services participating in this BPEL process 
+     The default output of the BPEL designer uses strings as input and 
+     output to the BPEL Process. But you can define or import any XML 
+     Schema type and us them as part of the message types.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+    <types>  
+        <schema attributeFormDefault="unqualified" 
+                elementFormDefault="qualified" 
+                targetNamespace="http://eclipse.org/bpel/sample" 
+                xmlns="http://www.w3.org/2001/XMLSchema"
+                >
+                
+            <element name="ScopeFHActivityRequest">
+                <complexType>
+                    <sequence>
+                        <element name="input" type="string" />
+                    </sequence>
+                </complexType>
+            </element>
+                  
+            <element name="ScopeFHActivityResponse">
+                <complexType>
+                    <sequence>
+                        <element name="result" type="string"/>
+                    </sequence>
+                </complexType>
+            </element>
+            
+        </schema>
+    </types>
+  
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     MESSAGE TYPE DEFINITION - Definition of the message types used as 
+     part of the port type defintions
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+    <message name="ScopeFHActivityRequestMessage">
+        <part name="payload" element="tns:ScopeFHActivityRequest"/>
+    </message>
+    
+    <message name="ScopeFHActivityResponseMessage">
+        <part name="payload" element="tns:ScopeFHActivityResponse"/>
+    </message>
+
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     PORT TYPE DEFINITION - A port type groups a set of operations into
+     a logical service unit.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- portType implemented by the ScopeFHActivity BPEL process -->
+    <portType name="ScopeFHActivity">
+        <operation name="initiate">
+            <input message="tns:ScopeFHActivityRequestMessage"/>
+        </operation>
+    </portType>
+
+    <!-- portType implemented by the requester of ScopeFHActivity BPEL process 
+         for asynchronous callback purposes
+         -->
+    <portType name="ScopeFHActivityCallback">
+        <operation name="onResult">
+            <input message="tns:ScopeFHActivityResponseMessage"/>
+        </operation>
+    </portType>
+
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     PARTNER LINK TYPE DEFINITION
+         the ScopeFHActivity partnerLinkType binds the provider and
+         requester portType into an asynchronous conversation.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+    <plnk:partnerLinkType name="ScopeFHActivity">
+        <plnk:role name="ScopeFHActivityProvider" portType="tns:ScopeFHActivity"/>
+        <plnk:role name="ScopeFHActivityRequester" portType="tns:ScopeFHActivityCallback"/>
+    </plnk:partnerLinkType>   
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     BINDING DEFINITION - Defines the message format and protocol details
+     for a web service.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <binding name="ScopeFHActivityBinding" type="tns:ScopeFHActivity">
+        <soap:binding style="document"
+    		transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="initiate">
+            <soap:operation
+    			soapAction="http://eclipse.org/bpel/sample/initiate"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+    </binding>
+
+    <binding name="ScopeFHActivityCallbackBinding" type="tns:ScopeFHActivityCallback">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="onResult">
+            <soap:operation
+    			soapAction="http://eclipse.org/bpel/sample/onResult"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+    </binding>
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     SERVICE DEFINITION - A service groups a set of ports into
+     a service unit.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <service name="ScopeFHActivityService">
+        <port name="ScopeFHActivityPort" binding="tns:ScopeFHActivityBinding">
+    		<soap:address location="http://localhost:8080/ScopeFHActivity"/>
+        </port>
+    </service>
+
+    <service name="ScopeFHActivityServiceCallback">
+        <port name="ScopeFHActivityPortCallbackPort" binding="tns:ScopeFHActivityCallbackBinding">
+    		<soap:address location="http://localhost:8080/ScopeFHActivityCallback"/>
+        </port>
+    </service>
+</definitions>

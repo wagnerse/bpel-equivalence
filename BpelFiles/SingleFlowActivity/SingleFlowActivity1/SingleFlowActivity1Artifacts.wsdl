@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+<definitions name="SingleFlowActivity1"
+        targetNamespace="http://eclipse.org/bpel/sample"
+        xmlns:tns="http://eclipse.org/bpel/sample"
+        xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+        xmlns="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+        >
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     TYPE DEFINITION - List of services participating in this BPEL process 
+     The default output of the BPEL designer uses strings as input and 
+     output to the BPEL Process. But you can define or import any XML 
+     Schema type and us them as part of the message types.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+    <types>  
+        <schema attributeFormDefault="unqualified" 
+                elementFormDefault="qualified" 
+                targetNamespace="http://eclipse.org/bpel/sample" 
+                xmlns="http://www.w3.org/2001/XMLSchema"
+                >
+                
+            <element name="SingleFlowActivity1Request">
+                <complexType>
+                    <sequence>
+                        <element name="input" type="string" />
+                    </sequence>
+                </complexType>
+            </element>
+                  
+            <element name="SingleFlowActivity1Response">
+                <complexType>
+                    <sequence>
+                        <element name="result" type="string"/>
+                    </sequence>
+                </complexType>
+            </element>
+            
+        </schema>
+    </types>
+  
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     MESSAGE TYPE DEFINITION - Definition of the message types used as 
+     part of the port type defintions
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+    <message name="SingleFlowActivity1RequestMessage">
+        <part name="payload" element="tns:SingleFlowActivity1Request"/>
+    </message>
+    
+    <message name="SingleFlowActivity1ResponseMessage">
+        <part name="payload" element="tns:SingleFlowActivity1Response"/>
+    </message>
+
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     PORT TYPE DEFINITION - A port type groups a set of operations into
+     a logical service unit.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- portType implemented by the SingleFlowActivity1 BPEL process -->
+    <portType name="SingleFlowActivity1">
+        <operation name="initiate">
+            <input message="tns:SingleFlowActivity1RequestMessage"/>
+        </operation>
+    </portType>
+
+    <!-- portType implemented by the requester of SingleFlowActivity1 BPEL process 
+         for asynchronous callback purposes
+         -->
+    <portType name="SingleFlowActivity1Callback">
+        <operation name="onResult">
+            <input message="tns:SingleFlowActivity1ResponseMessage"/>
+        </operation>
+    </portType>
+
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     PARTNER LINK TYPE DEFINITION
+         the SingleFlowActivity1 partnerLinkType binds the provider and
+         requester portType into an asynchronous conversation.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+    <plnk:partnerLinkType name="SingleFlowActivity1">
+        <plnk:role name="SingleFlowActivity1Provider" portType="tns:SingleFlowActivity1"/>
+        <plnk:role name="SingleFlowActivity1Requester" portType="tns:SingleFlowActivity1Callback"/>
+    </plnk:partnerLinkType>   
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     BINDING DEFINITION - Defines the message format and protocol details
+     for a web service.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <binding name="SingleFlowActivity1Binding" type="tns:SingleFlowActivity1">
+        <soap:binding style="document"
+    		transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="initiate">
+            <soap:operation
+    			soapAction="http://eclipse.org/bpel/sample/initiate"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+    </binding>
+
+    <binding name="SingleFlowActivity1CallbackBinding" type="tns:SingleFlowActivity1Callback">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="onResult">
+            <soap:operation
+    			soapAction="http://eclipse.org/bpel/sample/onResult"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+    </binding>
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     SERVICE DEFINITION - A service groups a set of ports into
+     a service unit.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <service name="SingleFlowActivity1Service">
+        <port name="SingleFlowActivity1Port" binding="tns:SingleFlowActivity1Binding">
+    		<soap:address location="http://localhost:8080/SingleFlowActivity1"/>
+        </port>
+    </service>
+
+    <service name="SingleFlowActivity1ServiceCallback">
+        <port name="SingleFlowActivity1PortCallbackPort" binding="tns:SingleFlowActivity1CallbackBinding">
+    		<soap:address location="http://localhost:8080/SingleFlowActivity1Callback"/>
+        </port>
+    </service>
+</definitions>

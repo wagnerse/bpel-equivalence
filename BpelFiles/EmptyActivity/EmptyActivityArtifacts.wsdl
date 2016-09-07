@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+<definitions name="EmptyActivity"
+        targetNamespace="http://eclipse.org/bpel/sample"
+        xmlns:tns="http://eclipse.org/bpel/sample"
+        xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+        xmlns="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+        >
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     TYPE DEFINITION - List of services participating in this BPEL process 
+     The default output of the BPEL designer uses strings as input and 
+     output to the BPEL Process. But you can define or import any XML 
+     Schema type and us them as part of the message types.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+    <types>  
+        <schema attributeFormDefault="unqualified" 
+                elementFormDefault="qualified" 
+                targetNamespace="http://eclipse.org/bpel/sample" 
+                xmlns="http://www.w3.org/2001/XMLSchema"
+                >
+                
+            <element name="EmptyActivityRequest">
+                <complexType>
+                    <sequence>
+                        <element name="input" type="string" />
+                    </sequence>
+                </complexType>
+            </element>
+                  
+            <element name="EmptyActivityResponse">
+                <complexType>
+                    <sequence>
+                        <element name="result" type="string"/>
+                    </sequence>
+                </complexType>
+            </element>
+            
+        </schema>
+    </types>
+  
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     MESSAGE TYPE DEFINITION - Definition of the message types used as 
+     part of the port type defintions
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+    <message name="EmptyActivityRequestMessage">
+        <part name="payload" element="tns:EmptyActivityRequest"/>
+    </message>
+    
+    <message name="EmptyActivityResponseMessage">
+        <part name="payload" element="tns:EmptyActivityResponse"/>
+    </message>
+
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     PORT TYPE DEFINITION - A port type groups a set of operations into
+     a logical service unit.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- portType implemented by the EmptyActivity BPEL process -->
+    <portType name="EmptyActivity">
+        <operation name="initiate">
+            <input message="tns:EmptyActivityRequestMessage"/>
+        </operation>
+    </portType>
+
+    <!-- portType implemented by the requester of EmptyActivity BPEL process 
+         for asynchronous callback purposes
+         -->
+    <portType name="EmptyActivityCallback">
+        <operation name="onResult">
+            <input message="tns:EmptyActivityResponseMessage"/>
+        </operation>
+    </portType>
+
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     PARTNER LINK TYPE DEFINITION
+         the EmptyActivity partnerLinkType binds the provider and
+         requester portType into an asynchronous conversation.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->    
+    <plnk:partnerLinkType name="EmptyActivity">
+        <plnk:role name="EmptyActivityProvider" portType="tns:EmptyActivity"/>
+        <plnk:role name="EmptyActivityRequester" portType="tns:EmptyActivityCallback"/>
+    </plnk:partnerLinkType>   
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     BINDING DEFINITION - Defines the message format and protocol details
+     for a web service.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <binding name="EmptyActivityBinding" type="tns:EmptyActivity">
+        <soap:binding style="document"
+    		transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="initiate">
+            <soap:operation
+    			soapAction="http://eclipse.org/bpel/sample/initiate"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+    </binding>
+
+    <binding name="EmptyActivityCallbackBinding" type="tns:EmptyActivityCallback">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="onResult">
+            <soap:operation
+    			soapAction="http://eclipse.org/bpel/sample/onResult"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+        </operation>
+    </binding>
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     SERVICE DEFINITION - A service groups a set of ports into
+     a service unit.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <service name="EmptyActivityService">
+        <port name="EmptyActivityPort" binding="tns:EmptyActivityBinding">
+    		<soap:address location="http://localhost:8080/EmptyActivity"/>
+        </port>
+    </service>
+
+    <service name="EmptyActivityServiceCallback">
+        <port name="EmptyActivityPortCallbackPort" binding="tns:EmptyActivityCallbackBinding">
+    		<soap:address location="http://localhost:8080/EmptyActivityCallback"/>
+        </port>
+    </service>
+</definitions>

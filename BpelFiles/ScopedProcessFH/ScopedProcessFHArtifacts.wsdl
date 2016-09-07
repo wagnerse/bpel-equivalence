@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<definitions name="ScopedProcessFH"
+        targetNamespace="de.uni_stuttgart.iaas.bpel.equivalence.test"
+        xmlns:tns="de.uni_stuttgart.iaas.bpel.equivalence.test"
+        xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype"
+        xmlns="http://schemas.xmlsoap.org/wsdl/"
+        xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+        >
+
+
+<!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     SERVICE DEFINITION - A service groups a set of ports into
+     a service unit.
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <service name="ScopedProcessFHService">
+    </service>
+</definitions>

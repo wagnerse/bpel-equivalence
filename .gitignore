@@ -19,9 +19,6 @@ build/
 *.war
 *.ear
 
-#Testfiles
-BpelFiles/
-
 #Logfiles
 Logging.txt
 Logging.html
