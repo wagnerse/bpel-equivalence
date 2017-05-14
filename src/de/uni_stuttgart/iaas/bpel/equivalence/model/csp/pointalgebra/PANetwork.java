@@ -47,7 +47,7 @@ public class PANetwork extends CSPNetwork{
 	 * @param timeType
 	 * @return
 	 */
-	public PAVariable createVariable(EObject bpelElement, BPELStateEnum timeState, TimeTypeEnum timeType) {
+	public PAVariable createVariable(Object bpelElement, BPELStateEnum timeState, TimeTypeEnum timeType) {
 		PAVariable newVariable = this.createVariable(bpelElement, new TimePointDesc(timeState, timeType));
 		return newVariable;
 	}
@@ -59,7 +59,7 @@ public class PANetwork extends CSPNetwork{
 	 * @param timePoint
 	 * @return
 	 */
-	public PAVariable createVariable(EObject bpelElement, TimePointDesc timePoint) {
+	public PAVariable createVariable(Object bpelElement, TimePointDesc timePoint) {
 		PAVariable newVariable = new PAVariable(idCount++);
 		newVariable.setBpelElement(bpelElement);
 		newVariable.setTimePoint(timePoint);
@@ -71,15 +71,15 @@ public class PANetwork extends CSPNetwork{
 	
 	/**
 	 * Return the variable for a given {@link EObject} and a given {@link TimePointDesc}.
-	 * @param bpelElement
+	 * @param bpel4ChorElement
 	 * @param timeState
 	 * @param timeType
 	 * @return null if no variable is available.
 	 */
-	public PAVariable getVariable(EObject bpelElement, BPELStateEnum timeState, TimeTypeEnum timeType) {
+	public PAVariable getVariable(Object bpel4ChorElement, BPELStateEnum timeState, TimeTypeEnum timeType) {
 		TimePointDesc desc = new TimePointDesc(timeState, timeType);
 		for (CSPVariable v: this.getVariables()) {
-			if (((PAVariable) v).getBpelElement().equals(bpelElement) && ((PAVariable) v).getTimePoint().equals(desc)) {
+			if (((PAVariable) v).getBpelElement().equals(bpel4ChorElement) && ((PAVariable) v).getTimePoint().equals(desc)) {
 				return (PAVariable) v;
 			}
 		}

@@ -1,6 +1,8 @@
 package de.uni_stuttgart.iaas.bpel.equivalence.model.factories;
 
 import org.eclipse.bpel.model.BPELPackage;
+import org.eclipse.bpel.model.Process;
+import org.eclipse.bpel.model.impl.ProcessImpl;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 
@@ -18,13 +20,13 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.networks.ProcessNetwork;
 public class ProcessNetworkFactory implements IActivityNetworkFactory{
 
 	@Override
-	public EClass getSupportedEClass() {
-		return BPELPackage.eINSTANCE.getProcess();
+	public Class<?> getSupportedClass() {
+		return ProcessImpl.class;
 	}
 
 	@Override
-	public AbstractActivityNetwork createElementNetwork(AbstractActivityNetwork parentNetwork, EObject eobject, PANetwork network) {
-		return new ProcessNetwork(parentNetwork, eobject, network);
+	public AbstractActivityNetwork createElementNetwork(AbstractActivityNetwork parentNetwork, Object object, PANetwork network) {
+		return new ProcessNetwork(parentNetwork, (Process) object, network);
 	}
 
 }

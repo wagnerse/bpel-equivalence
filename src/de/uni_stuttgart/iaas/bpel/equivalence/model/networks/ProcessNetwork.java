@@ -38,8 +38,8 @@ public class ProcessNetwork extends AbstractDefaultActivityNetwork{
 	}
 
 	@Override
-	public EClass getSupportedEClass() {
-		return BPELPackage.eINSTANCE.getProcess();
+	public Class<?> getSupportedClass() {
+		return Process.class;
 	}
 	
 	@Override
@@ -49,14 +49,14 @@ public class ProcessNetwork extends AbstractDefaultActivityNetwork{
 	}
 
 	@Override
-	protected Map<EObject, AbstractActivityNetwork> createChildNetworks() {
-		Map<EObject, AbstractActivityNetwork> childMap = new HashMap<EObject, AbstractActivityNetwork>();
-		childMap.put(this.getEObject(), createChildNetwork((EObject) process.getActivity()));
+	protected Map<Object, AbstractActivityNetwork> createChildNetworks() {
+		Map<Object, AbstractActivityNetwork> childMap = new HashMap<Object, AbstractActivityNetwork>();
+		childMap.put(this, createChildNetwork((EObject) process.getActivity()));
 		return childMap;
 	}
 
 	@Override
-	public EObject getEObject() {
+	public Object getObject() {
 		return (EObject) this.process;
 	}
 	

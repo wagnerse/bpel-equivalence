@@ -18,7 +18,7 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PANetwork;
  */
 public class NetworkFactoryRepo {
 	
-	private Map<EClass, IActivityNetworkFactory> factories = new HashMap<EClass, IActivityNetworkFactory>();
+	private Map<Class<?>, IActivityNetworkFactory> factories = new HashMap<Class<?>, IActivityNetworkFactory>();
 	
 	private static NetworkFactoryRepo instance = null;
 	
@@ -38,20 +38,20 @@ public class NetworkFactoryRepo {
 	}
 	
 	/**
-	 * Create a {@link AbstractActivityNetwork} from a given {@link EObject} if a suitable
+	 * Create a {@link AbstractActivityNetwork} from a given {@link Object} if a suitable
 	 * factory is registered.
-	 * @param parentNetwork The parent network holds the parent {@link EObject}
-	 * @param eobject current BPEL element
+	 * @param parentNetwork The parent network holds the parent {@link Object}
+	 * @param object current BPEL element
 	 * @param network a point algebra network
 	 * @return A activity network object
 	 */
-	public AbstractActivityNetwork createElementNetwork(AbstractActivityNetwork parentNetwork, EObject eobject, PANetwork network) {
-		EClass eClass = eobject.eClass();		
-		if (!factories.containsKey(eClass)) {
-			return null; //TODO stub?
+	public AbstractActivityNetwork createElementNetwork(AbstractActivityNetwork parentNetwork, Object object, PANetwork network) {
+		Class<?> clazz = object.getClass();		
+		if (!factories.containsKey(clazz)) {
+			throw new RuntimeException("No factory found for class " + clazz.getName());
 		}
 		else {
-			return factories.get(eClass).createElementNetwork(parentNetwork, eobject, network);
+			return factories.get(clazz).createElementNetwork(parentNetwork, object, network);
 		}
 	}
 	
@@ -60,7 +60,7 @@ public class NetworkFactoryRepo {
 	 * @param factory
 	 */
 	public void registerFactory(IActivityNetworkFactory factory) {
-		factories.put(factory.getSupportedEClass(), factory);
+		factories.put(factory.getSupportedClass(), factory);
 	}
 
 }

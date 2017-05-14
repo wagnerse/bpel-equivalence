@@ -31,7 +31,7 @@ public abstract class AbstractActivityNetwork {
 	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
 	private AbstractActivityNetwork parentNetwork;
-	protected Map<EObject, AbstractActivityNetwork> childNetworks = new HashMap<EObject, AbstractActivityNetwork>();
+	protected Map<Object, AbstractActivityNetwork> childNetworks = new HashMap<Object, AbstractActivityNetwork>();
 
 	private PANetwork network;
 	private Map<ConstraintMappingKey, RelationEnum[]> constraintsMapping = new HashMap<ConstraintMappingKey, RelationEnum[]>();
@@ -120,18 +120,18 @@ public abstract class AbstractActivityNetwork {
 	}
 
 	/**
-	 * Get net EMF class object of the supported class to determine witch BPEL element
+	 * Get net class object of the supported class to determine witch BPEL4Chor element
 	 * is supported by this object
 	 * 
-	 * @return {@link EClass}
+	 * @return {@link Class<?>}
 	 */
-	public abstract EClass getSupportedEClass();
+	public abstract Class<?> getSupportedClass();
 
 	/**
-	 * Get the specific {@link EObject}, are the point network is created from.
+	 * Get the specific {@link Object}, are the point network is created from.
 	 * @return
 	 */
-	public abstract EObject getEObject();
+	public abstract Object getObject();
 
 	/**
 	 * Get the activity connector of this activity network, that contains the local variables.
@@ -153,7 +153,7 @@ public abstract class AbstractActivityNetwork {
 	 * Every child network is related to a BPEL child element.
 	 * @return
 	 */
-	protected abstract Map<EObject, AbstractActivityNetwork> createChildNetworks();
+	protected abstract Map<Object, AbstractActivityNetwork> createChildNetworks();
 
 	/**
 	 * Initialize the constraint map with a description of the inter activity constraints.
@@ -237,13 +237,16 @@ public abstract class AbstractActivityNetwork {
 		}
 	}
 	
+	
+	
 	/**
-	 * Get the child networks of this network, createt from the BPEL child elements
+	 * Get the child networks of this network, created from the BPEL child elements
 	 * @return
 	 */
 	public Collection<AbstractActivityNetwork> getChildNetworks() {
 		return this.childNetworks.values();
 	}
+	 
 
 	/**
 	 * Get the parent activity network of this activity network

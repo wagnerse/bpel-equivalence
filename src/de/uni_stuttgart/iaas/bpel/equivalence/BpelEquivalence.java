@@ -4,13 +4,29 @@ import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 
+import org.eclipse.bpel.model.Assign;
 import org.eclipse.bpel.model.BPELPackage;
+import org.eclipse.bpel.model.Empty;
+import org.eclipse.bpel.model.Exit;
+import org.eclipse.bpel.model.Invoke;
+import org.eclipse.bpel.model.Receive;
+import org.eclipse.bpel.model.Reply;
+import org.eclipse.bpel.model.Wait;
+import org.eclipse.bpel.model.impl.AssignImpl;
+import org.eclipse.bpel.model.impl.EmptyImpl;
+import org.eclipse.bpel.model.impl.ExitImpl;
+import org.eclipse.bpel.model.impl.InvokeImpl;
+import org.eclipse.bpel.model.impl.OpaqueActivityImpl;
+import org.eclipse.bpel.model.impl.ReceiveImpl;
+import org.eclipse.bpel.model.impl.ReplyImpl;
+import org.eclipse.bpel.model.impl.WaitImpl;
 import org.eclipse.emf.ecore.EObject;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.model.BPELStateEnum;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PANetwork;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.pointalgebra.PASolver;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.BasicActivityFactory;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.ChoreographyNetworkFactory;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.FHCatchNetworkFactory;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.FlowNetworkFactory;
 import de.uni_stuttgart.iaas.bpel.equivalence.model.factories.ProcessNetworkFactory;
@@ -41,18 +57,20 @@ public class BpelEquivalence {
 	}
 
 	private void initRepo() {
-
+		
+		NetworkFactoryRepo.getInstance().registerFactory(new ChoreographyNetworkFactory());
 		NetworkFactoryRepo.getInstance().registerFactory(new ProcessNetworkFactory());
 		NetworkFactoryRepo.getInstance().registerFactory(new ScopeNetworkFactory());
 		NetworkFactoryRepo.getInstance().registerFactory(new FlowNetworkFactory());
 
-		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(BPELPackage.eINSTANCE.getReceive()));
-		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(BPELPackage.eINSTANCE.getReply()));
-		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(BPELPackage.eINSTANCE.getInvoke()));
-		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(BPELPackage.eINSTANCE.getAssign()));
-		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(BPELPackage.eINSTANCE.getExit()));
-		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(BPELPackage.eINSTANCE.getWait()));
-		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(BPELPackage.eINSTANCE.getEmpty()));
+		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(ReceiveImpl.class));
+		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(ReplyImpl.class));
+		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(InvokeImpl.class));
+		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(AssignImpl.class));
+		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(ExitImpl.class));
+		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(WaitImpl.class));
+		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(EmptyImpl.class));
+		NetworkFactoryRepo.getInstance().registerFactory(new BasicActivityFactory(OpaqueActivityImpl.class));
 		// TODO check compensate, compensateScope, rethrow, validate
 
 		NetworkFactoryRepo.getInstance().registerFactory(new FHCatchNetworkFactory());
@@ -67,11 +85,11 @@ public class BpelEquivalence {
 	 * Create point algebra network of a {@link EObject} and the containing
 	 * child's.
 	 * 
-	 * @param eObject activity to create the network
+	 * @param object choreography, process or activity to create the network
 	 * @param tryToIncomplete propagate until a contradiction occurs
 	 * @return Point algebra network
 	 */
-	public PANetwork createNetwork(EObject eObject, boolean tryToIncomplete) {
+	public PANetwork createNetwork(Object eObject, boolean tryToIncomplete) {
 		PANetwork problem =  NetworkFactoryRepo.getInstance()
 				.createElementNetwork(null, eObject, new PANetwork(new PASolver())).linkActivityNetworkLayer();
 		System.out.println("Start constraint probagation");

@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.commons.lang.builder.EqualsBuilder;
 
 import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.CSPConstraint;
+import de.uni_stuttgart.iaas.bpel.equivalence.model.csp.CSPVariable;
 
 /**
  * A interval constraint describes the relation between two intervals.
@@ -26,7 +27,7 @@ public class IAConstraint extends CSPConstraint{
 		this.relations.addAll(relations);
 	}
 	
-	public IAConstraint(IAVariable from, IAVariable to, BranchingType...relationArray) {
+	public IAConstraint(CSPVariable from, CSPVariable to, BranchingType...relationArray) {
 		this.relations.addAll(relations);
 		this.setFrom(from);
 		this.setTo(to);
@@ -96,7 +97,7 @@ public class IAConstraint extends CSPConstraint{
 	public Object clone() {
 		BranchingType[] relationArray = new BranchingType[this.getRelations().size()];
 		relationArray = this.relations.toArray(relationArray);
-		return new IAConstraint((IAVariable) this.getFrom(),(IAVariable) this.getTo(), relationArray);
+		return new IAConstraint((CSPVariable) this.getFrom(),(CSPVariable) this.getTo(), relationArray);
 	}
 
 	@Override

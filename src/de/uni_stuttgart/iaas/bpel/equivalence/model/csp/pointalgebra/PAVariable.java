@@ -16,24 +16,13 @@ import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
 public class PAVariable extends CSPVariable {
 	
 	private TimePointDesc timePoint;
-	private EObject bpelElement;
-	
 	public PAVariable(int id) {
 		super(id);
 	}
 		
-	public PAVariable(int id, EObject bpelElement, TimePointDesc timePoint) {
-		super(id);
-		this.bpelElement = bpelElement;
+	public PAVariable(int id, Object bpelElement, TimePointDesc timePoint) {
+		super(id, bpelElement);
 		this.timePoint = timePoint;
-	}
-	
-	public void setBpelElement(EObject bpelElement) {
-		this.bpelElement = bpelElement;
-	}
-	
-	public EObject getBpelElement() {
-		return bpelElement;
 	}
 	
 	public void setTimePoint(TimePointDesc timePoint) {
@@ -44,12 +33,12 @@ public class PAVariable extends CSPVariable {
 		return timePoint;
 	}
 	
-	public String getBpelName() {
-		Object nameAttr = EMFUtils.getAttributeByName(bpelElement, "name");
-		String bpelName = (nameAttr instanceof String)? (String) nameAttr : "";
-		
-		return bpelName;
+	
+	@Override
+	public String getStateName() {
+		return timePoint.getState().name();
 	}
+	
 	
 	@Override
 	public String getName() {		

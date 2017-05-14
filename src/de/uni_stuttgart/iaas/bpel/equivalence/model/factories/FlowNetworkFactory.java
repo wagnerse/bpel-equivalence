@@ -2,6 +2,7 @@ package de.uni_stuttgart.iaas.bpel.equivalence.model.factories;
 
 import org.eclipse.bpel.model.BPELPackage;
 import org.eclipse.bpel.model.Flow;
+import org.eclipse.bpel.model.impl.FlowImpl;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 
@@ -19,14 +20,14 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.networks.FlowNetwork;
 public class FlowNetworkFactory implements IActivityNetworkFactory {
 
 	@Override
-	public EClass getSupportedEClass() {
-		return BPELPackage.eINSTANCE.getFlow();
+	public Class<?> getSupportedClass() {
+		return FlowImpl.class;
 	}
 
 	@Override
-	public AbstractActivityNetwork createElementNetwork(AbstractActivityNetwork parentNetwork, EObject eobject,
+	public AbstractActivityNetwork createElementNetwork(AbstractActivityNetwork parentNetwork, Object object,
 			PANetwork network) {
-		return new FlowNetwork(parentNetwork, (Flow) eobject, network);
+		return new FlowNetwork(parentNetwork, (Flow) object, network);
 	}
 
 }

@@ -53,12 +53,12 @@ public class FlowNetwork extends AbstractActivityNetwork {
 	}
 
 	@Override
-	public EClass getSupportedEClass() {
-		return BPELPackage.eINSTANCE.getFlow();
+	public Class<?> getSupportedClass() {
+		return Flow.class;
 	}
 
 	@Override
-	public EObject getEObject() {
+	public Object getObject() {
 		return flow;
 	}
 
@@ -70,35 +70,35 @@ public class FlowNetwork extends AbstractActivityNetwork {
 
 	protected void initLocalNetwork() {
 		// create variables
-		PAVariable startInitial = this.getNetwork().createVariable(this.getEObject(),
+		PAVariable startInitial = this.getNetwork().createVariable(this.getObject(),
 				new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START));
 		this.variables.add(startInitial);
 
-		PAVariable startDead = this.getNetwork().createVariable(this.getEObject(),
+		PAVariable startDead = this.getNetwork().createVariable(this.getObject(),
 				new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START));
 		this.variables.add(startDead);
 
-		PAVariable startAborted = this.getNetwork().createVariable(this.getEObject(),
+		PAVariable startAborted = this.getNetwork().createVariable(this.getObject(),
 				new TimePointDesc(BPELStateEnum.ABORTED, TimeTypeEnum.START));
 		this.variables.add(startAborted);
 
-		PAVariable startTerminating = this.getNetwork().createVariable(this.getEObject(),
+		PAVariable startTerminating = this.getNetwork().createVariable(this.getObject(),
 				new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START));
 		this.variables.add(startTerminating);
 
-		PAVariable startTerminated = this.getNetwork().createVariable(this.getEObject(),
+		PAVariable startTerminated = this.getNetwork().createVariable(this.getObject(),
 				new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.START));
 		this.variables.add(startTerminated);
 
-		PAVariable startExe = this.getNetwork().createVariable(this.getEObject(),
+		PAVariable startExe = this.getNetwork().createVariable(this.getObject(),
 				new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.START));
 		this.variables.add(startExe);
 
-		PAVariable startFault = this.getNetwork().createVariable(this.getEObject(),
+		PAVariable startFault = this.getNetwork().createVariable(this.getObject(),
 				new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START));
 		this.variables.add(startFault);
 
-		PAVariable startComp = this.getNetwork().createVariable(this.getEObject(),
+		PAVariable startComp = this.getNetwork().createVariable(this.getObject(),
 				new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START));
 		this.variables.add(startComp);
 
@@ -369,8 +369,8 @@ public class FlowNetwork extends AbstractActivityNetwork {
 	}
 
 	@Override
-	protected Map<EObject, AbstractActivityNetwork> createChildNetworks() {
-		Map<EObject, AbstractActivityNetwork> childMap = new HashMap<EObject, AbstractActivityNetwork>();
+	protected Map<Object, AbstractActivityNetwork> createChildNetworks() {
+		Map<Object, AbstractActivityNetwork> childMap = new HashMap<Object, AbstractActivityNetwork>();
 
 		// add activities
 		for (EObject a : flow.getActivities()) {

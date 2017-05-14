@@ -45,8 +45,8 @@ public class FHCatchNetwork extends AbstractActivityNetwork {
 	}
 
 	@Override
-	public EClass getSupportedEClass() {
-		return BPELPackage.eINSTANCE.getCatch();
+	public Class<?> getSupportedClass() {
+		return Catch.class;
 	}
 
 	@Override
@@ -56,34 +56,34 @@ public class FHCatchNetwork extends AbstractActivityNetwork {
 	}
 
 	@Override
-	public EObject getEObject() {
+	public Object getObject() {
 		return faultHandlerCatch;
 	}
 
 	protected void initLocalNetwork() {
 		//create variables
-				PAVariable startInitial = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START));
+				PAVariable startInitial = this.getNetwork().createVariable(this.getObject(), new TimePointDesc(BPELStateEnum.INITAL, TimeTypeEnum.START));
 				this.variables.add(startInitial);
 				
-				PAVariable startDead = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START));
+				PAVariable startDead = this.getNetwork().createVariable(this.getObject(), new TimePointDesc(BPELStateEnum.DEAD, TimeTypeEnum.START));
 				this.variables.add(startDead);
 				
-				PAVariable startAborted = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.ABORTED, TimeTypeEnum.START));
+				PAVariable startAborted = this.getNetwork().createVariable(this.getObject(), new TimePointDesc(BPELStateEnum.ABORTED, TimeTypeEnum.START));
 				this.variables.add(startAborted);
 				
-				PAVariable startTerminating = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START));
+				PAVariable startTerminating = this.getNetwork().createVariable(this.getObject(), new TimePointDesc(BPELStateEnum.TERMINATING, TimeTypeEnum.START));
 				this.variables.add(startTerminating);
 				
-				PAVariable startTerminated = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.START));
+				PAVariable startTerminated = this.getNetwork().createVariable(this.getObject(), new TimePointDesc(BPELStateEnum.TERMINATED, TimeTypeEnum.START));
 				this.variables.add(startTerminated);
 				
-				PAVariable startExe = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.START));
+				PAVariable startExe = this.getNetwork().createVariable(this.getObject(), new TimePointDesc(BPELStateEnum.EXECUTING, TimeTypeEnum.START));
 				this.variables.add(startExe);
 				
-				PAVariable startFault = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START));
+				PAVariable startFault = this.getNetwork().createVariable(this.getObject(), new TimePointDesc(BPELStateEnum.FAULT, TimeTypeEnum.START));
 				this.variables.add(startFault);
 				
-				PAVariable startComp = this.getNetwork().createVariable(this.getEObject(), new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START));
+				PAVariable startComp = this.getNetwork().createVariable(this.getObject(), new TimePointDesc(BPELStateEnum.COMPLETED, TimeTypeEnum.START));
 				this.variables.add(startComp);
 				
 				//create inter-state constraints for control flow
@@ -176,10 +176,10 @@ public class FHCatchNetwork extends AbstractActivityNetwork {
 	}
 
 	@Override
-	protected Map<EObject, AbstractActivityNetwork> createChildNetworks() {
-		Map<EObject, AbstractActivityNetwork> childMap = new HashMap<EObject, AbstractActivityNetwork>();
+	protected Map<Object, AbstractActivityNetwork> createChildNetworks() {
+		Map<Object, AbstractActivityNetwork> childMap = new HashMap<Object, AbstractActivityNetwork>();
 		if (this.activity != null) {
-			childMap.put(this.getEObject(), createChildNetwork(activity));
+			childMap.put(this, createChildNetwork(activity));
 		}
 		return childMap;
 	}

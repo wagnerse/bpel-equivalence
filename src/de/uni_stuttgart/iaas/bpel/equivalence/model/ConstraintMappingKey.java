@@ -30,9 +30,9 @@ public class ConstraintMappingKey {
 	public int hashCode() {
 		return new HashCodeBuilder(53, 67)
 				.append(p1)
-				.append(n1.getEObject())
+				.append(n1.getObject())
 				.append(p2)
-				.append(n2.getEObject())
+				.append(n2.getObject())
 				.toHashCode();
 	}
 

@@ -14,39 +14,31 @@ import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
  *
  */
 public class IAVariable extends CSPVariable {
-
-	private EObject bpelElement;
-	private BPELStateEnum state;
+	
+	protected BPELStateEnum state;
 
 	public IAVariable(int id) {
 		super(id);
 	}
 	
-	public IAVariable(int id, EObject bpelElement, BPELStateEnum state) {
-		super(id);
-		this.bpelElement = bpelElement;
+	public IAVariable(int id, Object bpelElement, BPELStateEnum state) {
+		super(id, bpelElement);
 		this.state = state;
-	}
-	
-	public EObject getBpelElement() {
-		return bpelElement;
-	}
-	
-	public void setBpelElement(EObject bpelElement) {
-		this.bpelElement = bpelElement;
-	}
-	
-	public void setState(BPELStateEnum state) {
-		this.state = state;
-	}
-	
-	public BPELStateEnum getState() {
-		return state;
-	}
 
+	}
+	
+	@Override
+	public String getStateName() {
+		return this.state.name();
+	}
+	
 	@Override
 	public String getName() {
-		Object nameAttr = EMFUtils.getAttributeByName(bpelElement, "name");
+		
+		Object nameAttr = null;
+		if (bpelElement instanceof EObject) {
+			nameAttr = EMFUtils.getAttributeByName((EObject)bpelElement, "name");
+		}
 		String bpelName = (nameAttr instanceof String)? (String) nameAttr + this.getState().name(): "";
 		
 		return bpelName;
@@ -71,9 +63,17 @@ public class IAVariable extends CSPVariable {
 
 		IAVariable rhs = (IAVariable) obj;
 		return new EqualsBuilder()
-				.append(bpelElement, rhs.bpelElement)
-				.append(state, rhs.state)
+				.append(bpelElement, rhs.getBpelElement())
+				.append(state, rhs.getState())
 				.isEquals();
+	}
+	
+	public void setState(BPELStateEnum state) {
+		this.state = state;
+	}
+
+	public BPELStateEnum getState() {
+		return state;
 	}
 
 }

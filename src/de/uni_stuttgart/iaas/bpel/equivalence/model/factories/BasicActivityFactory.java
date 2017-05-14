@@ -11,27 +11,27 @@ import de.uni_stuttgart.iaas.bpel.equivalence.model.networks.BasicActivityNetwor
 
 /**
  * Creates a activity network for the BPEL basic activities
- * receive, reply, invoke, assign, throw, exit, wait, empty
+ * receive, reply, invoke, assign, throw, exit, wait, empty, opaque
  * 
  * @author Jonas Scheurich
  *
  */
 public class BasicActivityFactory implements IActivityNetworkFactory{
 	
-	private EClass support;
+	private Class<?> support;
 	
-	public BasicActivityFactory(EClass support) {
+	public BasicActivityFactory(Class<?> support) {
 		this.support = support;
 	}
 
 	@Override
-	public EClass getSupportedEClass() {
+	public Class<?> getSupportedClass() {
 		return support;
 	}
 
 	@Override
-	public AbstractActivityNetwork createElementNetwork(AbstractActivityNetwork parentNetwork, EObject eobject, PANetwork network) {
-		return new BasicActivityNetwork(parentNetwork, support,(Activity) eobject, network);
+	public AbstractActivityNetwork createElementNetwork(AbstractActivityNetwork parentNetwork, Object object, PANetwork network) {
+		return new BasicActivityNetwork(parentNetwork, support,(Activity) object, network);
 	}
 
 }

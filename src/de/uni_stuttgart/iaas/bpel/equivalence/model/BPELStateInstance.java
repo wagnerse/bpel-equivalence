@@ -14,24 +14,29 @@ import de.uni_stuttgart.iaas.bpel.equivalence.utils.EMFUtils;
  */
 public class BPELStateInstance {
 	
-	private EObject activity;
+	private Object activity;
 	private BPELStateEnum state;
 	private PAVariable start;
 	private PAVariable end;
 	
-	public BPELStateInstance(EObject activity, BPELStateEnum state, PAVariable start, PAVariable end) {
+	public BPELStateInstance(Object activity, BPELStateEnum state, PAVariable start, PAVariable end) {
 		this.activity = activity;
 		this.state = state;
 		this.start = start;
 		this.end = end;
 	}
 	
-	public EObject getBpelElement() {
+	public Object getBpelElement() {
 		return activity;
 	}
 	
 	public String getBpelName() {
-		Object nameAttr = EMFUtils.getAttributeByName(activity, "name");
+		
+		Object nameAttr = null;
+		if (activity instanceof EObject) {
+			nameAttr = EMFUtils.getAttributeByName( (EObject) activity, "name");
+		}
+	
 		String bpelName = (nameAttr instanceof String)? (String) nameAttr : "";
 		return bpelName;
 	}

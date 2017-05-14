@@ -20,7 +20,7 @@ public class IANetwork extends CSPNetwork{
 	
 	private int idCount = 0;
 
-	public IAVariable createVariable(EObject bpelElement, BPELStateEnum state) {
+	public IAVariable createVariable(Object bpelElement, BPELStateEnum state) {
 		IAVariable newVariable = new IAVariable(idCount++, bpelElement, state);
 		super.addVariable(newVariable);
 		super.addConstraint(new IAConstraint(newVariable, newVariable, BranchingType.Equals));
